@@ -1,0 +1,16 @@
+{
+  "yes_bias_threshold": 0.8,
+  "yes_bias_max_threshold": 0.9,
+
+  "position_size_usdc": 3.0,
+  "max_open_positions": 3,
+  "max_total_exposure_usdc": 9.0,
+  "max_daily_loss_usdc": 6.0,
+
+  "take_profit_multiplier": 1.6,
+  "stop_loss_multiplier": 0.8,
+  "hold_to_resolution": false,
+
+  "poll_interval_seconds": 10,
+  "short_window_min_seconds_to_close": 120
+}

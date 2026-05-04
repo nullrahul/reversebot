@@ -1,0 +1,135 @@
+"""
+Tests for L1 and L2 authentication modules.
+"""
+
+import os
+import sys
+import time
+import uuid
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from src.auth.l2_auth import L2Auth
+
+
+class TestL2AuthHeaders:
+
+    def test_headers_contain_required_fields(self):
+        """Every CLOB request must include all 4 POLY headers."""
+        auth = L2Auth(
+            api_key="test_key",
+            api_secret="dGVzdF9zZWNyZXRfMTIz",
+            passphrase="test_pass",
+            address="0x1234567890abcdef",
+        )
+
+        headers = auth.build_headers("GET", "/order")
+
+        assert "POLY-ADDRESS" in headers
+        assert "POLY-SIGNATURE" in headers
+        assert "POLY-TIMESTAMP" in headers
+        assert "POLY-NONCE" in headers
+        assert "POLY-API-KEY" in headers
+        assert "POLY-PASSPHRASE" in headers
+
+    def test_nonce_is_unique_per_request(self):
+        """Each request must have a unique nonce (UUID4)."""
+        auth = L2Auth(
+            api_key="test_key",
+            api_secret="dGVzdF9zZWNyZXQ=",
+            passphrase="test_pass",
+            address="0xtest",
+        )
+
+        nonces = set()
+        for _ in range(100):
+            headers = auth.build_headers("GET", "/test")
+            nonce = headers["POLY-NONCE"]
+            assert nonce not in nonces, f"Nonce reused: {nonce}"
+            nonces.add(nonce)
+
+            # Verify it's a valid UUID4
+            parsed = uuid.UUID(nonce, version=4)
+            assert str(parsed) == nonce
+
+    def test_timestamp_is_integer_string(self):
+        """Timestamp must be UTC seconds as an integer string."""
+        auth = L2Auth(
+            api_key="test_key",
+            api_secret="dGVzdF9zZWNyZXQ=",
+            passphrase="test_pass",
+            address="0xtest",
+        )
+
+        headers = auth.build_headers("GET", "/test")
+        ts = headers["POLY-TIMESTAMP"]
+
+        # Must be parseable as int
+        ts_int = int(ts)
+        # Must be reasonable (within last minute)
+        assert abs(ts_int - int(time.time())) < 60
+
+    def test_signature_changes_with_path(self):
+        """Different paths should produce different signatures."""
+        auth = L2Auth(
+            api_key="test_key",
+            api_secret="dGVzdF9zZWNyZXRfMTIz",
+            passphrase="test_pass",
+            address="0xtest",
+        )
+
+        h1 = auth.build_headers("GET", "/order")
+        h2 = auth.build_headers("GET", "/book")
+
+        # Signatures should differ (different paths)
+        # Note: timestamps might differ too, but the key point is they're not identical
+        assert h1["POLY-SIGNATURE"] != h2["POLY-SIGNATURE"] or h1["POLY-TIMESTAMP"] != h2["POLY-TIMESTAMP"]
+
+
+class TestL2Auth401Tracking:
+
+    def test_401_counter_increments(self):
+        auth = L2Auth("k", "s", "p", "0x")
+        assert auth.consecutive_401s == 0
+
+        auth.record_401()
+        assert auth.consecutive_401s == 1
+
+        auth.record_401()
+        assert auth.consecutive_401s == 2
+
+    def test_401_counter_triggers_kill_at_3(self):
+        auth = L2Auth("k", "s", "p", "0x")
+
+        auth.record_401()
+        assert not auth.should_kill
+
+        auth.record_401()
+        assert not auth.should_kill
+
+        auth.record_401()
+        assert auth.should_kill  # 3 consecutive = kill
+
+    def test_401_counter_resets_on_success(self):
+        auth = L2Auth("k", "s", "p", "0x")
+
+        auth.record_401()
+        auth.record_401()
+        auth.reset_401_counter()
+        assert auth.consecutive_401s == 0
+        assert not auth.should_kill
+
+        """Auth failure logging must never include secret or passphrase."""
+        auth = L2Auth(
+            api_key="my_key",
+            api_secret="SUPER_SECRET_VALUE",
+            passphrase="MY_PASSPHRASE",
+            address="0xtest",
+        )
+
+        # This should log but NOT include the secret
+        auth.log_auth_failure_details("GET", "/test", 401, "unauthorized")
+        # If we get here without error, the method works

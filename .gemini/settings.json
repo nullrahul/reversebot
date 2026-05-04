@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "polymarket": {
+      "httpUrl": "https://docs.polymarket.com/mcp" 
+    }
+  },
+  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "read_file|list_directory",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f graphify-out/graph.json ] && echo '{\"decision\":\"allow\",\"additionalContext\":\"graphify: Knowledge graph exists. Read graphify-out/GRAPH_REPORT.md for guidance.\"}' || echo '{\"decision\":\"allow\"}'"
+          }
+        ]
+      }
+    ]
+  }
+}
+

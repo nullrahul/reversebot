@@ -1,0 +1,939 @@
+{
+  "communities": {
+    "0": [
+      "clob_client_clobclient",
+      "clob_client_clobclient_cancel_all_orders",
+      "clob_client_clobclient_cancel_order",
+      "clob_client_clobclient_ensure_session",
+      "clob_client_clobclient_get_account_balance",
+      "clob_client_clobclient_get_current_price",
+      "clob_client_clobclient_get_order_status",
+      "clob_client_clobclient_get_orderbook",
+      "clob_client_clobclient_init",
+      "clob_client_clobclient_place_order",
+      "clob_client_clobclient_request",
+      "clob_client_clobclient_simulate_paper_order",
+      "clob_client_clobclient_wait_for_fill",
+      "clob_client_is_paper",
+      "clob_client_rationale_1",
+      "clob_client_rationale_153",
+      "clob_client_rationale_199",
+      "clob_client_rationale_280",
+      "clob_client_rationale_309",
+      "clob_client_rationale_337",
+      "clob_client_rationale_370",
+      "clob_client_rationale_395",
+      "clob_client_rationale_40",
+      "clob_client_rationale_433",
+      "clob_client_rationale_448",
+      "clob_client_rationale_89",
+      "config_botconfig",
+      "config_rationale_81",
+      "dashboard_api_close_position",
+      "decision_decisionengine_process_signal",
+      "decision_rationale_69",
+      "position_mgr_get_market_lock",
+      "position_mgr_positionmanager",
+      "position_mgr_positionmanager_check_position",
+      "position_mgr_positionmanager_close_all",
+      "position_mgr_positionmanager_close_position",
+      "position_mgr_positionmanager_get_overrides",
+      "position_mgr_positionmanager_init",
+      "position_mgr_positionmanager_manual_close_position",
+      "position_mgr_positionmanager_monitor_positions",
+      "position_mgr_positionmanager_open_position",
+      "position_mgr_positionmanager_recover_no_token_id",
+      "position_mgr_rationale_1",
+      "position_mgr_rationale_259",
+      "position_mgr_rationale_281",
+      "position_mgr_rationale_291",
+      "position_mgr_rationale_43",
+      "position_mgr_rationale_474",
+      "position_mgr_rationale_50",
+      "position_mgr_rationale_532",
+      "position_mgr_rationale_575",
+      "position_mgr_rationale_719",
+      "position_mgr_rationale_95",
+      "queries_get_open_positions",
+      "queries_rationale_269",
+      "src_strategy_position_mgr_py",
+      "test_position_mgr_mock_clob",
+      "test_position_mgr_mock_config",
+      "test_position_mgr_rationale_1",
+      "test_position_mgr_rationale_50",
+      "test_position_mgr_test_failed_order_marks_failed",
+      "test_position_mgr_test_fok_order_allowed",
+      "test_position_mgr_test_lock_is_per_market",
+      "test_position_mgr_test_market_lock_prevents_concurrent_opens",
+      "test_position_mgr_test_only_fok_orders_allowed",
+      "test_position_mgr_test_same_market_same_lock",
+      "test_position_mgr_test_successful_open",
+      "test_position_mgr_testfokenforcement",
+      "test_position_mgr_testopenposition",
+      "test_position_mgr_testraceconditionprotection",
+      "users_rahulkumar_documents_reversebot_src_api_clob_client_py",
+      "users_rahulkumar_documents_reversebot_tests_test_position_mgr_py"
+    ],
+    "1": [
+      "queries_close_position",
+      "queries_count_open_positions",
+      "queries_create_position",
+      "queries_get_flagged_markets",
+      "queries_get_market",
+      "queries_get_position",
+      "queries_get_total_exposure",
+      "queries_has_open_position_for_market",
+      "queries_has_traded_market",
+      "queries_log_event",
+      "queries_log_scan",
+      "queries_rationale_1",
+      "queries_rationale_109",
+      "queries_rationale_118",
+      "queries_rationale_132",
+      "queries_rationale_147",
+      "queries_rationale_173",
+      "queries_rationale_209",
+      "queries_rationale_231",
+      "queries_rationale_248",
+      "queries_rationale_280",
+      "queries_rationale_293",
+      "queries_rationale_305",
+      "queries_rationale_318",
+      "queries_rationale_330",
+      "queries_rationale_380",
+      "queries_rationale_414",
+      "queries_reset_market_threshold_tracking",
+      "queries_update_market_threshold_tracking",
+      "queries_update_position_notes",
+      "queries_update_position_status",
+      "scanner_marketscanner_run_scan_cycle",
+      "scanner_remote_marketscanner_run_scan_cycle",
+      "test_db_rationale_1",
+      "test_db_rationale_50",
+      "test_db_rationale_75",
+      "test_db_sample_market",
+      "test_db_test_close_position",
+      "test_db_test_count_and_exposure",
+      "test_db_test_create_position",
+      "test_db_test_events_are_append_only",
+      "test_db_test_flagged_markets",
+      "test_db_test_get_nonexistent_returns_none",
+      "test_db_test_has_open_position",
+      "test_db_test_log_event",
+      "test_db_test_log_scan",
+      "test_db_test_paper_positions_separate",
+      "test_db_test_partial_unique_index_exists",
+      "test_db_test_partial_unique_index_prevents_duplicates",
+      "test_db_test_shares_calculation_invariant",
+      "test_db_test_tables_exist",
+      "test_db_test_threshold_tracking",
+      "test_db_test_update_position_status",
+      "test_db_test_upsert_and_get",
+      "test_db_test_upsert_updates_existing",
+      "test_db_test_wal_mode_enabled",
+      "test_db_testauditlogs",
+      "test_db_testmarkets",
+      "test_db_testpaperpositions",
+      "test_db_testpositions",
+      "test_db_testschemacreation",
+      "users_rahulkumar_documents_reversebot_src_db_queries_py",
+      "users_rahulkumar_documents_reversebot_tests_test_db_py",
+      "verify_fixes_verify_issue_7_pending_guards",
+      "websocket_rationale_333",
+      "websocket_websocketclient_get_live_price"
+    ],
+    "2": [
+      "decision_decisionengine",
+      "decision_decisionengine_init",
+      "decision_get_core_context",
+      "decision_rationale_21",
+      "decision_rationale_43",
+      "log_config_get_logger",
+      "log_config_rationale_1",
+      "log_config_rationale_18",
+      "log_config_rationale_35",
+      "log_config_rationale_99",
+      "log_config_safestreamhandler",
+      "log_config_safestreamhandler_emit",
+      "log_config_setup_logging",
+      "main_main",
+      "main_parse_args",
+      "main_rationale_1",
+      "main_rationale_127",
+      "main_rationale_85",
+      "main_tradingengine",
+      "main_tradingengine_init",
+      "main_tradingengine_run",
+      "main_tradingengine_start",
+      "main_tradingengine_stop",
+      "scanner_marketscanner",
+      "scanner_marketscanner_discovery_loop",
+      "scanner_marketscanner_get_current_et_minutes",
+      "scanner_marketscanner_init",
+      "scanner_marketscanner_parse_time_to_minutes",
+      "scanner_marketscanner_should_track_market",
+      "scanner_marketscanner_start_discovery",
+      "scanner_marketscanner_stop_discovery",
+      "scanner_rationale_1",
+      "scanner_rationale_104",
+      "scanner_rationale_98",
+      "test_validator_testshortwindowscannerfilter",
+      "test_validator_testshortwindowscannerfilter_test_scanner_tracks_crypto_short_window",
+      "users_rahulkumar_documents_reversebot_src_logs_log_config_py",
+      "users_rahulkumar_documents_reversebot_src_main_py",
+      "users_rahulkumar_documents_reversebot_src_strategy_decision_py",
+      "users_rahulkumar_documents_reversebot_src_strategy_scanner_py"
+    ],
+    "3": [
+      "fetch_test2_main",
+      "gamma_client_gammaclient",
+      "gamma_client_gammaclient_close",
+      "gamma_client_gammaclient_ensure_session",
+      "gamma_client_gammaclient_fetch_active_markets",
+      "gamma_client_gammaclient_fetch_active_markets_index",
+      "gamma_client_gammaclient_fetch_all_active_markets",
+      "gamma_client_gammaclient_fetch_all_active_markets_index",
+      "gamma_client_gammaclient_fetch_ephemeral_crypto_markets",
+      "gamma_client_gammaclient_get",
+      "gamma_client_gammaclient_get_true_now",
+      "gamma_client_gammaclient_init",
+      "gamma_client_gammaclient_parse_market",
+      "gamma_client_normalize_tag_slug",
+      "gamma_client_parse_timestamp",
+      "gamma_client_rationale_1",
+      "gamma_client_rationale_100",
+      "gamma_client_rationale_131",
+      "gamma_client_rationale_144",
+      "gamma_client_rationale_217",
+      "gamma_client_rationale_277",
+      "gamma_client_rationale_319",
+      "gamma_client_rationale_356",
+      "gamma_client_rationale_394",
+      "gamma_client_rationale_46",
+      "gamma_client_rationale_64",
+      "gamma_client_rationale_86",
+      "gamma_client_rationale_94",
+      "rate_limiter_ratelimiter_acquire_api_call",
+      "rate_limiter_rationale_147",
+      "test_parse_vps_test",
+      "test_validator_rationale_105",
+      "test_validator_rationale_98",
+      "test_validator_testvolumedoublecountingguard",
+      "test_validator_testvolumedoublecountingguard_test_short_window_metadata_is_parsed",
+      "test_validator_testvolumedoublecountingguard_test_volume_is_taker_side_only",
+      "test_validator_testvolumedoublecountingguard_test_zero_volume_handled",
+      "users_rahulkumar_documents_reversebot_fetch_test2_py",
+      "users_rahulkumar_documents_reversebot_src_api_gamma_client_py",
+      "users_rahulkumar_documents_reversebot_test_parse_vps_py"
+    ],
+    "4": [
+      "l2_auth_consecutive_401s",
+      "l2_auth_l2auth",
+      "l2_auth_l2auth_build_headers",
+      "l2_auth_l2auth_create_signature",
+      "l2_auth_l2auth_get_timestamp",
+      "l2_auth_l2auth_init",
+      "l2_auth_l2auth_log_auth_failure_details",
+      "l2_auth_l2auth_record_401",
+      "l2_auth_l2auth_reset_401_counter",
+      "l2_auth_l2auth_sync_server_time",
+      "l2_auth_rationale_1",
+      "l2_auth_rationale_146",
+      "l2_auth_rationale_157",
+      "l2_auth_rationale_195",
+      "l2_auth_rationale_31",
+      "l2_auth_rationale_75",
+      "l2_auth_rationale_85",
+      "l2_auth_rationale_95",
+      "l2_auth_should_kill",
+      "test_auth_rationale_1",
+      "test_auth_rationale_21",
+      "test_auth_rationale_39",
+      "test_auth_rationale_59",
+      "test_auth_rationale_76",
+      "test_auth_testl2auth401tracking",
+      "test_auth_testl2auth401tracking_test_401_counter_increments",
+      "test_auth_testl2auth401tracking_test_401_counter_resets_on_success",
+      "test_auth_testl2auth401tracking_test_401_counter_triggers_kill_at_3",
+      "test_auth_testl2authheaders",
+      "test_auth_testl2authheaders_test_headers_contain_required_fields",
+      "test_auth_testl2authheaders_test_nonce_is_unique_per_request",
+      "test_auth_testl2authheaders_test_signature_changes_with_path",
+      "test_auth_testl2authheaders_test_timestamp_is_integer_string",
+      "users_rahulkumar_documents_reversebot_src_auth_l2_auth_py",
+      "users_rahulkumar_documents_reversebot_src_wallet_balance_py",
+      "users_rahulkumar_documents_reversebot_tests_test_auth_py",
+      "wallet_balance_check_proxy_balance",
+      "wallet_balance_rationale_15"
+    ],
+    "5": [
+      "scanner_remote_marketscanner",
+      "scanner_remote_marketscanner_discovery_loop",
+      "scanner_remote_marketscanner_init",
+      "scanner_remote_marketscanner_should_track_market",
+      "scanner_remote_marketscanner_start_discovery",
+      "scanner_remote_marketscanner_stop_discovery",
+      "scanner_remote_normalize_symbol",
+      "scanner_remote_rationale_1",
+      "scanner_remote_rationale_45",
+      "users_rahulkumar_documents_reversebot_scanner_remote_py",
+      "users_rahulkumar_documents_reversebot_src_api_websocket_py",
+      "users_rahulkumar_documents_reversebot_verify_fixes_py",
+      "verify_fixes_run_all",
+      "verify_fixes_verify_issue_2_no_price_logic",
+      "verify_fixes_verify_issue_3_share_rounding",
+      "websocket_is_connected",
+      "websocket_rationale_1",
+      "websocket_rationale_124",
+      "websocket_rationale_142",
+      "websocket_rationale_169",
+      "websocket_rationale_194",
+      "websocket_rationale_212",
+      "websocket_rationale_223",
+      "websocket_rationale_236",
+      "websocket_rationale_337",
+      "websocket_rationale_35",
+      "websocket_seconds_since_last_message",
+      "websocket_websocketclient",
+      "websocket_websocketclient_disconnect",
+      "websocket_websocketclient_get_backoff_delay",
+      "websocket_websocketclient_init",
+      "websocket_websocketclient_listen_loop",
+      "websocket_websocketclient_push_subscription_state",
+      "websocket_websocketclient_resubscribe",
+      "websocket_websocketclient_start",
+      "websocket_websocketclient_subscribe_market",
+      "websocket_websocketclient_unsubscribe_market"
+    ],
+    "6": [
+      "basemodel",
+      "dashboard_api_clear_history",
+      "dashboard_api_delete_history",
+      "dashboard_api_get_config",
+      "dashboard_api_history",
+      "dashboard_api_pnl_series",
+      "dashboard_api_positions",
+      "dashboard_api_set_config",
+      "dashboard_api_stats",
+      "dashboard_api_tpsl_position",
+      "dashboard_configupdate",
+      "dashboard_connectionmanager",
+      "dashboard_connectionmanager_connect",
+      "dashboard_connectionmanager_disconnect",
+      "dashboard_connectionmanager_init",
+      "dashboard_db",
+      "dashboard_get_db_path",
+      "dashboard_get_history",
+      "dashboard_get_password",
+      "dashboard_get_pnl_series",
+      "dashboard_get_positions",
+      "dashboard_get_runtime_config_path",
+      "dashboard_get_runtime_config_path_internal",
+      "dashboard_get_stats",
+      "dashboard_is_paper",
+      "dashboard_load_runtime_config",
+      "dashboard_rationale_1",
+      "dashboard_save_runtime_config",
+      "dashboard_serve_rd_dashboard",
+      "dashboard_set_engine",
+      "dashboard_start_dashboard_server",
+      "dashboard_tpslupdate",
+      "dashboard_verify_key",
+      "dashboard_websocket_endpoint",
+      "src_api_dashboard_py"
+    ],
+    "7": [
+      "kill_switch_is_triggered",
+      "kill_switch_killswitch",
+      "kill_switch_killswitch_execute_kill_sequence",
+      "kill_switch_killswitch_init",
+      "kill_switch_killswitch_record_api_error",
+      "kill_switch_killswitch_register_callback",
+      "kill_switch_killswitch_reset_api_errors",
+      "kill_switch_killswitch_trigger",
+      "kill_switch_rationale_1",
+      "kill_switch_rationale_100",
+      "kill_switch_rationale_105",
+      "kill_switch_rationale_121",
+      "kill_switch_rationale_38",
+      "kill_switch_rationale_80",
+      "kill_switch_rationale_84",
+      "test_kill_switch_mock_clob",
+      "test_kill_switch_mock_ws",
+      "test_kill_switch_rationale_1",
+      "test_kill_switch_rationale_38",
+      "test_kill_switch_rationale_47",
+      "test_kill_switch_rationale_56",
+      "test_kill_switch_test_cancel_all_called_before_cleanup",
+      "test_kill_switch_test_cancel_all_called_even_if_ws_none",
+      "test_kill_switch_test_kill_switch_idempotent",
+      "test_kill_switch_test_kill_switch_sets_flag_immediately",
+      "test_kill_switch_testconsecutiveapierrors",
+      "test_kill_switch_testconsecutiveapierrors_test_error_reset",
+      "test_kill_switch_testconsecutiveapierrors_test_error_tracking",
+      "test_kill_switch_testkillswitchsequence",
+      "users_rahulkumar_documents_reversebot_src_risk_kill_switch_py",
+      "users_rahulkumar_documents_reversebot_tests_test_kill_switch_py"
+    ],
+    "8": [
+      "clob_client_clobclient_get_available_volume_at_ask",
+      "clob_client_rationale_171",
+      "queries_rationale_64",
+      "queries_upsert_market",
+      "test_validator_mock_config",
+      "test_validator_rationale_1",
+      "test_validator_rationale_35",
+      "test_validator_rationale_65",
+      "test_validator_sample_market",
+      "test_validator_test_all_checks_pass",
+      "test_validator_test_check_1_liquidity_fail",
+      "test_validator_test_check_1_liquidity_pass",
+      "test_validator_test_check_4_duplicate_blocks_second_position",
+      "test_validator_test_check_7_position_count_limit",
+      "test_validator_test_check_8_price_stability_requires_2_cycles",
+      "test_validator_test_check_9_category_filter",
+      "test_validator_test_short_window_time_check_fails_near_expiry",
+      "test_validator_test_short_window_time_check_passes_for_active_5m_market",
+      "test_validator_testvalidatorchecks",
+      "users_rahulkumar_documents_reversebot_src_strategy_validator_py",
+      "users_rahulkumar_documents_reversebot_tests_test_validator_py",
+      "validator_rationale_1",
+      "validator_rationale_42",
+      "validator_rationale_51",
+      "validator_rationale_60",
+      "validator_rationale_82",
+      "validator_signalvalidator",
+      "validator_signalvalidator_init",
+      "validator_signalvalidator_validate",
+      "validator_validationresult",
+      "validator_validationresult_summary"
+    ],
+    "9": [
+      "analyze_dump_analyze",
+      "analyze_rd_dump_analyze",
+      "analyze_vps_outcomes_analyze",
+      "analyze_vps_outcomes_gammaclient",
+      "analyze_vps_outcomes_gammaclient_close",
+      "analyze_vps_outcomes_gammaclient_get_market",
+      "analyze_vps_outcomes_gammaclient_init",
+      "clob_client_clobclient_close",
+      "export_trades_vps_export",
+      "queries_close_db",
+      "queries_init_db",
+      "queries_rationale_20",
+      "queries_rationale_52",
+      "test_db_db",
+      "test_db_rationale_39",
+      "test_kill_switch_db",
+      "test_kill_switch_test_kill_records_event_in_db",
+      "test_position_mgr_db",
+      "test_validator_db",
+      "test_ws_test_ws",
+      "truth_check_check",
+      "users_rahulkumar_documents_reversebot_analyze_dump_py",
+      "users_rahulkumar_documents_reversebot_analyze_rd_dump_py",
+      "users_rahulkumar_documents_reversebot_export_trades_vps_py",
+      "users_rahulkumar_documents_reversebot_r_and_d_analyze_vps_outcomes_py",
+      "users_rahulkumar_documents_reversebot_test_ws_py",
+      "users_rahulkumar_documents_reversebot_truth_check_py",
+      "websocket_rationale_86",
+      "websocket_websocketclient_connect"
+    ],
+    "10": [
+      "queries_get_performance_summary",
+      "queries_rationale_437",
+      "telegram_client_rationale_1",
+      "telegram_client_rationale_164",
+      "telegram_client_rationale_171",
+      "telegram_client_rationale_177",
+      "telegram_client_rationale_201",
+      "telegram_client_rationale_28",
+      "telegram_client_rationale_63",
+      "telegram_client_telegramclient",
+      "telegram_client_telegramclient_escape_html",
+      "telegram_client_telegramclient_generate_positions_report",
+      "telegram_client_telegramclient_generate_summary_report",
+      "telegram_client_telegramclient_get_back_keyboard",
+      "telegram_client_telegramclient_get_main_keyboard",
+      "telegram_client_telegramclient_init",
+      "telegram_client_telegramclient_refresh_loop",
+      "telegram_client_telegramclient_register_handlers",
+      "telegram_client_telegramclient_scheduled_report_loop",
+      "telegram_client_telegramclient_send_menu",
+      "telegram_client_telegramclient_start",
+      "telegram_client_telegramclient_start_refresh",
+      "telegram_client_telegramclient_stop",
+      "telegram_client_telegramclient_stop_refresh",
+      "users_rahulkumar_documents_reversebot_src_api_telegram_client_py"
+    ],
+    "11": [
+      "config_botconfig_validate",
+      "config_env_bool",
+      "config_env_float",
+      "config_env_int",
+      "config_env_int_list",
+      "config_env_list",
+      "config_load_config",
+      "config_load_runtime_overrides",
+      "config_rationale_1",
+      "config_rationale_140",
+      "config_rationale_17",
+      "config_rationale_217",
+      "config_rationale_27",
+      "config_rationale_298",
+      "config_rationale_39",
+      "config_rationale_51",
+      "config_rationale_59",
+      "config_rationale_67",
+      "config_require_env",
+      "dashboard_serve_dashboard",
+      "users_rahulkumar_documents_reversebot_config_config_py"
+    ],
+    "12": [
+      "rate_limiter_available_tokens",
+      "rate_limiter_ratelimiter",
+      "rate_limiter_ratelimiter_acquire_order",
+      "rate_limiter_ratelimiter_init",
+      "rate_limiter_rationale_1",
+      "rate_limiter_rationale_102",
+      "rate_limiter_rationale_112",
+      "rate_limiter_rationale_137",
+      "rate_limiter_rationale_22",
+      "rate_limiter_rationale_29",
+      "rate_limiter_rationale_44",
+      "rate_limiter_rationale_52",
+      "rate_limiter_tokenbucket",
+      "rate_limiter_tokenbucket_acquire",
+      "rate_limiter_tokenbucket_init",
+      "rate_limiter_tokenbucket_refill",
+      "users_rahulkumar_documents_reversebot_src_api_rate_limiter_py"
+    ],
+    "13": [
+      "limits_rationale_1",
+      "limits_rationale_107",
+      "limits_rationale_25",
+      "limits_rationale_35",
+      "limits_rationale_52",
+      "limits_rationale_68",
+      "limits_rationale_88",
+      "limits_risklimits",
+      "limits_risklimits_check_all",
+      "limits_risklimits_check_daily_loss",
+      "limits_risklimits_check_exposure",
+      "limits_risklimits_check_position_count",
+      "limits_risklimits_init",
+      "limits_risklimits_should_kill_switch",
+      "queries_get_daily_realised_loss",
+      "queries_rationale_342",
+      "users_rahulkumar_documents_reversebot_src_risk_limits_py"
+    ],
+    "14": [
+      "l1_auth_address",
+      "l1_auth_l1auth",
+      "l1_auth_l1auth_create_l2_auth_signature",
+      "l1_auth_l1auth_init",
+      "l1_auth_l1auth_sign_eip712",
+      "l1_auth_l1auth_sign_message",
+      "l1_auth_l1auth_sign_order",
+      "l1_auth_rationale_1",
+      "l1_auth_rationale_101",
+      "l1_auth_rationale_110",
+      "l1_auth_rationale_143",
+      "l1_auth_rationale_56",
+      "l1_auth_rationale_62",
+      "l1_auth_rationale_92",
+      "l1_auth_sign_eip712_data",
+      "users_rahulkumar_documents_reversebot_src_auth_l1_auth_py"
+    ],
+    "15": [
+      "hft_rolling_manager_hftmarketmanager",
+      "hft_rolling_manager_hftmarketmanager_close",
+      "hft_rolling_manager_hftmarketmanager_discover_current_15m_market",
+      "hft_rolling_manager_hftmarketmanager_fetch_candidate_markets",
+      "hft_rolling_manager_hftmarketmanager_get_session",
+      "hft_rolling_manager_hftmarketmanager_init",
+      "hft_rolling_manager_hftmarketmanager_parse_time",
+      "hft_rolling_manager_hftmarketmanager_run_rotation_loop",
+      "hft_rolling_manager_hftmarketmanager_validate_market",
+      "hft_rolling_manager_rationale_114",
+      "hft_rolling_manager_rationale_167",
+      "hft_rolling_manager_rationale_40",
+      "hft_rolling_manager_rationale_79",
+      "users_rahulkumar_documents_reversebot_r_and_d_crypto_short_window_tests_hft_rolling_manager_py"
+    ],
+    "16": [
+      "dashboard_api_control",
+      "health_healthmonitor",
+      "health_healthmonitor_init",
+      "health_healthmonitor_monitor_loop",
+      "health_healthmonitor_start",
+      "health_healthmonitor_stop",
+      "health_rationale_1",
+      "health_rationale_31",
+      "health_rationale_61",
+      "health_rationale_67",
+      "health_rationale_78",
+      "users_rahulkumar_documents_reversebot_src_risk_health_py"
+    ],
+    "17": [
+      "rejections_rationale_17",
+      "rejections_rationale_44",
+      "rejections_rationale_8",
+      "rejections_rejectionlogger",
+      "rejections_rejectionlogger_close",
+      "rejections_rejectionlogger_init",
+      "rejections_rejectionlogger_log_rejection",
+      "users_rahulkumar_documents_reversebot_src_db_rejections_py"
+    ],
+    "18": [
+      "test_validator_rationale_464",
+      "test_validator_rationale_473",
+      "test_validator_rationale_481",
+      "test_validator_testsharescalculation",
+      "test_validator_testsharescalculation_test_correct_shares_formula",
+      "test_validator_testsharescalculation_test_fee_adjusted_ev",
+      "test_validator_testsharescalculation_test_wrong_shares_formula_fails_invariant"
+    ],
+    "19": [
+      "test_discovery_logic_mockgammaclient",
+      "test_discovery_logic_mockgammaclient_get_slugs",
+      "test_discovery_logic_mockgammaclient_init",
+      "test_discovery_logic_run_test",
+      "users_rahulkumar_documents_reversebot_test_discovery_logic_py"
+    ],
+    "20": [
+      "activate_get_pyvenvconfig",
+      "activate_global_deactivate",
+      "activate_global_old_virtual_prompt",
+      "activate_global_prompt",
+      "users_rahulkumar_documents_reversebot_venv_local_bin_activate_ps1"
+    ],
+    "21": [
+      "fetch_short_markets_fetch_and_filter_markets",
+      "fetch_short_markets_is_crypto_short_window",
+      "fetch_short_markets_rationale_10",
+      "users_rahulkumar_documents_reversebot_r_and_d_crypto_short_window_tests_fetch_short_markets_py"
+    ],
+    "22": [
+      "test_gamma_filter2_fetch_and_filter_markets",
+      "test_gamma_filter2_is_crypto_short_window",
+      "users_rahulkumar_documents_reversebot_test_gamma_filter2_py"
+    ],
+    "23": [
+      "live_market_test_fetch_live",
+      "live_market_test_is_match",
+      "users_rahulkumar_documents_reversebot_live_market_test_py"
+    ],
+    "24": [
+      "check_markets_check",
+      "users_rahulkumar_documents_reversebot_check_markets_py"
+    ],
+    "25": [
+      "check_events_check",
+      "users_rahulkumar_documents_reversebot_check_events_py"
+    ],
+    "26": [
+      "parse_debug_main",
+      "users_rahulkumar_documents_reversebot_parse_debug_py"
+    ],
+    "27": [
+      "scratch_fetch_markets",
+      "users_rahulkumar_documents_reversebot_scratch_py"
+    ],
+    "28": [
+      "debug_prices_check",
+      "users_rahulkumar_documents_reversebot_debug_prices_py"
+    ],
+    "29": [
+      "test_gamma_filter_test_filter",
+      "users_rahulkumar_documents_reversebot_test_gamma_filter_py"
+    ],
+    "30": [
+      "scan_all_check",
+      "users_rahulkumar_documents_reversebot_scan_all_py"
+    ],
+    "31": [
+      "check_prices_check",
+      "users_rahulkumar_documents_reversebot_check_prices_py"
+    ],
+    "32": [
+      "find_15m_check",
+      "users_rahulkumar_documents_reversebot_find_15m_py"
+    ],
+    "33": [
+      "deep_search_15m_check",
+      "users_rahulkumar_documents_reversebot_deep_search_15m_py"
+    ],
+    "34": [
+      "test_payloads_test_schemas",
+      "users_rahulkumar_documents_reversebot_test_payloads_py"
+    ],
+    "35": [
+      "fetch_test_main",
+      "users_rahulkumar_documents_reversebot_fetch_test_py"
+    ],
+    "36": [
+      "debug_markets_main",
+      "users_rahulkumar_documents_reversebot_src_debug_markets_py"
+    ],
+    "37": [
+      "users_rahulkumar_documents_reversebot_fetch_trades_v2_py"
+    ],
+    "38": [
+      "users_rahulkumar_documents_reversebot_test_db_py"
+    ],
+    "39": [
+      "users_rahulkumar_documents_reversebot_check_statuses_py"
+    ],
+    "40": [
+      "users_rahulkumar_documents_reversebot_fetch_trades_py"
+    ],
+    "41": [
+      "users_rahulkumar_documents_reversebot_check_db2_py"
+    ],
+    "42": [
+      "users_rahulkumar_documents_reversebot_check_counts_py"
+    ],
+    "43": [
+      "users_rahulkumar_documents_reversebot_check_db_py"
+    ],
+    "44": [
+      "users_rahulkumar_documents_reversebot_clear_fake_wins_py"
+    ],
+    "45": [
+      "users_rahulkumar_documents_reversebot_config_init_py"
+    ],
+    "46": [
+      "test_position_mgr_rationale_73"
+    ],
+    "47": [
+      "test_position_mgr_rationale_113"
+    ],
+    "48": [
+      "test_position_mgr_rationale_152"
+    ],
+    "49": [
+      "test_position_mgr_rationale_200"
+    ],
+    "50": [
+      "test_position_mgr_rationale_208"
+    ],
+    "51": [
+      "test_position_mgr_rationale_219"
+    ],
+    "52": [
+      "test_position_mgr_rationale_232"
+    ],
+    "53": [
+      "test_kill_switch_rationale_63"
+    ],
+    "54": [
+      "test_kill_switch_rationale_97"
+    ],
+    "55": [
+      "test_kill_switch_rationale_106"
+    ],
+    "56": [
+      "test_kill_switch_rationale_121"
+    ],
+    "57": [
+      "test_kill_switch_rationale_130"
+    ],
+    "58": [
+      "test_db_rationale_79"
+    ],
+    "59": [
+      "test_db_rationale_95"
+    ],
+    "60": [
+      "test_db_rationale_104"
+    ],
+    "61": [
+      "test_db_rationale_118"
+    ],
+    "62": [
+      "test_db_rationale_129"
+    ],
+    "63": [
+      "test_db_rationale_170"
+    ],
+    "64": [
+      "test_db_rationale_208"
+    ],
+    "65": [
+      "test_db_rationale_245"
+    ],
+    "66": [
+      "test_db_rationale_291"
+    ],
+    "67": [
+      "test_db_rationale_309"
+    ],
+    "68": [
+      "users_rahulkumar_documents_reversebot_tests_init_py"
+    ],
+    "69": [
+      "test_validator_rationale_216"
+    ],
+    "70": [
+      "test_validator_rationale_232"
+    ],
+    "71": [
+      "test_validator_rationale_248"
+    ],
+    "72": [
+      "test_validator_rationale_268"
+    ],
+    "73": [
+      "test_validator_rationale_292"
+    ],
+    "74": [
+      "test_validator_rationale_308"
+    ],
+    "75": [
+      "test_validator_rationale_436"
+    ],
+    "76": [
+      "users_rahulkumar_documents_reversebot_src_init_py"
+    ],
+    "77": [
+      "users_rahulkumar_documents_reversebot_src_auth_init_py"
+    ],
+    "78": [
+      "l2_auth_rationale_66"
+    ],
+    "79": [
+      "l2_auth_rationale_71"
+    ],
+    "80": [
+      "l1_auth_rationale_88"
+    ],
+    "81": [
+      "users_rahulkumar_documents_reversebot_src_logs_init_py"
+    ],
+    "82": [
+      "users_rahulkumar_documents_reversebot_src_db_init_py"
+    ],
+    "83": [
+      "rate_limiter_rationale_96"
+    ],
+    "84": [
+      "users_rahulkumar_documents_reversebot_src_api_init_py"
+    ],
+    "85": [
+      "users_rahulkumar_documents_reversebot_src_risk_init_py"
+    ],
+    "86": [
+      "users_rahulkumar_documents_reversebot_src_strategy_init_py"
+    ]
+  },
+  "gods": [
+    {
+      "id": "main_main",
+      "label": "main()",
+      "degree": 32
+    },
+    {
+      "id": "clob_client_clobclient",
+      "label": "ClobClient",
+      "degree": 32
+    },
+    {
+      "id": "queries_upsert_market",
+      "label": "upsert_market()",
+      "degree": 27
+    },
+    {
+      "id": "l2_auth_l2auth",
+      "label": "L2Auth",
+      "degree": 19
+    },
+    {
+      "id": "telegram_client_telegramclient",
+      "label": "TelegramClient",
+      "degree": 17
+    },
+    {
+      "id": "position_mgr_positionmanager",
+      "label": "PositionManager",
+      "degree": 17
+    },
+    {
+      "id": "config_botconfig",
+      "label": "BotConfig",
+      "degree": 16
+    },
+    {
+      "id": "gamma_client_gammaclient",
+      "label": "GammaClient",
+      "degree": 16
+    },
+    {
+      "id": "kill_switch_killswitch",
+      "label": "KillSwitch",
+      "degree": 16
+    },
+    {
+      "id": "config_load_config",
+      "label": "load_config()",
+      "degree": 15
+    }
+  ],
+  "surprises": [
+    {
+      "source": "main()",
+      "target": "start_dashboard_server()",
+      "source_files": [
+        "/Users/rahulkumar/Documents/reversebot/src/main.py",
+        "src/api/dashboard.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities; peripheral node `start_dashboard_server()` unexpectedly reaches hub `main()`"
+    },
+    {
+      "source": "serve_dashboard()",
+      "target": "load_config()",
+      "source_files": [
+        "src/api/dashboard.py",
+        "/Users/rahulkumar/Documents/reversebot/config/config.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `serve_dashboard()` unexpectedly reaches hub `load_config()`"
+    },
+    {
+      "source": "api_set_config()",
+      "target": "load_runtime_overrides()",
+      "source_files": [
+        "src/api/dashboard.py",
+        "/Users/rahulkumar/Documents/reversebot/config/config.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "test_lock_is_per_market()",
+      "target": "get_market_lock()",
+      "source_files": [
+        "/Users/rahulkumar/Documents/reversebot/tests/test_position_mgr.py",
+        "src/strategy/position_mgr.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `test_lock_is_per_market()` unexpectedly reaches hub `get_market_lock()`"
+    },
+    {
+      "source": "test_same_market_same_lock()",
+      "target": "get_market_lock()",
+      "source_files": [
+        "/Users/rahulkumar/Documents/reversebot/tests/test_position_mgr.py",
+        "src/strategy/position_mgr.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `test_same_market_same_lock()` unexpectedly reaches hub `get_market_lock()`"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "nodes": [
+    {"id": "obsidian_vault", "label": "Obsidian Vault", "file_type": "document", "source_file": "obsidianreversebot/Welcome.md"},
+    {"id": "randd_crypto_short_window_tests", "label": "Crypto Short Window Tests", "file_type": "document", "source_file": "R_and_D/README.md"},
+    {"id": "randd_fetch_short_markets_py", "label": "fetch_short_markets.py", "file_type": "code", "source_file": "R_and_D/README.md"},
+    {"id": "randd_cvd_guard_tuning", "label": "CVD Guard Tuning", "file_type": "concept", "source_file": "R_and_D/README.md"},
+    {"id": "randd_maker_mode", "label": "Maker Mode", "file_type": "concept", "source_file": "R_and_D/README.md"},
+    {"id": "randd_theta_decay_logic", "label": "Theta Decay Logic", "file_type": "concept", "source_file": "R_and_D/README.md"},
+    {"id": "dependency_yt_dlp", "label": "yt-dlp", "file_type": "dependency", "source_file": "venv_local/share/doc/yt_dlp/README.txt"},
+    {"id": "main_main", "label": "main()", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "db_upsert_market", "label": "upsert_market()", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "auth_l2auth", "label": "L2Auth", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "api_clobclient", "label": "ClobClient", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "api_telegramclient", "label": "TelegramClient", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "api_gammaclient", "label": "GammaClient", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "risk_killswitch", "label": "KillSwitch", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "config_load_config", "label": "load_config()", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "api_websocketclient", "label": "WebSocketClient", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"},
+    {"id": "strategy_signalvalidator", "label": "SignalValidator", "file_type": "code", "source_file": "graphify-out/GRAPH_REPORT.md"}
+  ],
+  "edges": [
+    {"source": "main_main", "target": "config_load_config", "relation": "calls", "confidence": "INFERRED", "confidence_score": 0.9},
+    {"source": "db_upsert_market", "target": "config_load_config", "relation": "uses", "confidence": "INFERRED", "confidence_score": 0.8},
+    {"source": "risk_killswitch", "target": "api_clobclient", "relation": "monitors", "confidence": "INFERRED", "confidence_score": 0.9},
+    {"source": "randd_crypto_short_window_tests", "target": "api_gammaclient", "relation": "uses", "confidence": "EXTRACTED", "confidence_score": 1.0},
+    {"source": "randd_fetch_short_markets_py", "target": "api_gammaclient", "relation": "queries", "confidence": "EXTRACTED", "confidence_score": 1.0},
+    {"source": "strategy_signalvalidator", "target": "randd_cvd_guard_tuning", "relation": "uses", "confidence": "INFERRED", "confidence_score": 0.7},
+    {"source": "main_main", "target": "api_websocketclient", "relation": "uses", "confidence": "INFERRED", "confidence_score": 0.9}
+  ],
+  "hyperedges": [],
+  "input_tokens": 1250,
+  "output_tokens": 850
+}
