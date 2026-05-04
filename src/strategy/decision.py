@@ -109,15 +109,29 @@ class DecisionEngine:
         if yes_token_id and self.position_mgr.ws:
             latest_yes = self.position_mgr.ws.ask_cache.get(yes_token_id) or self.position_mgr.ws.price_cache.get(yes_token_id)
             if latest_yes is not None:
-                if latest_yes >= self.config.yes_bias_max_threshold:
+                # Dynamic Threshold by Time Regime
+                secs_left = new_closes_at - int(time.time()) if new_closes_at > 0 else 1000
+                max_allowed = getattr(self.config, "early_yes_bias_max", 0.55)
+                
+                early_min = getattr(self.config, "early_phase_min_seconds", 600)
+                mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+                
+                if secs_left < mid_min:
+                    max_allowed = getattr(self.config, "late_yes_bias_max", 0.60)
+                elif secs_left <= early_min:
+                    max_allowed = getattr(self.config, "mid_yes_bias_max", 0.65)
+                else:
+                    max_allowed = getattr(self.config, "early_yes_bias_max", 0.55)
+
+                if latest_yes >= max_allowed:
                     logger.info(
                         "toxic_entry_prevented",
                         market_id=market_id,
                         latest_yes=latest_yes,
-                        max_allowed=self.config.yes_bias_max_threshold,
-                        message=f"PRICE SPIKE DETECTED: Latest Yes ({latest_yes}) >= Max Threshold ({self.config.yes_bias_max_threshold}). Rejecting entry."
+                        max_allowed=max_allowed,
+                        message=f"PRICE SPIKE DETECTED: Latest Yes ({latest_yes}) >= Max Threshold ({max_allowed}). Rejecting entry."
                     )
-                    return False, f"Toxic price detected at entry: {latest_yes} >= {self.config.yes_bias_max_threshold}"
+                    return False, f"Toxic price detected at entry: {latest_yes} >= {max_allowed}"
                 # Update yes_price to be the absolute latest for downstream logic
                 yes_price = latest_yes
 

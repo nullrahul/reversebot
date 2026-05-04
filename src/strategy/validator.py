@@ -201,7 +201,19 @@ class SignalValidator:
 
         # 8. PRICE STABILITY CHECK
         consecutive_cycles = market.get("consecutive_cycles_above", 0)
-        required_cycles = 2 # Prevent Flash-Spikes
+        
+        closes_at = market.get("closes_at", 0)
+        seconds_to_close = max(0, closes_at - int(time.time())) if closes_at else 1000
+        early_min = getattr(self.config, "early_phase_min_seconds", 600)
+        mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+        
+        if seconds_to_close < mid_min:
+            required_cycles = getattr(self.config, "late_cycles", 3)
+        elif seconds_to_close <= early_min:
+            required_cycles = getattr(self.config, "mid_cycles", 2)
+        else:
+            required_cycles = getattr(self.config, "early_cycles", 1)
+
         check_8 = consecutive_cycles >= required_cycles
         result.checks["8_price_stability"] = check_8
         if not check_8:
@@ -225,7 +237,7 @@ class SignalValidator:
                 f"Category '{category_str}' not in whitelist: {self.config.category_whitelist}"
             )
 
-        # 10. WICK DETECTION (Mean Reversion Imbalance) -> REVERSAL CONFIDENCE SCORE (RCS)
+        # 10. WICK DETECTION (Mean Reversion Imbalance)
         check_10 = True
         if book:
             bids = book.get("bids", [])
@@ -235,37 +247,32 @@ class SignalValidator:
             no_bid_size = sum(float(b.get("size", 0)) for b in bids[:3])
             no_ask_size = sum(float(a.get("size", 0)) for a in asks[:3])
             
-            yes_price = market.get("yes_price", 0.5)
-            closes_at = market.get("closes_at", 0)
-            seconds_to_close = max(0, closes_at - int(time.time())) if closes_at else 1000
-            
-            # --- RCS Calculation ---
-            # 1. Price Deviation (0 to 4.0)
-            # High deviation from 0.5 is good if we have time, bad if we don't.
-            price_dev = min(4.0, abs(yes_price - 0.50) * 10)
-            
-            # 2. Imbalance Weight (0 to 3.0)
-            imbalance = 0.0
+            # Wick Reversion: We only want to buy NO when it's being heavily dumped (creating a wick).
             if no_bid_size > 0:
-                raw_ratio = no_ask_size / no_bid_size
-                imbalance = min(3.0, raw_ratio * 0.75)
-            elif no_ask_size > 0:
-                imbalance = 3.0 # Pure freefall
-            
-            # 3. Theta Penalty (0 to -5.0)
-            # Exerts massive downward pressure if price is extremely biased and time is running out.
-            theta_penalty = 0.0
-            if seconds_to_close < 180 and yes_price > 0.70:
-                theta_penalty = ((180 - seconds_to_close) / 180.0) * (yes_price * 5)
+                imbalance_ratio = no_ask_size / no_bid_size
                 
-            # Assume velocity is decent since the scanner caught it (we add a baseline 1.0)
-            velocity_weight = 1.0 
-            
-            rcs = price_dev + velocity_weight + imbalance - theta_penalty
-            
-            if rcs < 5.0:
-                check_10 = False
-                result.reasons.append(f"Wick Guard: RCS too low ({rcs:.1f} < 5.0). Dev:{price_dev:.1f} Imb:{imbalance:.1f} Theta:-{theta_penalty:.1f}")
+                closes_at = market.get("closes_at", 0)
+                seconds_to_close = max(0, closes_at - int(time.time())) if closes_at else 1000
+                
+                early_min = getattr(self.config, "early_phase_min_seconds", 600)
+                mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+                
+                if seconds_to_close < mid_min:
+                    base_ratio = getattr(self.config, "late_imbalance", 4.0)
+                elif seconds_to_close <= early_min:
+                    base_ratio = getattr(self.config, "mid_imbalance", 3.0)
+                else:
+                    base_ratio = getattr(self.config, "early_imbalance", 2.0)
+                
+                # Liquidity-Aware Guard: If bid size is tiny, 1 small order skews the ratio.
+                required_ratio = base_ratio if no_bid_size >= 10.0 else (base_ratio - 1.0)
+                
+                if imbalance_ratio < required_ratio:
+                    check_10 = False
+                    result.reasons.append(f"Wick Guard: No imbalance detected. Ask/Bid ratio is {imbalance_ratio:.2f} < {required_ratio}")
+            else:
+                # If there are 0 bids, it's a pure free-fall, which is a perfect wick to catch
+                pass
 
         result.checks["10_wick_guard"] = check_10
 

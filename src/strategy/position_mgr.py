@@ -273,15 +273,18 @@ class PositionManager:
             m_data = await get_market(self.db, market_id)
             
             # --- Dynamic Stop Loss by Time Regime ---
-            sl_mult = self.config.stop_loss_multiplier
+            sl_mult = getattr(self.config, "mid_stop_loss", 0.65)
             if m_data and m_data.get("closes_at"):
                 seconds_to_close = m_data["closes_at"] - now
-                if seconds_to_close < 180: # Late Phase (<3m) -> Ultra-Tight Stop Loss
-                    sl_mult = 0.85
-                elif seconds_to_close <= 600: # Mid Phase (3-10m) -> Looser Stop Loss
-                    sl_mult = 0.60
-                else: # Early Phase (>10m) -> Default
-                    sl_mult = 0.75
+                early_min = getattr(self.config, "early_phase_min_seconds", 600)
+                mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+                
+                if seconds_to_close < mid_min:
+                    sl_mult = getattr(self.config, "late_stop_loss", 0.90)
+                elif seconds_to_close <= early_min:
+                    sl_mult = getattr(self.config, "mid_stop_loss", 0.65)
+                else:
+                    sl_mult = getattr(self.config, "early_stop_loss", 0.80)
             
             if not no_token_id:
                 no_token_id = await self._recover_no_token_id(market_id, position_id)
@@ -557,21 +560,24 @@ class PositionManager:
         from src.db.queries import get_market
         m_data = await get_market(self.db, mid)
 
-        tp1_m = self.config.tp1_multiplier
-        tp2_m = self.config.tp2_multiplier
+        tp1_m = getattr(self.config, "mid_tp1", 1.15)
+        tp2_m = getattr(self.config, "mid_tp2", 2.00)
         now = int(time.time())
 
         if m_data and m_data.get("closes_at"):
             seconds_to_close = m_data["closes_at"] - now
-            if seconds_to_close < 180: # Late Phase (<3m) -> Scalp tightly, no runners
-                tp1_m = 1.08
-                tp2_m = 1.08 # Close all aggressively
-            elif seconds_to_close <= 600: # Mid Phase (3-10m) -> Normal
-                tp1_m = 1.15
-                tp2_m = 2.00
-            else: # Early Phase (>10m) -> Wait for bigger moves
-                tp1_m = 1.30
-                tp2_m = 2.50
+            early_min = getattr(self.config, "early_phase_min_seconds", 600)
+            mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+
+            if seconds_to_close < mid_min:
+                tp1_m = getattr(self.config, "late_tp1", 1.06)
+                tp2_m = getattr(self.config, "late_tp2", 1.06)
+            elif seconds_to_close <= early_min:
+                tp1_m = getattr(self.config, "mid_tp1", 1.15)
+                tp2_m = getattr(self.config, "mid_tp2", 2.00)
+            else:
+                tp1_m = getattr(self.config, "early_tp1", 1.25)
+                tp2_m = getattr(self.config, "early_tp2", 2.50)
 
         targets = []
         actual_shares = int(shares)        

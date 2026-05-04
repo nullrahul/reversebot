@@ -50,15 +50,30 @@ _HOT_FIELDS: Dict[str, type] = {
     "short_window_min_seconds_to_close": int,
     "trailing_tp_enabled": bool,
     "tp1_shares_count": int,
-    "tp1_multiplier": float,
-    "tp2_multiplier": float,
-    # ── Quality Filter (Change 4 + 5 + 7 from strategy_diagnosis.md) ──
-    "min_consecutive_cycles": int,      # Min ticks YES must stay in zone before entry
-    "min_seconds_to_close_pre_entry": int,  # Reject entry if < N secs left on market
-    "price_velocity_max": float,        # Max YES price velocity allowed (anti-momentum)
-    "price_velocity_window": int,       # Number of price ticks to measure velocity over
-    # ── Testing Flags ──
-    "_TESTING_only_15min_windows": bool,  # TEMP: Ignore 5-min windows, subscribe 15-min only
+    "min_seconds_to_close_pre_entry": int,
+    "price_velocity_max": float,
+    "price_velocity_window": int,
+    "_TESTING_only_15min_windows": bool,
+    "early_phase_min_seconds": int,
+    "early_yes_bias_max": float,
+    "early_tp1": float,
+    "early_tp2": float,
+    "early_stop_loss": float,
+    "early_cycles": int,
+    "early_imbalance": float,
+    "mid_phase_min_seconds": int,
+    "mid_yes_bias_max": float,
+    "mid_tp1": float,
+    "mid_tp2": float,
+    "mid_stop_loss": float,
+    "mid_cycles": int,
+    "mid_imbalance": float,
+    "late_yes_bias_max": float,
+    "late_tp1": float,
+    "late_tp2": float,
+    "late_stop_loss": float,
+    "late_cycles": int,
+    "late_imbalance": float,
 }
 
 
