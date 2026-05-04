@@ -43,3 +43,6 @@ htmlcov/
 .coverage
 coverage.xml
 node_modules
+
+.gemini/
+gha-creds-*.json

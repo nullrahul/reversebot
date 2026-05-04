@@ -1,12 +1,12 @@
-# Graph Report - /Users/rahulkumar/Documents/reversebot  (2026-04-22)
+# Graph Report - /Users/rahulkumar/Documents/reversebot  (2026-05-04)
 
 ## Corpus Check
-- 72 files · ~118,606 words
+- 56 files · ~756,507 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 723 nodes · 1429 edges · 105 communities detected
-- Extraction: 50% EXTRACTED · 50% INFERRED · 0% AMBIGUOUS · INFERRED: 708 edges (avg confidence: 0.63)
+- 865 nodes · 1791 edges · 133 communities detected
+- Extraction: 45% EXTRACTED · 55% INFERRED · 0% AMBIGUOUS · INFERRED: 990 edges (avg confidence: 0.6)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -115,132 +115,160 @@
 - [[_COMMUNITY_Community 102|Community 102]]
 - [[_COMMUNITY_Community 103|Community 103]]
 - [[_COMMUNITY_Community 104|Community 104]]
+- [[_COMMUNITY_Community 105|Community 105]]
+- [[_COMMUNITY_Community 106|Community 106]]
+- [[_COMMUNITY_Community 107|Community 107]]
+- [[_COMMUNITY_Community 108|Community 108]]
+- [[_COMMUNITY_Community 109|Community 109]]
+- [[_COMMUNITY_Community 110|Community 110]]
+- [[_COMMUNITY_Community 111|Community 111]]
+- [[_COMMUNITY_Community 112|Community 112]]
+- [[_COMMUNITY_Community 113|Community 113]]
+- [[_COMMUNITY_Community 114|Community 114]]
+- [[_COMMUNITY_Community 115|Community 115]]
+- [[_COMMUNITY_Community 116|Community 116]]
+- [[_COMMUNITY_Community 117|Community 117]]
+- [[_COMMUNITY_Community 118|Community 118]]
+- [[_COMMUNITY_Community 119|Community 119]]
+- [[_COMMUNITY_Community 120|Community 120]]
+- [[_COMMUNITY_Community 121|Community 121]]
+- [[_COMMUNITY_Community 122|Community 122]]
+- [[_COMMUNITY_Community 123|Community 123]]
+- [[_COMMUNITY_Community 124|Community 124]]
+- [[_COMMUNITY_Community 125|Community 125]]
+- [[_COMMUNITY_Community 126|Community 126]]
+- [[_COMMUNITY_Community 127|Community 127]]
+- [[_COMMUNITY_Community 128|Community 128]]
+- [[_COMMUNITY_Community 129|Community 129]]
+- [[_COMMUNITY_Community 130|Community 130]]
+- [[_COMMUNITY_Community 131|Community 131]]
+- [[_COMMUNITY_Community 132|Community 132]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `ClobClient` - 86 edges
-2. `BotConfig` - 64 edges
-3. `GammaClient` - 53 edges
-4. `SignalValidator` - 51 edges
-5. `L2Auth` - 46 edges
-6. `KillSwitch` - 43 edges
-7. `WebSocketClient` - 42 edges
-8. `MarketScanner` - 41 edges
-9. `PositionManager` - 40 edges
-10. `RateLimiter` - 38 edges
+1. `ClobClient` - 126 edges
+2. `BotConfig` - 94 edges
+3. `L2Auth` - 63 edges
+4. `RateLimiter` - 58 edges
+5. `PositionManager` - 58 edges
+6. `GammaClient` - 57 edges
+7. `SignalValidator` - 56 edges
+8. `TransientNetworkError` - 52 edges
+9. `WebSocketClient` - 52 edges
+10. `MarketScanner` - 47 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `BotConfig` --uses--> `Risk Limits — Daily Loss, Exposure Cap, Position Count for Reverse Bot.  Checked`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/config/config.py → /Users/rahulkumar/Documents/reversebot/src/risk/limits.py
-- `BotConfig` --uses--> `Enforces position limits, exposure caps, and daily loss limits.     All checks r`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/config/config.py → /Users/rahulkumar/Documents/reversebot/src/risk/limits.py
-- `BotConfig` --uses--> `Run all risk checks. Returns (allowed, reason).         If any check fails, retu`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/config/config.py → /Users/rahulkumar/Documents/reversebot/src/risk/limits.py
-- `BotConfig` --uses--> `Check if daily loss limit has been reached.`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/config/config.py → /Users/rahulkumar/Documents/reversebot/src/risk/limits.py
-- `BotConfig` --uses--> `Check if max position count has been reached.`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/config/config.py → /Users/rahulkumar/Documents/reversebot/src/risk/limits.py
+- `main()` --calls--> `TelegramClient`  [INFERRED]
+  /Users/rahulkumar/Documents/reversebot/src/main.py → src/api/telegram_client.py
+- `ClobClient` --uses--> `TransientNetworkError`  [INFERRED]
+  /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py → src/exceptions.py
+- `CLOB API Client — Order Execution for Polymarket.  Handles: - FOK order placemen` --uses--> `TransientNetworkError`  [INFERRED]
+  /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py → src/exceptions.py
+- `Async client for the Polymarket CLOB API.     Handles authenticated order operat` --uses--> `TransientNetworkError`  [INFERRED]
+  /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py → src/exceptions.py
+- `Make an authenticated, rate-limited request to the CLOB API.         Returns (st` --uses--> `TransientNetworkError`  [INFERRED]
+  /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py → src/exceptions.py
 
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.03
-Nodes (57): api_control(), HealthMonitor, WebSocket Health Monitor — Heartbeat Check for Polymarket Reverse Bot.  Monitors, Monitors WebSocket connection health.     Fires kill switch on prolonged silence, Start the health monitor as a background task., Stop the health monitor., Background loop checking WS health every 30 seconds., KillSwitch (+49 more)
+Cohesion: 0.04
+Nodes (102): ClobClient, BotConfig, Immutable configuration for the Reverse Bot. All values from .env., get_core_context(), Extract the core event context by stripping dates, times, and window markers., Extract the core event context by stripping dates, times, and window markers., Extract the core event context by stripping dates, times, and window markers., Orchestrates the full trading decision pipeline:     Signal → Validate → EV → Sl (+94 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.05
-Nodes (77): close_position(), count_open_positions(), create_position(), get_daily_realised_loss(), get_flagged_markets(), get_market(), get_open_positions(), get_position() (+69 more)
+Cohesion: 0.03
+Nodes (75): api_control(), DecisionEngine, GhostGuard, Ghost Guard — Polygon Nonce Invalidation Monitor.  MISTAKE 13 GUARD: Ghost Fills, Asynchronous monitor for Polygon on-chain nonce resets., Start the monitoring task., Stop the monitoring task., Main loop polling for new blocks and checking for nonce increments. (+67 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.05
-Nodes (53): start_dashboard_server(), DecisionEngine, main(), GammaClient, _normalize_tag_slug(), _parse_timestamp(), Gamma API Client — Market Discovery & Polling for Polymarket.  Polls the Gamma A, Make a rate-limited GET request to the Gamma API. (+45 more)
+Cohesion: 0.04
+Nodes (63): CLOB API Client — Order Execution for Polymarket.  Handles: - FOK order placemen, Fetch the current orderbook for a token.         Used for slippage guard — check, Calculate total available volume at current ask price for a side.         Used f, Calculate total available volume at current ask price for a side.         Used f, Place an order on the CLOB.          ENFORCED: Only FOK orders are accepted., Place an order on the CLOB.          ENFORCED: Only FOK orders are accepted., Simulate an order fill for paper trading mode., Rehydrate a paper order across restarts. (+55 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.06
-Nodes (62): ClobClient, BotConfig, Immutable configuration for the Reverse Bot. All values from .env., get_core_context(), Extract the core event context by stripping dates, times, and window markers., Extract the core event context by stripping dates, times, and window markers., Orchestrates the full trading decision pipeline:     Signal → Validate → EV → Sl, Orchestrates the full trading decision pipeline:     Signal → Validate → EV → Sl (+54 more)
+Nodes (56): GammaClient, _normalize_tag_slug(), _parse_timestamp(), Gamma API Client — Market Discovery & Polling for Polymarket.  Polls the Gamma A, Make a rate-limited GET request to the Gamma API., Get real world UTC time from API headers., Fetch active binary markets from Gamma API.          Returns a list of normalize, Fetch active markets directly from Gamma `/markets`.          Notes:         - ` (+48 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.04
-Nodes (42): CLOB API Client — Order Execution for Polymarket.  Handles: - FOK order placemen, Fetch the current orderbook for a token.         Used for slippage guard — check, Calculate total available volume at current ask price for a side.         Used f, Place an order on the CLOB.          ENFORCED: Only FOK orders are accepted., Simulate an order fill for paper trading mode., Poll order status to confirm fill.          MISTAKE 7 GUARD: HTTP 200 from place, Poll order status until confirmed MATCHED/CANCELLED or timeout.         Returns, Cancel a single order. Returns True if successful. (+34 more)
+Cohesion: 0.05
+Nodes (36): audit_recent(), audit_pnl(), deep_analyze_trades(), Exception, BotException, GhostPositionError, OrderRejectedError, Exception Hierarchy — RuFlo V3 Reverse Bot.  Provides typed exceptions for disti (+28 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.06
-Nodes (48): analyze(), analyze(), analyze(), GammaClient, BaseModel, api_clear_history(), api_close_position(), api_delete_history() (+40 more)
+Nodes (57): close_position(), count_open_positions(), create_position(), get_flagged_markets(), get_market(), get_position(), get_total_exposure(), has_open_position_for_market() (+49 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.11
-Nodes (10): get_performance_summary(), Calculate high-level performance metrics from the positions table., Telegram Client — Remote Control & Reporting for Polymarket Reverse Bot. Uses ai, Start or restart the auto-refresh loop for positions., Stop the auto-refresh loop., Edit the positions message every 60 seconds., Escape HTML-sensitive characters in dynamic text., Manages the Telegram bot interface with a dynamic dashboard. (+2 more)
+Cohesion: 0.07
+Nodes (45): BaseModel, api_clear_history(), api_close_position(), api_delete_history(), api_get_config(), api_history(), api_pnl_series(), api_positions() (+37 more)
 
 ### Community 7 - "Community 7"
+Cohesion: 0.07
+Nodes (16): ClobFetcher, DuckDBClient, Registers a partitioned parquet directory as a view., Runs a query and returns a Pandas DataFrame., Utility to get last N minutes of price data., Calculates volatility and mean for a market., BacktestEngine, Simulates the strategy against engineered features. (+8 more)
+
+### Community 8 - "Community 8"
 Cohesion: 0.13
 Nodes (19): _env_bool(), _env_float(), _env_int(), _env_int_list(), _env_list(), load_config(), load_runtime_overrides(), Configuration loader for Polymarket Reverse Bot. All tunable parameters loaded f (+11 more)
 
-### Community 8 - "Community 8"
-Cohesion: 0.12
-Nodes (12): L1Auth, L1 Authentication — EIP-712 Wallet Signing for Polymarket.  Uses eth_account to, Sign EIP-712 typed data.         Returns the hex signature., Create the EIP-712 signature needed to derive L2 API credentials.          Args:, Sign an order with EIP-712 for CLOB submission.          Args:             order, L1 EIP-712 authentication handler.     Signs typed data to derive L2 API credent, Initialize with private key.          Args:             private_key: Hex private, Sign a plaintext message with the private key.         Returns the hex signature (+4 more)
-
 ### Community 9 - "Community 9"
-Cohesion: 0.16
-Nodes (8): Risk Limits — Daily Loss, Exposure Cap, Position Count for Reverse Bot.  Checked, Check if kill switch should fire based on risk limits.         This is called fr, Enforces position limits, exposure caps, and daily loss limits.     All checks r, Run all risk checks. Returns (allowed, reason).         If any check fails, retu, Check if daily loss limit has been reached., Check if max position count has been reached., Check if adding a trade would exceed max exposure., RiskLimits
+Cohesion: 0.13
+Nodes (7): get_performance_summary(), Calculate high-level performance metrics from the positions table., Send a summary every 4 hours., Telegram Bot client for remote control and notifications.     Uses aiogram 3.x f, Send a verbose notification for a new trade entry., Send a verbose notification for a trade exit., TelegramClient
 
 ### Community 10 - "Community 10"
-Cohesion: 0.23
-Nodes (5): HFTMarketManager, O(1) style discovery using cached markets.         Finds current active market a, Continuously monitor and rotate markets., Fetch markets matching the criteria. Cache results to avoid spamming API (O(1) l, Check if market meets strict trading requirements.
+Cohesion: 0.14
+Nodes (15): expected_value(), net_value(), Quantitative Math Utilities — RuFlo V3 Reverse Bot.  Consolidates all trading ma, Calculate minimum orderbook depth to avoid excessive slippage.      Formula: siz, Calculate take-profit target value.      Formula: cost_basis * tp_multiplier, Calculate stop-loss target value.      Formula: cost_basis * sl_multiplier, Apply Polymarket fee to a gross position value.      Args:         gross_value:, Calculate mark-to-market unrealised P&L for an open position.      Args: (+7 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.25
-Nodes (7): get_logger(), Structured logging configuration for Polymarket Reverse Bot. Uses structlog with, A StreamHandler that ignores BrokenPipeError.     Useful when running in backgro, Configure structlog with JSON rendering, rotating file handler,     and stdout o, Get a structured logger bound with module name and bot version.     Every log li, SafeStreamHandler, setup_logging()
+Cohesion: 0.2
+Nodes (9): dashboard_processor(), get_logger(), Structured logging configuration for Polymarket Reverse Bot. Uses structlog with, Get a structured logger bound with module name and bot version.     Every log li, Structlog processor that forwards log events to the web dashboard., A StreamHandler that ignores BrokenPipeError.     Useful when running in backgro, Configure structlog with JSON rendering, rotating file handler,     and stdout o, SafeStreamHandler (+1 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.6
-Nodes (2): MockGammaClient, run_test()
+Cohesion: 0.32
+Nodes (2): LiveMonitor, Fetch current prices from Gamma API to seed the monitor.
 
 ### Community 13 - "Community 13"
 Cohesion: 0.4
 Nodes (0): 
 
 ### Community 14 - "Community 14"
-Cohesion: 0.67
-Nodes (3): fetch_and_filter_markets(), is_crypto_short_window(), Checks if a market question implies a 5-minute or 15-minute crypto window.
+Cohesion: 1.0
+Nodes (0): 
 
 ### Community 15 - "Community 15"
 Cohesion: 1.0
-Nodes (2): fetch_and_filter_markets(), is_crypto_short_window()
+Nodes (1): All 5 required tables must exist.
 
 ### Community 16 - "Community 16"
 Cohesion: 1.0
-Nodes (2): fetch_live(), is_match()
+Nodes (1): Partial unique index on positions(market_id) WHERE status='OPEN' must exist.
 
 ### Community 17 - "Community 17"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): WAL journal mode should be active for concurrent reads.
 
 ### Community 18 - "Community 18"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Insert a market, then retrieve it.
 
 ### Community 19 - "Community 19"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Upserting the same market_id updates fields.
 
 ### Community 20 - "Community 20"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Create a position and verify default status is PENDING.
 
 ### Community 21 - "Community 21"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Two OPEN positions for the same market_id must be rejected by the DB.
 
 ### Community 22 - "Community 22"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): MISTAKE 3 guard: shares * entry_price ≈ size_usdc.         This asserts the corr
 
 ### Community 23 - "Community 23"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Events log should accumulate, never lose entries.
 
 ### Community 24 - "Community 24"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Paper positions are tracked separately from live positions.
 
 ### Community 25 - "Community 25"
 Cohesion: 1.0
@@ -260,15 +288,15 @@ Nodes (0):
 
 ### Community 29 - "Community 29"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Number of consecutive 401 auth failures.
 
 ### Community 30 - "Community 30"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): True if 401 threshold reached — kill switch should fire.
 
 ### Community 31 - "Community 31"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Public wallet address.
 
 ### Community 32 - "Community 32"
 Cohesion: 1.0
@@ -280,7 +308,7 @@ Nodes (0):
 
 ### Community 34 - "Community 34"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Current available tokens (approximate, without lock).
 
 ### Community 35 - "Community 35"
 Cohesion: 1.0
@@ -296,466 +324,640 @@ Nodes (0):
 
 ### Community 38 - "Community 38"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Run sanity checks on loaded config. Raises ValueError on bad config.
 
 ### Community 39 - "Community 39"
 Cohesion: 1.0
-Nodes (1): All 5 required tables must exist.
+Nodes (1): Load configuration from .env file.     Fails loudly on missing required keys or
 
 ### Community 40 - "Community 40"
 Cohesion: 1.0
-Nodes (1): Partial unique index on positions(market_id) WHERE status='OPEN' must exist.
+Nodes (1): Merge dashboard/runtime_config.json overrides onto the base config.     Called e
 
 ### Community 41 - "Community 41"
 Cohesion: 1.0
-Nodes (1): WAL journal mode should be active for concurrent reads.
+Nodes (1): Checks if a market question implies a 5-minute or 15-minute crypto window.
 
 ### Community 42 - "Community 42"
 Cohesion: 1.0
-Nodes (1): Insert a market, then retrieve it.
+Nodes (1): Fetch markets matching the criteria. Cache results to avoid spamming API (O(1) l
 
 ### Community 43 - "Community 43"
 Cohesion: 1.0
-Nodes (1): Upserting the same market_id updates fields.
+Nodes (1): Check if market meets strict trading requirements.
 
 ### Community 44 - "Community 44"
 Cohesion: 1.0
-Nodes (1): Create a position and verify default status is PENDING.
+Nodes (1): O(1) style discovery using cached markets.         Finds current active market a
 
 ### Community 45 - "Community 45"
 Cohesion: 1.0
-Nodes (1): Two OPEN positions for the same market_id must be rejected by the DB.
+Nodes (1): Continuously monitor and rotate markets.
 
 ### Community 46 - "Community 46"
 Cohesion: 1.0
-Nodes (1): MISTAKE 3 guard: shares * entry_price ≈ size_usdc.         This asserts the corr
+Nodes (1): A StreamHandler that ignores BrokenPipeError.     Useful when running in backgro
 
 ### Community 47 - "Community 47"
 Cohesion: 1.0
-Nodes (1): Events log should accumulate, never lose entries.
+Nodes (1): Configure structlog with JSON rendering, rotating file handler,     and stdout o
 
 ### Community 48 - "Community 48"
 Cohesion: 1.0
-Nodes (1): Paper positions are tracked separately from live positions.
+Nodes (1): Get a structured logger bound with module name and bot version.     Every log li
 
 ### Community 49 - "Community 49"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Initialize database: create file, apply schema, run migrations.     Returns an o
 
 ### Community 50 - "Community 50"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Close the database connection safely.
 
 ### Community 51 - "Community 51"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Insert or update a market record.
 
 ### Community 52 - "Community 52"
 Cohesion: 1.0
-Nodes (1): Number of consecutive 401 auth failures.
+Nodes (1): Fetch a single market by ID.
 
 ### Community 53 - "Community 53"
 Cohesion: 1.0
-Nodes (1): True if 401 threshold reached — kill switch should fire.
+Nodes (1): Get all flagged markets (candidates for trading).
 
 ### Community 54 - "Community 54"
 Cohesion: 1.0
-Nodes (1): Public wallet address.
+Nodes (1): Update the 2-cycle confirmation tracking fields.
 
 ### Community 55 - "Community 55"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Reset threshold tracking when price drops below threshold.
 
 ### Community 56 - "Community 56"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Create a new position with status PENDING.     Returns the position_id (uuid4).
 
 ### Community 57 - "Community 57"
 Cohesion: 1.0
-Nodes (1): Current available tokens (approximate, without lock).
+Nodes (1): Update position status and optionally the order_id.
 
 ### Community 58 - "Community 58"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Update the notes field for a position (used for self-healing Token IDs).
 
 ### Community 59 - "Community 59"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Close a position with exit data.
 
 ### Community 60 - "Community 60"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Get all currently open or pending positions.
 
 ### Community 61 - "Community 61"
 Cohesion: 1.0
-Nodes (1): Run sanity checks on loaded config. Raises ValueError on bad config.
+Nodes (1): Check if the bot has ever opened a position for this market.
 
 ### Community 62 - "Community 62"
 Cohesion: 1.0
-Nodes (1): Load configuration from .env file.     Fails loudly on missing required keys or
+Nodes (1): Fetch a single position by ID.
 
 ### Community 63 - "Community 63"
 Cohesion: 1.0
-Nodes (1): Merge dashboard/runtime_config.json overrides onto the base config.     Called e
+Nodes (1): Check if there's already an OPEN or PENDING position for this market.
 
 ### Community 64 - "Community 64"
 Cohesion: 1.0
-Nodes (1): Log auth failure details for debugging.         NEVER logs the API secret or pas
+Nodes (1): Count currently open or pending positions.
 
 ### Community 65 - "Community 65"
 Cohesion: 1.0
-Nodes (1): Close a position with exit data.
+Nodes (1): Record a scan cycle. Returns the scan_id.
 
 ### Community 66 - "Community 66"
 Cohesion: 1.0
-Nodes (1): Get all currently open or pending positions.
+Nodes (1): Append an event to the audit log. Returns the event_id.
 
 ### Community 67 - "Community 67"
 Cohesion: 1.0
-Nodes (1): Check if the bot has ever opened a position for this market.
+Nodes (1): Calculate high-level performance metrics from the positions table.
 
 ### Community 68 - "Community 68"
 Cohesion: 1.0
-Nodes (1): Fetch a single position by ID.
+Nodes (1): Dual-bucket rate limiter for Polymarket API.     Separate buckets for order oper
 
 ### Community 69 - "Community 69"
 Cohesion: 1.0
-Nodes (1): Check if there's already an OPEN or PENDING position for this market.
+Nodes (1): Args:             orders_per_min: Max orders per minute (default 55, hard limit
 
 ### Community 70 - "Community 70"
 Cohesion: 1.0
-Nodes (1): Count currently open or pending positions.
+Nodes (1): Acquire a token for placing an order.         Consumes from BOTH order and API b
 
 ### Community 71 - "Community 71"
 Cohesion: 1.0
-Nodes (1): Sum of size_usdc for all OPEN or PENDING positions.
+Nodes (1): Acquire a token for a general API call.         Consumes from API bucket only.
 
 ### Community 72 - "Community 72"
 Cohesion: 1.0
-Nodes (1): Sum of negative realised_pnl for positions closed today (UTC).     Returns a pos
+Nodes (1): Telegram Client — Remote Control & Reporting for Polymarket Reverse Bot. Uses ai
 
 ### Community 73 - "Community 73"
 Cohesion: 1.0
-Nodes (1): Record a scan cycle. Returns the scan_id.
+Nodes (1): Manages the Telegram bot interface with a dynamic dashboard.
 
 ### Community 74 - "Community 74"
 Cohesion: 1.0
-Nodes (1): Append an event to the audit log. Returns the event_id.
+Nodes (1): Register all message and callback handlers.
 
 ### Community 75 - "Community 75"
 Cohesion: 1.0
-Nodes (1): Calculate high-level performance metrics from the positions table.
+Nodes (1): Start or restart the auto-refresh loop for positions.
 
 ### Community 76 - "Community 76"
 Cohesion: 1.0
-Nodes (1): Re-subscribe to all channels after reconnection.
+Nodes (1): Stop the auto-refresh loop.
 
 ### Community 77 - "Community 77"
 Cohesion: 1.0
-Nodes (1): Start the WebSocket listener as a background task.         Messages populate sel
+Nodes (1): Edit the positions message every 60 seconds.
 
 ### Community 78 - "Community 78"
 Cohesion: 1.0
-Nodes (1): Main listen loop with automatic reconnection.         Runs as a separate asyncio
+Nodes (1): Escape HTML-sensitive characters in dynamic text.
 
 ### Community 79 - "Community 79"
 Cohesion: 1.0
-Nodes (1): Get the latest price from the cache.
+Nodes (1): Async WebSocket client for Polymarket CLOB feeds.     Handles connection lifecyc
 
 ### Community 80 - "Community 80"
 Cohesion: 1.0
-Nodes (1): Calculate exponential backoff delay: 1→2→4→8→16→30 max.
+Nodes (1): Establish WebSocket connection.
 
 ### Community 81 - "Community 81"
 Cohesion: 1.0
-Nodes (1): Encapsulates the trading loop logic to allow for remote management.
+Nodes (1): Gracefully close WebSocket and session.
 
 ### Community 82 - "Community 82"
 Cohesion: 1.0
-Nodes (1): The core trading loop moved from main().
+Nodes (1): Push the batched array of active tokens to the WS in chunks to avoid INVALID OPE
 
 ### Community 83 - "Community 83"
 Cohesion: 1.0
-Nodes (1): Result of all 10 validation checks.
+Nodes (1): Subscribe to updates for a specific market using token_id.
 
 ### Community 84 - "Community 84"
 Cohesion: 1.0
-Nodes (1): Human-readable summary of all check results.
+Nodes (1): Unsubscribe from a market's updates and clear memory.
 
 ### Community 85 - "Community 85"
 Cohesion: 1.0
-Nodes (1): Validates a signal through all 10 required checks.     Each check is independent
+Nodes (1): Re-subscribe to all channels after reconnection.
 
 ### Community 86 - "Community 86"
 Cohesion: 1.0
-Nodes (1): Extract the core event context by stripping dates, times, and window markers.
+Nodes (1): Start the WebSocket listener as a background task.         Messages populate sel
 
 ### Community 87 - "Community 87"
 Cohesion: 1.0
-Nodes (1): Orchestrates the full trading decision pipeline:     Signal → Validate → EV → Sl
+Nodes (1): Main listen loop with automatic reconnection.         Runs as a separate asyncio
 
 ### Community 88 - "Community 88"
 Cohesion: 1.0
-Nodes (1): Process a confirmed scanner signal through the full decision pipeline.
+Nodes (1): Get the latest price from the cache.
 
 ### Community 89 - "Community 89"
 Cohesion: 1.0
-Nodes (1): Triggered from dashboard to close a specific position immediately.
+Nodes (1): Calculate exponential backoff delay: 1→2→4→8→16→30 max.
 
 ### Community 90 - "Community 90"
 Cohesion: 1.0
-Nodes (1): Close a position:         - Paper mode: directly record the close with correct P
+Nodes (1): Run sanity checks on loaded config. Raises ValueError on bad config.
 
 ### Community 91 - "Community 91"
 Cohesion: 1.0
-Nodes (1): Close all open positions. Used by kill switch.         Returns count of successf
+Nodes (1): Load configuration from .env file.     Fails loudly on missing required keys or
 
 ### Community 92 - "Community 92"
 Cohesion: 1.0
-Nodes (1): aiohttp
+Nodes (1): Merge dashboard/runtime_config.json overrides onto the base config.     Called e
 
 ### Community 93 - "Community 93"
 Cohesion: 1.0
-Nodes (1): Yes Bias Strategy
+Nodes (1): Log auth failure details for debugging.         NEVER logs the API secret or pas
 
 ### Community 94 - "Community 94"
 Cohesion: 1.0
-Nodes (1): Kill Switch System
+Nodes (1): Close a position with exit data.
 
 ### Community 95 - "Community 95"
 Cohesion: 1.0
-Nodes (1): RuFlo V3 Overview
+Nodes (1): Get all currently open or pending positions.
 
 ### Community 96 - "Community 96"
 Cohesion: 1.0
-Nodes (1): Claude Code Config
+Nodes (1): Check if the bot has ever opened a position for this market.
 
 ### Community 97 - "Community 97"
 Cohesion: 1.0
-Nodes (1): Main Dashboard UI
+Nodes (1): Fetch a single position by ID.
 
 ### Community 98 - "Community 98"
 Cohesion: 1.0
-Nodes (1): R&D Dashboard UI
+Nodes (1): Check if there's already an OPEN or PENDING position for this market.
 
 ### Community 99 - "Community 99"
 Cohesion: 1.0
-Nodes (1): Obsidian Vault
+Nodes (1): Count currently open or pending positions.
 
 ### Community 100 - "Community 100"
 Cohesion: 1.0
-Nodes (1): Crypto Short Window Tests
+Nodes (1): Sum of size_usdc for all OPEN or PENDING positions.
 
 ### Community 101 - "Community 101"
 Cohesion: 1.0
-Nodes (1): CVD Guard Tuning
+Nodes (1): Sum of negative realised_pnl for positions closed today (UTC).     Returns a pos
 
 ### Community 102 - "Community 102"
 Cohesion: 1.0
-Nodes (1): Maker Mode
+Nodes (1): Record a scan cycle. Returns the scan_id.
 
 ### Community 103 - "Community 103"
 Cohesion: 1.0
-Nodes (1): Theta Decay Logic
+Nodes (1): Append an event to the audit log. Returns the event_id.
 
 ### Community 104 - "Community 104"
+Cohesion: 1.0
+Nodes (1): Calculate high-level performance metrics from the positions table.
+
+### Community 105 - "Community 105"
+Cohesion: 1.0
+Nodes (1): Re-subscribe to all channels after reconnection.
+
+### Community 106 - "Community 106"
+Cohesion: 1.0
+Nodes (1): Main listen loop with automatic reconnection.         Runs as a separate asyncio
+
+### Community 107 - "Community 107"
+Cohesion: 1.0
+Nodes (1): Get the latest price from the cache.
+
+### Community 108 - "Community 108"
+Cohesion: 1.0
+Nodes (1): Calculate exponential backoff delay: 1→2→4→8→16→30 max.
+
+### Community 109 - "Community 109"
+Cohesion: 1.0
+Nodes (1): Encapsulates the trading loop logic to allow for remote management.
+
+### Community 110 - "Community 110"
+Cohesion: 1.0
+Nodes (1): The core trading loop moved from main().
+
+### Community 111 - "Community 111"
+Cohesion: 1.0
+Nodes (1): Result of all 10 validation checks.
+
+### Community 112 - "Community 112"
+Cohesion: 1.0
+Nodes (1): Human-readable summary of all check results.
+
+### Community 113 - "Community 113"
+Cohesion: 1.0
+Nodes (1): Validates a signal through all 10 required checks.     Each check is independent
+
+### Community 114 - "Community 114"
+Cohesion: 1.0
+Nodes (1): Extract the core event context by stripping dates, times, and window markers.
+
+### Community 115 - "Community 115"
+Cohesion: 1.0
+Nodes (1): Orchestrates the full trading decision pipeline:     Signal → Validate → EV → Sl
+
+### Community 116 - "Community 116"
+Cohesion: 1.0
+Nodes (1): Process a confirmed scanner signal through the full decision pipeline.
+
+### Community 117 - "Community 117"
+Cohesion: 1.0
+Nodes (1): Triggered from dashboard to close a specific position immediately.
+
+### Community 118 - "Community 118"
+Cohesion: 1.0
+Nodes (1): Close a position:         - Paper mode: directly record the close with correct P
+
+### Community 119 - "Community 119"
+Cohesion: 1.0
+Nodes (1): Close all open positions. Used by kill switch.         Returns count of successf
+
+### Community 120 - "Community 120"
+Cohesion: 1.0
+Nodes (1): aiohttp
+
+### Community 121 - "Community 121"
+Cohesion: 1.0
+Nodes (1): Yes Bias Strategy
+
+### Community 122 - "Community 122"
+Cohesion: 1.0
+Nodes (1): Kill Switch System
+
+### Community 123 - "Community 123"
+Cohesion: 1.0
+Nodes (1): RuFlo V3 Overview
+
+### Community 124 - "Community 124"
+Cohesion: 1.0
+Nodes (1): Claude Code Config
+
+### Community 125 - "Community 125"
+Cohesion: 1.0
+Nodes (1): Main Dashboard UI
+
+### Community 126 - "Community 126"
+Cohesion: 1.0
+Nodes (1): R&D Dashboard UI
+
+### Community 127 - "Community 127"
+Cohesion: 1.0
+Nodes (1): Obsidian Vault
+
+### Community 128 - "Community 128"
+Cohesion: 1.0
+Nodes (1): Crypto Short Window Tests
+
+### Community 129 - "Community 129"
+Cohesion: 1.0
+Nodes (1): CVD Guard Tuning
+
+### Community 130 - "Community 130"
+Cohesion: 1.0
+Nodes (1): Maker Mode
+
+### Community 131 - "Community 131"
+Cohesion: 1.0
+Nodes (1): Theta Decay Logic
+
+### Community 132 - "Community 132"
 Cohesion: 1.0
 Nodes (1): yt-dlp
 
 ## Knowledge Gaps
-- **165 isolated node(s):** `Configuration loader for Polymarket Reverse Bot. All tunable parameters loaded f`, `Get required env var or exit with descriptive error.`, `Get float env var with default.`, `Get int env var with default.`, `Get bool env var with default. Only 'false' (case-insensitive) is False.` (+160 more)
+- **231 isolated node(s):** `Configuration loader for Polymarket Reverse Bot. All tunable parameters loaded f`, `Get required env var or exit with descriptive error.`, `Get float env var with default.`, `Get int env var with default.`, `Get bool env var with default. Only 'false' (case-insensitive) is False.` (+226 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 17`** (2 nodes): `check()`, `check_markets.py`
+- **Thin community `Community 14`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 18`** (2 nodes): `check()`, `check_events.py`
+- **Thin community `Community 15`** (1 nodes): `All 5 required tables must exist.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (2 nodes): `main()`, `parse_debug.py`
+- **Thin community `Community 16`** (1 nodes): `Partial unique index on positions(market_id) WHERE status='OPEN' must exist.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (2 nodes): `fetch_markets()`, `scratch.py`
+- **Thin community `Community 17`** (1 nodes): `WAL journal mode should be active for concurrent reads.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 21`** (2 nodes): `check()`, `debug_prices.py`
+- **Thin community `Community 18`** (1 nodes): `Insert a market, then retrieve it.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (2 nodes): `test_filter()`, `test_gamma_filter.py`
+- **Thin community `Community 19`** (1 nodes): `Upserting the same market_id updates fields.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (2 nodes): `check()`, `scan_all.py`
+- **Thin community `Community 20`** (1 nodes): `Create a position and verify default status is PENDING.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (2 nodes): `check()`, `check_prices.py`
+- **Thin community `Community 21`** (1 nodes): `Two OPEN positions for the same market_id must be rejected by the DB.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (2 nodes): `check()`, `find_15m.py`
+- **Thin community `Community 22`** (1 nodes): `MISTAKE 3 guard: shares * entry_price ≈ size_usdc.         This asserts the corr`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (2 nodes): `check()`, `deep_search_15m.py`
+- **Thin community `Community 23`** (1 nodes): `Events log should accumulate, never lose entries.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (2 nodes): `test_schemas()`, `test_payloads.py`
+- **Thin community `Community 24`** (1 nodes): `Paper positions are tracked separately from live positions.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (2 nodes): `main()`, `fetch_test.py`
+- **Thin community `Community 25`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (2 nodes): `main()`, `debug_markets.py`
+- **Thin community `Community 26`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (1 nodes): `fetch_trades_v2.py`
+- **Thin community `Community 27`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (1 nodes): `test_db.py`
+- **Thin community `Community 28`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (1 nodes): `check_statuses.py`
+- **Thin community `Community 29`** (1 nodes): `Number of consecutive 401 auth failures.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (1 nodes): `fetch_trades.py`
+- **Thin community `Community 30`** (1 nodes): `True if 401 threshold reached — kill switch should fire.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (1 nodes): `check_db2.py`
+- **Thin community `Community 31`** (1 nodes): `Public wallet address.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (1 nodes): `check_counts.py`
+- **Thin community `Community 32`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `check_db.py`
+- **Thin community `Community 33`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `clear_fake_wins.py`
+- **Thin community `Community 34`** (1 nodes): `Current available tokens (approximate, without lock).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `__init__.py`
+- **Thin community `Community 35`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (1 nodes): `All 5 required tables must exist.`
+- **Thin community `Community 36`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (1 nodes): `Partial unique index on positions(market_id) WHERE status='OPEN' must exist.`
+- **Thin community `Community 37`** (1 nodes): `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (1 nodes): `WAL journal mode should be active for concurrent reads.`
+- **Thin community `Community 38`** (1 nodes): `Run sanity checks on loaded config. Raises ValueError on bad config.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (1 nodes): `Insert a market, then retrieve it.`
+- **Thin community `Community 39`** (1 nodes): `Load configuration from .env file.     Fails loudly on missing required keys or`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (1 nodes): `Upserting the same market_id updates fields.`
+- **Thin community `Community 40`** (1 nodes): `Merge dashboard/runtime_config.json overrides onto the base config.     Called e`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (1 nodes): `Create a position and verify default status is PENDING.`
+- **Thin community `Community 41`** (1 nodes): `Checks if a market question implies a 5-minute or 15-minute crypto window.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 45`** (1 nodes): `Two OPEN positions for the same market_id must be rejected by the DB.`
+- **Thin community `Community 42`** (1 nodes): `Fetch markets matching the criteria. Cache results to avoid spamming API (O(1) l`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (1 nodes): `MISTAKE 3 guard: shares * entry_price ≈ size_usdc.         This asserts the corr`
+- **Thin community `Community 43`** (1 nodes): `Check if market meets strict trading requirements.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (1 nodes): `Events log should accumulate, never lose entries.`
+- **Thin community `Community 44`** (1 nodes): `O(1) style discovery using cached markets.         Finds current active market a`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `Paper positions are tracked separately from live positions.`
+- **Thin community `Community 45`** (1 nodes): `Continuously monitor and rotate markets.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (1 nodes): `__init__.py`
+- **Thin community `Community 46`** (1 nodes): `A StreamHandler that ignores BrokenPipeError.     Useful when running in backgro`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `__init__.py`
+- **Thin community `Community 47`** (1 nodes): `Configure structlog with JSON rendering, rotating file handler,     and stdout o`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `__init__.py`
+- **Thin community `Community 48`** (1 nodes): `Get a structured logger bound with module name and bot version.     Every log li`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `Number of consecutive 401 auth failures.`
+- **Thin community `Community 49`** (1 nodes): `Initialize database: create file, apply schema, run migrations.     Returns an o`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `True if 401 threshold reached — kill switch should fire.`
+- **Thin community `Community 50`** (1 nodes): `Close the database connection safely.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `Public wallet address.`
+- **Thin community `Community 51`** (1 nodes): `Insert or update a market record.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `__init__.py`
+- **Thin community `Community 52`** (1 nodes): `Fetch a single market by ID.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `__init__.py`
+- **Thin community `Community 53`** (1 nodes): `Get all flagged markets (candidates for trading).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 57`** (1 nodes): `Current available tokens (approximate, without lock).`
+- **Thin community `Community 54`** (1 nodes): `Update the 2-cycle confirmation tracking fields.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 58`** (1 nodes): `__init__.py`
+- **Thin community `Community 55`** (1 nodes): `Reset threshold tracking when price drops below threshold.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 59`** (1 nodes): `__init__.py`
+- **Thin community `Community 56`** (1 nodes): `Create a new position with status PENDING.     Returns the position_id (uuid4).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 60`** (1 nodes): `__init__.py`
+- **Thin community `Community 57`** (1 nodes): `Update position status and optionally the order_id.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 61`** (1 nodes): `Run sanity checks on loaded config. Raises ValueError on bad config.`
+- **Thin community `Community 58`** (1 nodes): `Update the notes field for a position (used for self-healing Token IDs).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 62`** (1 nodes): `Load configuration from .env file.     Fails loudly on missing required keys or`
+- **Thin community `Community 59`** (1 nodes): `Close a position with exit data.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 63`** (1 nodes): `Merge dashboard/runtime_config.json overrides onto the base config.     Called e`
+- **Thin community `Community 60`** (1 nodes): `Get all currently open or pending positions.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 64`** (1 nodes): `Log auth failure details for debugging.         NEVER logs the API secret or pas`
+- **Thin community `Community 61`** (1 nodes): `Check if the bot has ever opened a position for this market.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 65`** (1 nodes): `Close a position with exit data.`
+- **Thin community `Community 62`** (1 nodes): `Fetch a single position by ID.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 66`** (1 nodes): `Get all currently open or pending positions.`
+- **Thin community `Community 63`** (1 nodes): `Check if there's already an OPEN or PENDING position for this market.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 67`** (1 nodes): `Check if the bot has ever opened a position for this market.`
+- **Thin community `Community 64`** (1 nodes): `Count currently open or pending positions.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 68`** (1 nodes): `Fetch a single position by ID.`
+- **Thin community `Community 65`** (1 nodes): `Record a scan cycle. Returns the scan_id.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 69`** (1 nodes): `Check if there's already an OPEN or PENDING position for this market.`
+- **Thin community `Community 66`** (1 nodes): `Append an event to the audit log. Returns the event_id.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 70`** (1 nodes): `Count currently open or pending positions.`
+- **Thin community `Community 67`** (1 nodes): `Calculate high-level performance metrics from the positions table.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 71`** (1 nodes): `Sum of size_usdc for all OPEN or PENDING positions.`
+- **Thin community `Community 68`** (1 nodes): `Dual-bucket rate limiter for Polymarket API.     Separate buckets for order oper`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 72`** (1 nodes): `Sum of negative realised_pnl for positions closed today (UTC).     Returns a pos`
+- **Thin community `Community 69`** (1 nodes): `Args:             orders_per_min: Max orders per minute (default 55, hard limit`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 73`** (1 nodes): `Record a scan cycle. Returns the scan_id.`
+- **Thin community `Community 70`** (1 nodes): `Acquire a token for placing an order.         Consumes from BOTH order and API b`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 74`** (1 nodes): `Append an event to the audit log. Returns the event_id.`
+- **Thin community `Community 71`** (1 nodes): `Acquire a token for a general API call.         Consumes from API bucket only.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 75`** (1 nodes): `Calculate high-level performance metrics from the positions table.`
+- **Thin community `Community 72`** (1 nodes): `Telegram Client — Remote Control & Reporting for Polymarket Reverse Bot. Uses ai`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 76`** (1 nodes): `Re-subscribe to all channels after reconnection.`
+- **Thin community `Community 73`** (1 nodes): `Manages the Telegram bot interface with a dynamic dashboard.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 77`** (1 nodes): `Start the WebSocket listener as a background task.         Messages populate sel`
+- **Thin community `Community 74`** (1 nodes): `Register all message and callback handlers.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 78`** (1 nodes): `Main listen loop with automatic reconnection.         Runs as a separate asyncio`
+- **Thin community `Community 75`** (1 nodes): `Start or restart the auto-refresh loop for positions.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 79`** (1 nodes): `Get the latest price from the cache.`
+- **Thin community `Community 76`** (1 nodes): `Stop the auto-refresh loop.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 80`** (1 nodes): `Calculate exponential backoff delay: 1→2→4→8→16→30 max.`
+- **Thin community `Community 77`** (1 nodes): `Edit the positions message every 60 seconds.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 81`** (1 nodes): `Encapsulates the trading loop logic to allow for remote management.`
+- **Thin community `Community 78`** (1 nodes): `Escape HTML-sensitive characters in dynamic text.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 82`** (1 nodes): `The core trading loop moved from main().`
+- **Thin community `Community 79`** (1 nodes): `Async WebSocket client for Polymarket CLOB feeds.     Handles connection lifecyc`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 83`** (1 nodes): `Result of all 10 validation checks.`
+- **Thin community `Community 80`** (1 nodes): `Establish WebSocket connection.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 84`** (1 nodes): `Human-readable summary of all check results.`
+- **Thin community `Community 81`** (1 nodes): `Gracefully close WebSocket and session.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 85`** (1 nodes): `Validates a signal through all 10 required checks.     Each check is independent`
+- **Thin community `Community 82`** (1 nodes): `Push the batched array of active tokens to the WS in chunks to avoid INVALID OPE`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 86`** (1 nodes): `Extract the core event context by stripping dates, times, and window markers.`
+- **Thin community `Community 83`** (1 nodes): `Subscribe to updates for a specific market using token_id.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 87`** (1 nodes): `Orchestrates the full trading decision pipeline:     Signal → Validate → EV → Sl`
+- **Thin community `Community 84`** (1 nodes): `Unsubscribe from a market's updates and clear memory.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 88`** (1 nodes): `Process a confirmed scanner signal through the full decision pipeline.`
+- **Thin community `Community 85`** (1 nodes): `Re-subscribe to all channels after reconnection.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 89`** (1 nodes): `Triggered from dashboard to close a specific position immediately.`
+- **Thin community `Community 86`** (1 nodes): `Start the WebSocket listener as a background task.         Messages populate sel`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 90`** (1 nodes): `Close a position:         - Paper mode: directly record the close with correct P`
+- **Thin community `Community 87`** (1 nodes): `Main listen loop with automatic reconnection.         Runs as a separate asyncio`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 91`** (1 nodes): `Close all open positions. Used by kill switch.         Returns count of successf`
+- **Thin community `Community 88`** (1 nodes): `Get the latest price from the cache.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 92`** (1 nodes): `aiohttp`
+- **Thin community `Community 89`** (1 nodes): `Calculate exponential backoff delay: 1→2→4→8→16→30 max.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 93`** (1 nodes): `Yes Bias Strategy`
+- **Thin community `Community 90`** (1 nodes): `Run sanity checks on loaded config. Raises ValueError on bad config.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 94`** (1 nodes): `Kill Switch System`
+- **Thin community `Community 91`** (1 nodes): `Load configuration from .env file.     Fails loudly on missing required keys or`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 95`** (1 nodes): `RuFlo V3 Overview`
+- **Thin community `Community 92`** (1 nodes): `Merge dashboard/runtime_config.json overrides onto the base config.     Called e`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 96`** (1 nodes): `Claude Code Config`
+- **Thin community `Community 93`** (1 nodes): `Log auth failure details for debugging.         NEVER logs the API secret or pas`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 97`** (1 nodes): `Main Dashboard UI`
+- **Thin community `Community 94`** (1 nodes): `Close a position with exit data.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 98`** (1 nodes): `R&D Dashboard UI`
+- **Thin community `Community 95`** (1 nodes): `Get all currently open or pending positions.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 99`** (1 nodes): `Obsidian Vault`
+- **Thin community `Community 96`** (1 nodes): `Check if the bot has ever opened a position for this market.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 100`** (1 nodes): `Crypto Short Window Tests`
+- **Thin community `Community 97`** (1 nodes): `Fetch a single position by ID.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 101`** (1 nodes): `CVD Guard Tuning`
+- **Thin community `Community 98`** (1 nodes): `Check if there's already an OPEN or PENDING position for this market.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 102`** (1 nodes): `Maker Mode`
+- **Thin community `Community 99`** (1 nodes): `Count currently open or pending positions.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 103`** (1 nodes): `Theta Decay Logic`
+- **Thin community `Community 100`** (1 nodes): `Sum of size_usdc for all OPEN or PENDING positions.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 104`** (1 nodes): `yt-dlp`
+- **Thin community `Community 101`** (1 nodes): `Sum of negative realised_pnl for positions closed today (UTC).     Returns a pos`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 102`** (1 nodes): `Record a scan cycle. Returns the scan_id.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 103`** (1 nodes): `Append an event to the audit log. Returns the event_id.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 104`** (1 nodes): `Calculate high-level performance metrics from the positions table.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 105`** (1 nodes): `Re-subscribe to all channels after reconnection.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 106`** (1 nodes): `Main listen loop with automatic reconnection.         Runs as a separate asyncio`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 107`** (1 nodes): `Get the latest price from the cache.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 108`** (1 nodes): `Calculate exponential backoff delay: 1→2→4→8→16→30 max.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 109`** (1 nodes): `Encapsulates the trading loop logic to allow for remote management.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 110`** (1 nodes): `The core trading loop moved from main().`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 111`** (1 nodes): `Result of all 10 validation checks.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 112`** (1 nodes): `Human-readable summary of all check results.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 113`** (1 nodes): `Validates a signal through all 10 required checks.     Each check is independent`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 114`** (1 nodes): `Extract the core event context by stripping dates, times, and window markers.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 115`** (1 nodes): `Orchestrates the full trading decision pipeline:     Signal → Validate → EV → Sl`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 116`** (1 nodes): `Process a confirmed scanner signal through the full decision pipeline.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 117`** (1 nodes): `Triggered from dashboard to close a specific position immediately.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 118`** (1 nodes): `Close a position:         - Paper mode: directly record the close with correct P`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 119`** (1 nodes): `Close all open positions. Used by kill switch.         Returns count of successf`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 120`** (1 nodes): `aiohttp`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 121`** (1 nodes): `Yes Bias Strategy`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 122`** (1 nodes): `Kill Switch System`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 123`** (1 nodes): `RuFlo V3 Overview`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 124`** (1 nodes): `Claude Code Config`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 125`** (1 nodes): `Main Dashboard UI`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 126`** (1 nodes): `R&D Dashboard UI`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 127`** (1 nodes): `Obsidian Vault`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 128`** (1 nodes): `Crypto Short Window Tests`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 129`** (1 nodes): `CVD Guard Tuning`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 130`** (1 nodes): `Maker Mode`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 131`** (1 nodes): `Theta Decay Logic`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 132`** (1 nodes): `yt-dlp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `main()` connect `Community 2` to `Community 0`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 9`, `Community 11`?**
-  _High betweenness centrality (0.142) - this node is a cross-community bridge._
-- **Why does `ClobClient` connect `Community 3` to `Community 0`, `Community 2`, `Community 4`, `Community 5`, `Community 8`?**
-  _High betweenness centrality (0.125) - this node is a cross-community bridge._
-- **Why does `L2Auth` connect `Community 4` to `Community 8`, `Community 2`, `Community 3`?**
-  _High betweenness centrality (0.078) - this node is a cross-community bridge._
-- **Are the 70 inferred relationships involving `ClobClient` (e.g. with `TestOpenPosition` and `TestRaceConditionProtection`) actually correct?**
-  _`ClobClient` has 70 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 60 inferred relationships involving `BotConfig` (e.g. with `MarketScanner` and `Market Scanner — Poll & Threshold Detection for Polymarket Reverse Bot.`) actually correct?**
-  _`BotConfig` has 60 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 40 inferred relationships involving `GammaClient` (e.g. with `MarketScanner` and `Market Scanner — Poll & Threshold Detection for Polymarket Reverse Bot.`) actually correct?**
-  _`GammaClient` has 40 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 47 inferred relationships involving `SignalValidator` (e.g. with `TestVolumeDoubleCountingGuard` and `TestValidatorChecks`) actually correct?**
-  _`SignalValidator` has 47 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `main()` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 6`, `Community 7`, `Community 8`, `Community 9`, `Community 11`?**
+  _High betweenness centrality (0.193) - this node is a cross-community bridge._
+- **Why does `ClobClient` connect `Community 0` to `Community 1`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`?**
+  _High betweenness centrality (0.167) - this node is a cross-community bridge._
+- **Why does `L2Auth` connect `Community 2` to `Community 0`, `Community 1`, `Community 8`, `Community 7`?**
+  _High betweenness centrality (0.081) - this node is a cross-community bridge._
+- **Are the 108 inferred relationships involving `ClobClient` (e.g. with `TestOpenPosition` and `TestRaceConditionProtection`) actually correct?**
+  _`ClobClient` has 108 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 90 inferred relationships involving `BotConfig` (e.g. with `RuntimeConfig` and `RuntimeConfig — Mutable shared configuration for hot-reload support.  Problem: B`) actually correct?**
+  _`BotConfig` has 90 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 53 inferred relationships involving `L2Auth` (e.g. with `TestL2AuthHeaders` and `TestL2Auth401Tracking`) actually correct?**
+  _`L2Auth` has 53 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 53 inferred relationships involving `RateLimiter` (e.g. with `TradingEngine` and `Main Entry Point — Polymarket Reverse (Yes Bias) Bot.  Boot sequence: 1. Load co`) actually correct?**
+  _`RateLimiter` has 53 INFERRED edges - model-reasoned connections that need verification._

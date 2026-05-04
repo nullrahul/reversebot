@@ -34,25 +34,25 @@
   "_TESTING_only_15min_windows": false,
 
   "early_phase_min_seconds": 600,
-  "early_yes_bias_max": 0.55,
-  "early_tp1": 1.25,
+  "early_yes_bias_max": 0.40,
+  "early_tp1": 1.30,
   "early_tp2": 2.50,
-  "early_stop_loss": 0.80,
+  "early_stop_loss": 0.50,
   "early_cycles": 1,
-  "early_imbalance": 2.0,
+  "early_imbalance": 4.0,
 
   "mid_phase_min_seconds": 180,
-  "mid_yes_bias_max": 0.65,
-  "mid_tp1": 1.15,
+  "mid_yes_bias_max": 0.40,
+  "mid_tp1": 1.25,
   "mid_tp2": 2.00,
-  "mid_stop_loss": 0.65,
+  "mid_stop_loss": 0.50,
   "mid_cycles": 2,
-  "mid_imbalance": 3.0,
+  "mid_imbalance": 5.0,
 
-  "late_yes_bias_max": 0.60,
-  "late_tp1": 1.06,
-  "late_tp2": 1.06,
-  "late_stop_loss": 0.90,
+  "late_yes_bias_max": 0.30,
+  "late_tp1": 1.15,
+  "late_tp2": 1.15,
+  "late_stop_loss": 0.60,
   "late_cycles": 3,
-  "late_imbalance": 4.0
+  "late_imbalance": 6.0
 }
