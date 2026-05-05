@@ -218,9 +218,9 @@ class TradingEngine:
 
                     # Wait for next poll
                     elapsed = time.time() - cycle_start
-                    # We target 1s monitoring speed regardless of poll_interval_seconds
+                    # We target 0.1s monitoring speed regardless of poll_interval_seconds
                     # (poll_interval_seconds will now act as a fallback minimum)
-                    wait = max(0, 1.0 - elapsed)
+                    wait = max(0, 0.1 - elapsed)
                     if wait > 0 and not self.kill_switch.is_triggered:
                         await asyncio.sleep(wait)
 

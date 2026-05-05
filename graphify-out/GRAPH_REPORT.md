@@ -1,7 +1,7 @@
 # Graph Report - /Users/rahulkumar/Documents/reversebot  (2026-05-04)
 
 ## Corpus Check
-- 56 files · ~756,507 words
+- 56 files · ~772,189 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -159,14 +159,14 @@
 ## Surprising Connections (you probably didn't know these)
 - `main()` --calls--> `TelegramClient`  [INFERRED]
   /Users/rahulkumar/Documents/reversebot/src/main.py → src/api/telegram_client.py
-- `ClobClient` --uses--> `TransientNetworkError`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py → src/exceptions.py
-- `CLOB API Client — Order Execution for Polymarket.  Handles: - FOK order placemen` --uses--> `TransientNetworkError`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py → src/exceptions.py
-- `Async client for the Polymarket CLOB API.     Handles authenticated order operat` --uses--> `TransientNetworkError`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py → src/exceptions.py
-- `Make an authenticated, rate-limited request to the CLOB API.         Returns (st` --uses--> `TransientNetworkError`  [INFERRED]
-  /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py → src/exceptions.py
+- `TransientNetworkError` --uses--> `ClobClient`  [INFERRED]
+  src/exceptions.py → /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py
+- `TransientNetworkError` --uses--> `CLOB API Client — Order Execution for Polymarket.  Handles: - FOK order placemen`  [INFERRED]
+  src/exceptions.py → /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py
+- `TransientNetworkError` --uses--> `Async client for the Polymarket CLOB API.     Handles authenticated order operat`  [INFERRED]
+  src/exceptions.py → /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py
+- `TransientNetworkError` --uses--> `Make an authenticated, rate-limited request to the CLOB API.         Returns (st`  [INFERRED]
+  src/exceptions.py → /Users/rahulkumar/Documents/reversebot/src/api/clob_client.py
 
 ## Communities
 

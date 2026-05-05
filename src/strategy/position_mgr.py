@@ -277,7 +277,9 @@ class PositionManager:
             if m_data and m_data.get("closes_at"):
                 seconds_to_close = m_data["closes_at"] - now
                 early_min = getattr(self.config, "early_phase_min_seconds", 600)
+                early_min = int(early_min) if isinstance(early_min, (int, float)) else 600
                 mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+                mid_min = int(mid_min) if isinstance(mid_min, (int, float)) else 180
                 
                 if seconds_to_close < mid_min:
                     sl_mult = getattr(self.config, "late_stop_loss", 0.90)
@@ -286,16 +288,24 @@ class PositionManager:
                 else:
                     sl_mult = getattr(self.config, "early_stop_loss", 0.80)
             
+            sl_mult = float(sl_mult) if isinstance(sl_mult, (int, float)) else 0.65
+
             if not no_token_id:
                 no_token_id = await self._recover_no_token_id(market_id, position_id)
                 if not no_token_id: continue
 
-            # ─── ANTI-BLINDNESS FIX ───
-            current_no_price = self.ws.bid_cache.get(no_token_id)
+            # ─── ANTI-BLINDNESS FIX & SPREAD SUICIDE GRACE PERIOD ───
+            current_no_bid = self.ws.bid_cache.get(no_token_id)
+            current_no_ask = self.ws.ask_cache.get(no_token_id)
+            
+            opened_at = pos.get("opened_at", 0)
+            
+            current_no_price = current_no_bid
+            if now - opened_at < 30 and current_no_bid and current_no_ask:
+                current_no_price = (current_no_bid + current_no_ask) / 2.0
+
             if current_no_price is None or current_no_price <= 0:
                 # Try implied price from YES token if NO is empty
-                from src.db.queries import get_market
-                m_data = await get_market(self.db, market_id)
                 if m_data and m_data.get("yes_token_id"):
                     yes_ask = self.ws.ask_cache.get(m_data["yes_token_id"])
                     if yes_ask is not None and yes_ask < 1.0:
@@ -355,32 +365,55 @@ class PositionManager:
                 elif filled_any:
                     self._resting_tp_orders[position_id] = tp_orders
 
-            # ─── TAKER EXIT: Stop Loss ───
+            # ─── TAKER EXIT: Stop Loss & Auto-Kill ───
             if not hold_res:
-                sl_threshold = pos["size_usdc"] * sl_mult
-                total_current_value = net_value(current_value) + self._partial_proceeds.get(position_id, 0.0)
+                banked = self._partial_proceeds.get(position_id, 0.0)
+                if banked > 0:
+                    # True Breakeven SL: If we banked cash, protect the initial investment
+                    sl_threshold = pos["size_usdc"]
+                else:
+                    sl_threshold = pos["size_usdc"] * sl_mult
+                    
+                total_current_value = net_value(current_value) + banked
                 
                 # SL Debug (Slow log every 30s)
                 if now % 30 == 0:
                     logger.debug("sl_check", pid=position_id, val=round(total_current_value, 3), threshold=round(sl_threshold, 3), price=current_no_price)
 
-                if total_current_value <= sl_threshold:
-                    # SL Hardening: Check for extreme wicks (>40% drop in one cycle)
-                    prev_p = self._lkgp_memory.get(position_id, current_no_price)
-                    is_extreme_wick = (current_no_price < prev_p * 0.6)
-                    
-                    timer = self._sl_confirmation_timers.get(position_id)
-                    if timer is None:
-                        self._sl_confirmation_timers[position_id] = now
-                        logger.warning("sl_detected_starting_timer", pid=position_id, price=current_no_price, extreme=is_extreme_wick)
+                # Auto-Kill: If < 3 mins left and not in profit, dump it.
+                seconds_to_close = 1000
+                if m_data and m_data.get("closes_at"):
+                    seconds_to_close = m_data["closes_at"] - now
+                
+                auto_kill_triggered = False
+                if seconds_to_close < 180 and total_current_value <= pos["size_usdc"]:
+                    logger.warning("auto_kill_triggered", pid=position_id, secs_left=seconds_to_close, message="Auto-Kill triggered: < 3 mins left and not in profit.")
+                    auto_kill_triggered = True
+
+                if total_current_value <= sl_threshold or auto_kill_triggered:
+                    timer_data = self._sl_confirmation_timers.get(position_id)
+                    if timer_data is None:
+                        self._sl_confirmation_timers[position_id] = {"time": now, "price": current_no_price}
+                        logger.warning("sl_detected_starting_timer", pid=position_id, price=current_no_price, auto_kill=auto_kill_triggered)
                     else:
-                        # Wait at least 1.0s to confirm move is real, but exit fast if confirmed toxic
-                        wait_time = 1.0 if is_extreme_wick else 2.0
-                        if now - timer >= wait_time:
+                        timer_start = timer_data["time"]
+                        start_price = timer_data["price"]
+                        
+                        # Velocity Bypass: If price drops > 15% from when timer started, don't wait.
+                        velocity_bypass = False
+                        if current_no_price < (start_price * 0.85):
+                            logger.error("sl_velocity_bypass", pid=position_id, start_p=start_price, cur_p=current_no_price, message="Velocity Bypass: Price cratered > 15% during SL confirmation window. Exiting immediately.")
+                            velocity_bypass = True
+
+                        wait_time = 2.0
+                        if (now - timer_start >= wait_time) or velocity_bypass or auto_kill_triggered:
                             is_win = (net_value(current_value) + self._partial_proceeds.get(position_id, 0.0)) > pos["size_usdc"]
                             
-                            # Clean Labeling: If we banked profit but the remainder hit SL, call it PARTIAL_TP_EXIT
-                            reason = "PARTIAL_TP_EXIT" if self._partial_proceeds.get(position_id, 0.0) > 0 and is_win else "STOP_LOSS"
+                            # Clean Labeling
+                            if auto_kill_triggered:
+                                reason = "AUTO_KILL"
+                            else:
+                                reason = "PARTIAL_TP_EXIT" if self._partial_proceeds.get(position_id, 0.0) > 0 and is_win else "STOP_LOSS"
                             
                             await self._close_position(pos, current_no_price, reason)
                             self._sl_confirmation_timers.pop(position_id, None)
@@ -512,7 +545,7 @@ class PositionManager:
             else:
                 try:
                     logger.debug("standard_exit_attempt", pid=pid, market_id=pos["market_id"], exit_price=exit_price, shares=shares_to_sell)
-                    res = await self.clob.place_order(tid, "SELL", max(0.01, exit_price-0.01), shares_to_sell, "FOK")
+                    res = await self.clob.place_order(tid, "SELL", max(0.01, exit_price-0.03), shares_to_sell, "FOK")
                     if res:
                         self._partial_proceeds[pid] = self._partial_proceeds.get(pid, 0.0) + (shares_to_sell * exit_price)
                     else:
@@ -567,7 +600,9 @@ class PositionManager:
         if m_data and m_data.get("closes_at"):
             seconds_to_close = m_data["closes_at"] - now
             early_min = getattr(self.config, "early_phase_min_seconds", 600)
+            early_min = int(early_min) if isinstance(early_min, (int, float)) else 600
             mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+            mid_min = int(mid_min) if isinstance(mid_min, (int, float)) else 180
 
             if seconds_to_close < mid_min:
                 tp1_m = getattr(self.config, "late_tp1", 1.06)
@@ -579,24 +614,24 @@ class PositionManager:
                 tp1_m = getattr(self.config, "early_tp1", 1.25)
                 tp2_m = getattr(self.config, "early_tp2", 2.50)
 
+        tp1_m = float(tp1_m) if isinstance(tp1_m, (int, float)) else 1.15
+        tp2_m = float(tp2_m) if isinstance(tp2_m, (int, float)) else 2.00
+
         targets = []
         actual_shares = int(shares)        
-        if self.config.trailing_tp_enabled and actual_shares >= 10:
+        # Reduced threshold from 10 to 6 to enable splitting on smaller positions
+        if self.config.trailing_tp_enabled and actual_shares >= 6:
             # Dynamic Split logic: Attempt 60% / 40% split
             s1 = int(actual_shares * 0.6)
             s2 = actual_shares - s1
             
             # Polymarket API requires a minimum of 5 shares per order
-            if s1 < 5:
-                s1 = 5
-                s2 = actual_shares - s1
-                
-            if s2 < 5:
-                # If we don't have enough to split into two valid 5-share orders, fallback to single TP
-                targets.append({"s": actual_shares, "m": tp1_m})
-            else:
+            # If s1 or s2 are < 5, we can't split, so we fallback.
+            if s1 >= 5 and s2 >= 5:
                 targets.append({"s": s1, "m": tp1_m})
                 targets.append({"s": s2, "m": tp2_m})
+            else:
+                targets.append({"s": actual_shares, "m": tp1_m})
         else:
             # Single TP fallback:
             # Triggered if trailing is disabled OR we mathematically cannot satisfy two 5-share limit orders

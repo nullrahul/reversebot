@@ -92,6 +92,12 @@ class DecisionEngine:
         # signal reaches here, we may be closer to expiry. Re-check to be safe.
         if new_closes_at > 0:
             secs_left = new_closes_at - int(time.time())
+            
+            # MEAN REVERSION FIX: Reject early phase trades.
+            if secs_left > 600:
+                logger.info("decision_early_phase_rejected", market_id=market_id, secs_left=secs_left, message="Rejecting: >600s left. Mean reversion requires panic/late phase.")
+                return False, f"Market too early ({secs_left}s > 600s)"
+
             min_ttc = getattr(self.config, "min_seconds_to_close_pre_entry", 180)
             if secs_left < min_ttc:
                 logger.info(

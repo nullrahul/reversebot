@@ -205,7 +205,9 @@ class SignalValidator:
         closes_at = market.get("closes_at", 0)
         seconds_to_close = max(0, closes_at - int(time.time())) if closes_at else 1000
         early_min = getattr(self.config, "early_phase_min_seconds", 600)
+        early_min = int(early_min) if isinstance(early_min, (int, float)) else 600
         mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+        mid_min = int(mid_min) if isinstance(mid_min, (int, float)) else 180
         
         if seconds_to_close < mid_min:
             required_cycles = getattr(self.config, "late_cycles", 3)
@@ -213,6 +215,8 @@ class SignalValidator:
             required_cycles = getattr(self.config, "mid_cycles", 2)
         else:
             required_cycles = getattr(self.config, "early_cycles", 1)
+
+        required_cycles = int(required_cycles) if isinstance(required_cycles, (int, float)) else 1
 
         check_8 = consecutive_cycles >= required_cycles
         result.checks["8_price_stability"] = check_8
@@ -237,41 +241,30 @@ class SignalValidator:
                 f"Category '{category_str}' not in whitelist: {self.config.category_whitelist}"
             )
 
-        # 10. WICK DETECTION (Mean Reversion Imbalance)
+        # 10. SPREAD VACUUM DETECTOR (Flash Crash / Wick Guard)
         check_10 = True
         if book:
             bids = book.get("bids", [])
             asks = book.get("asks", [])
             
-            # Sum top 3 levels to gauge immediate pressure
-            no_bid_size = sum(float(b.get("size", 0)) for b in bids[:3])
-            no_ask_size = sum(float(a.get("size", 0)) for a in asks[:3])
+            best_bid = float(bids[0]["price"]) if bids else 0.0
+            best_ask = float(asks[0]["price"]) if asks else 1.0
             
-            # Wick Reversion: We only want to buy NO when it's being heavily dumped (creating a wick).
-            if no_bid_size > 0:
-                imbalance_ratio = no_ask_size / no_bid_size
+            # A true flash crash sweeps the orderbook, leaving a massive gap (wide spread) 
+            # between the remaining bids and the pulled market maker asks.
+            # If the spread is tight (e.g., < 3%), it's a normal trending market, NOT a wick.
+            
+            if best_ask > 0:
+                spread_pct = (best_ask - best_bid) / best_ask
                 
-                closes_at = market.get("closes_at", 0)
-                seconds_to_close = max(0, closes_at - int(time.time())) if closes_at else 1000
+                # We require at least a 4% spread gap to confirm a liquidity vacuum
+                min_required_spread = 0.04
                 
-                early_min = getattr(self.config, "early_phase_min_seconds", 600)
-                mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
-                
-                if seconds_to_close < mid_min:
-                    base_ratio = getattr(self.config, "late_imbalance", 4.0)
-                elif seconds_to_close <= early_min:
-                    base_ratio = getattr(self.config, "mid_imbalance", 3.0)
-                else:
-                    base_ratio = getattr(self.config, "early_imbalance", 2.0)
-                
-                # Liquidity-Aware Guard: If bid size is tiny, 1 small order skews the ratio.
-                required_ratio = base_ratio if no_bid_size >= 10.0 else (base_ratio - 1.0)
-                
-                if imbalance_ratio < required_ratio:
+                if spread_pct < min_required_spread:
                     check_10 = False
-                    result.reasons.append(f"Wick Guard: No imbalance detected. Ask/Bid ratio is {imbalance_ratio:.2f} < {required_ratio}")
+                    result.reasons.append(f"Wick Guard: Spread too tight ({spread_pct*100:.1f}% < {min_required_spread*100:.1f}%). This is a trend, not a flash crash.")
             else:
-                # If there are 0 bids, it's a pure free-fall, which is a perfect wick to catch
+                # If Ask is 0, book is broken (good for wicks)
                 pass
 
         result.checks["10_wick_guard"] = check_10
