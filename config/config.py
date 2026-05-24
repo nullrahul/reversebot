@@ -90,40 +90,31 @@ class BotConfig:
     chain_id: int
     clob_api_url: str
     gamma_api_url: str
+    polygon_rpc: str
 
-    # --- Strategy ---
-    yes_bias_threshold: float
-    yes_bias_max_threshold: float
-    min_volume_24h_usdc: float
-    min_time_to_close_hours: float # Changed to float for consistency
-    max_time_to_close_days: float # Changed to float for consistency
+    # --- Core Strategy ---
     position_size_usdc: float
     max_open_positions: int
     max_daily_loss_usdc: float
     max_total_exposure_usdc: float
-    take_profit_multiplier: float
-    stop_loss_multiplier: float
+    min_ev_threshold: float
+    global_cooldown: int
+    hold_to_resolution: bool
+
+    # --- Spread & Pricing Guards ---
     max_no_ask_multiplier: float
     high_vol_ask_multiplier: float
     high_vol_assets: List[str]
-    trailing_tp_activation_multiplier: float
-    trailing_tp_buffer_pct: float
-    min_ev_threshold: float
     max_spread_pct_of_ask: float
-    correlated_window_seconds: int
-    max_same_direction_entries: int
-    hold_to_resolution: bool
-    poll_interval_seconds: int
-    global_cooldown: int
-    slippage_depth_multiplier: float
+
+
+
+    # --- Risk ---
+    ghost_guard_enabled: bool
+
+    # --- Rate Limits ---
     rate_limit_orders_per_min: int
     rate_limit_api_calls_per_min: int
-    trailing_tp_enabled: bool
-    tp1_shares_count: int
-    tp1_multiplier: float
-    tp2_multiplier: float
-    polygon_rpc: str
-    ghost_guard_enabled: bool
 
     # --- Mode ---
     paper_trade: bool
@@ -132,13 +123,12 @@ class BotConfig:
 
     # --- Optional / With Defaults ---
     poly_address: Optional[str] = None
-    category_whitelist: List[str] = field(default_factory=list)
+    category_whitelist: List[str] = field(default_factory=lambda: ["Crypto"])
 
     # --- Market Targeting ---
     target_market_mode: str = "crypto_short_window"
     target_crypto_symbols: List[str] = field(default_factory=list)
     target_window_minutes: List[int] = field(default_factory=list)
-    short_window_discovery_interval_seconds: int = 20
     short_window_min_seconds_to_close: int = 60
 
     # --- Paths ---
@@ -149,15 +139,6 @@ class BotConfig:
     def validate(self) -> None:
         """Run sanity checks on loaded config. Raises ValueError on bad config."""
         errors = []
-
-        if not (0.0 < self.yes_bias_threshold < 1.0):
-            errors.append(f"YES_BIAS_THRESHOLD must be 0-1, got {self.yes_bias_threshold}")
-
-        if not (0.0 < self.yes_bias_max_threshold <= 1.0):
-            errors.append(f"YES_BIAS_MAX_THRESHOLD must be 0-1, got {self.yes_bias_max_threshold}")
-
-        if self.yes_bias_threshold >= self.yes_bias_max_threshold:
-            errors.append("YES_BIAS_THRESHOLD must be < YES_BIAS_MAX_THRESHOLD")
 
         if self.position_size_usdc <= 0:
             errors.append(f"POSITION_SIZE_USDC must be > 0, got {self.position_size_usdc}")
@@ -171,26 +152,13 @@ class BotConfig:
         if self.max_total_exposure_usdc < self.position_size_usdc:
             errors.append("MAX_TOTAL_EXPOSURE_USDC must be >= POSITION_SIZE_USDC")
 
-        if self.take_profit_multiplier <= 1.0:
-            errors.append(f"TAKE_PROFIT_MULTIPLIER must be > 1.0, got {self.take_profit_multiplier}")
 
-        if not (0.0 < self.stop_loss_multiplier < 1.0):
-            errors.append(f"STOP_LOSS_MULTIPLIER must be 0-1, got {self.stop_loss_multiplier}")
-
-        if self.poll_interval_seconds < 1:
-            errors.append(f"POLL_INTERVAL_SECONDS must be >= 1, got {self.poll_interval_seconds}")
-
-        if self.slippage_depth_multiplier < 0.1:
-            errors.append(f"SLIPPAGE_DEPTH_MULTIPLIER must be >= 0.1, got {self.slippage_depth_multiplier}")
 
         if self.rate_limit_orders_per_min > 60:
             errors.append(f"RATE_LIMIT_ORDERS_PER_MIN must be <= 60, got {self.rate_limit_orders_per_min}")
 
         if self.rate_limit_api_calls_per_min > 1000:
             errors.append(f"RATE_LIMIT_API_CALLS_PER_MIN must be <= 1000, got {self.rate_limit_api_calls_per_min}")
-
-        if not self.category_whitelist:
-            errors.append("CATEGORY_WHITELIST must contain at least one category")
 
         if self.target_market_mode not in {"broad", "crypto_short_window"}:
             errors.append(
@@ -204,19 +172,8 @@ class BotConfig:
         if invalid_windows:
             errors.append(f"TARGET_WINDOW_MINUTES must be positive, got {invalid_windows}")
 
-        if self.short_window_discovery_interval_seconds < 5:
-            errors.append(
-                "SHORT_WINDOW_DISCOVERY_INTERVAL_SECONDS must be >= 5 seconds"
-            )
-
         if self.short_window_min_seconds_to_close < 5:
             errors.append("SHORT_WINDOW_MIN_SECONDS_TO_CLOSE must be >= 5 seconds")
-
-        if self.target_market_mode == "crypto_short_window" and not self.paper_trade:
-            errors.append("TARGET_MARKET_MODE=crypto_short_window requires PAPER_TRADE=true")
-
-        if self.target_market_mode == "crypto_short_window" and self.poll_interval_seconds > 30:
-            errors.append("TARGET_MARKET_MODE=crypto_short_window requires POLL_INTERVAL_SECONDS <= 30")
 
         if errors:
             msg = "Configuration validation failed:\n" + "\n".join(f"  - {e}" for e in errors)
@@ -245,32 +202,29 @@ def load_config(env_path: Optional[str] = None) -> BotConfig:
         chain_id=_env_int("CHAIN_ID", 137),
         clob_api_url=os.getenv("CLOB_API_URL", "https://clob.polymarket.com").strip(),
         gamma_api_url=os.getenv("GAMMA_API_URL", "https://gamma-api.polymarket.com").strip(),
+        polygon_rpc=os.getenv("POLYGON_RPC", "https://polygon-rpc.com").strip(),
 
-        # Strategy
-        yes_bias_threshold=_env_float("YES_BIAS_THRESHOLD", 0.80),
-        yes_bias_max_threshold=_env_float("YES_BIAS_MAX_THRESHOLD", 0.97),
-        min_volume_24h_usdc=_env_float("MIN_VOLUME_24H_USDC", 500.0),
-        min_time_to_close_hours=_env_float("MIN_TIME_TO_CLOSE_HOURS", 6.0),
-        max_time_to_close_days=_env_float("MAX_TIME_TO_CLOSE_DAYS", 7.0),
+        # Core Strategy
         position_size_usdc=_env_float("POSITION_SIZE_USDC", 2.0),
         max_open_positions=_env_int("MAX_OPEN_POSITIONS", 2),
         max_daily_loss_usdc=_env_float("MAX_DAILY_LOSS_USDC", 5.0),
         max_total_exposure_usdc=_env_float("MAX_TOTAL_EXPOSURE_USDC", 5.0),
-        take_profit_multiplier=_env_float("TAKE_PROFIT_MULTIPLIER", 2.0),
-        stop_loss_multiplier=_env_float("STOP_LOSS_MULTIPLIER", 0.5),
+        min_ev_threshold=_env_float("MIN_EV_THRESHOLD", 0.02),
+        global_cooldown=_env_int("GLOBAL_COOLDOWN", 60),
+        hold_to_resolution=_env_bool("HOLD_TO_RESOLUTION", False),
+
+        # Spread & Pricing Guards
         max_no_ask_multiplier=_env_float("MAX_NO_ASK_MULTIPLIER", 1.35),
         high_vol_ask_multiplier=_env_float("HIGH_VOL_ASK_MULTIPLIER", 1.6),
         high_vol_assets=_env_list("HIGH_VOL_ASSETS", ["HYPE", "XRP", "DOGE"]),
-        trailing_tp_activation_multiplier=_env_float("TRAILING_TP_ACTIVATION_MULTIPLIER", 1.5),
-        trailing_tp_buffer_pct=_env_float("TRAILING_TP_BUFFER_PCT", 0.20),
-        min_ev_threshold=_env_float("MIN_EV_THRESHOLD", 0.02),
         max_spread_pct_of_ask=_env_float("MAX_SPREAD_PCT_OF_ASK", 0.60),
-        correlated_window_seconds=_env_int("CORRELATED_WINDOW_SECONDS", 180),
-        max_same_direction_entries=_env_int("MAX_SAME_DIRECTION_ENTRIES", 2),
-        hold_to_resolution=_env_bool("HOLD_TO_RESOLUTION", False),
-        poll_interval_seconds=_env_int("POLL_INTERVAL_SECONDS", 60),
-        global_cooldown=_env_int("GLOBAL_COOLDOWN", 60),
-        slippage_depth_multiplier=_env_float("SLIPPAGE_DEPTH_MULTIPLIER", 1.0),
+
+
+
+        # Risk
+        ghost_guard_enabled=_env_bool("GHOST_GUARD_ENABLED", False),
+
+        # Rate Limits
         rate_limit_orders_per_min=_env_int("RATE_LIMIT_ORDERS_PER_MIN", 55),
         rate_limit_api_calls_per_min=_env_int("RATE_LIMIT_API_CALLS_PER_MIN", 90),
 
@@ -279,28 +233,14 @@ def load_config(env_path: Optional[str] = None) -> BotConfig:
         bot_version=os.getenv("BOT_VERSION", "v0.1.0").strip(),
         dashboard_password=os.getenv("DASHBOARD_PASSWORD", "reversebot2025").strip(),
 
-        # Categories
-        category_whitelist=_env_list(
-            "CATEGORY_WHITELIST",
-            ["Sports", "Politics", "Crypto", "Finance", "Weather", "Entertainment"]
-        ),
+        # Categories (used by validator.py check 9 for non-crypto fallback)
+        category_whitelist=_env_list("CATEGORY_WHITELIST", ["Crypto"]),
 
         # Market targeting
         target_market_mode=os.getenv("TARGET_MARKET_MODE", "crypto_short_window").strip().lower(),
         target_crypto_symbols=[symbol.upper() for symbol in _env_list("TARGET_CRYPTO_SYMBOLS", ["BTC", "ETH"])],
         target_window_minutes=_env_int_list("TARGET_WINDOW_MINUTES", [5, 15]),
-        short_window_discovery_interval_seconds=_env_int(
-            "SHORT_WINDOW_DISCOVERY_INTERVAL_SECONDS", 20
-        ),
-        short_window_min_seconds_to_close=_env_int(
-            "SHORT_WINDOW_MIN_SECONDS_TO_CLOSE", 60
-        ),
-        trailing_tp_enabled=_env_bool("TRAILING_TP_ENABLED", True),
-        tp1_shares_count=_env_int("TP1_SHARES_COUNT", 8),
-        tp1_multiplier=_env_float("TP1_MULTIPLIER", 1.5),
-        tp2_multiplier=_env_float("TP2_MULTIPLIER", 2.5),
-        polygon_rpc=os.getenv("POLYGON_RPC", "https://polygon-rpc.com").strip(),
-        ghost_guard_enabled=_env_bool("GHOST_GUARD_ENABLED", False),
+        short_window_min_seconds_to_close=_env_int("SHORT_WINDOW_MIN_SECONDS_TO_CLOSE", 60),
 
         # Paths
         db_path=os.getenv("DB_PATH", "data/reversebot.db").strip(),
@@ -337,45 +277,28 @@ def load_runtime_overrides(base_config: "BotConfig") -> "BotConfig":
 
     # Mapping from runtime_config keys → BotConfig fields
     field_map = {
-        "yes_bias_threshold": ("yes_bias_threshold", float),
-        "yes_bias_max_threshold": ("yes_bias_max_threshold", float),
-        "min_volume_24h_usdc": ("min_volume_24h_usdc", float),
-        "min_time_to_close_hours": ("min_time_to_close_hours", float),
-        "max_time_to_close_days": ("max_time_to_close_days", float),
         "position_size_usdc": ("position_size_usdc", float),
         "max_open_positions": ("max_open_positions", int),
         "max_daily_loss_usdc": ("max_daily_loss_usdc", float),
         "max_total_exposure_usdc": ("max_total_exposure_usdc", float),
-        "take_profit_multiplier": ("take_profit_multiplier", float),
-        "stop_loss_multiplier": ("stop_loss_multiplier", float),
+        "min_ev_threshold": ("min_ev_threshold", float),
+        "global_cooldown": ("global_cooldown", int),
+        "hold_to_resolution": ("hold_to_resolution", bool),
         "max_no_ask_multiplier": ("max_no_ask_multiplier", float),
         "high_vol_ask_multiplier": ("high_vol_ask_multiplier", float),
         "high_vol_assets": ("high_vol_assets", list),
-        "trailing_tp_activation_multiplier": ("trailing_tp_activation_multiplier", float),
-        "trailing_tp_buffer_pct": ("trailing_tp_buffer_pct", float),
-        "min_ev_threshold": ("min_ev_threshold", float),
         "max_spread_pct_of_ask": ("max_spread_pct_of_ask", float),
-        "correlated_window_seconds": ("correlated_window_seconds", int),
-        "max_same_direction_entries": ("max_same_direction_entries", int),
-        "hold_to_resolution": ("hold_to_resolution", bool),
-        "poll_interval_seconds": ("poll_interval_seconds", int),
-        "global_cooldown": ("global_cooldown", int),
-        "slippage_depth_multiplier": ("slippage_depth_multiplier", float),
+
+        "ghost_guard_enabled": ("ghost_guard_enabled", bool),
         "short_window_min_seconds_to_close": ("short_window_min_seconds_to_close", int),
-        "trailing_tp_enabled": ("trailing_tp_enabled", bool),
-        "tp1_shares_count": ("tp1_shares_count", int),
-        "tp1_multiplier": ("tp1_multiplier", float),
-        "tp2_multiplier": ("tp2_multiplier", float),
     }
 
-    patched = False
     for rt_key, (cfg_field, cast_fn) in field_map.items():
         if rt_key in overrides:
             try:
                 new_val = cast_fn(overrides[rt_key])
                 if getattr(base_config, cfg_field) != new_val:
                     object.__setattr__(base_config, cfg_field, new_val)
-                    patched = True
             except (ValueError, TypeError):
                 pass
 

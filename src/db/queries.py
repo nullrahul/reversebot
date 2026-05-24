@@ -206,6 +206,7 @@ async def create_position(
     bot_version: str,
     paper: bool = False,
     notes: Optional[str] = None,
+    side: str = 'NO',
 ) -> str:
     """
     Create a new position with status PENDING.
@@ -218,18 +219,22 @@ async def create_position(
         f"""
         INSERT INTO {table} (
             position_id, market_id, side, entry_price, size_usdc,
-            shares_bought, order_status, opened_at, version_opened, notes
-        ) VALUES (?, ?, 'NO', ?, ?, ?, 'PENDING', ?, ?, ?)
+            shares_bought, order_status, opened_at, version_opened, notes,
+            max_price_seen, min_price_seen
+        ) VALUES (?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?, ?, ?)
         """,
         (
             position_id,
             market_id,
+            side,
             entry_price,
             size_usdc,
             shares_bought,
             int(time.time()),
             bot_version,
             notes,
+            entry_price,
+            entry_price,
         ),
     )
     await db.commit()
@@ -274,6 +279,22 @@ async def update_position_notes(
     await db.commit()
 
 
+async def update_position_min_max_prices(
+    db: aiosqlite.Connection,
+    position_id: str,
+    min_price: float,
+    max_price: float,
+    paper: bool = False,
+) -> None:
+    """Update tracking for lowest and highest prices observed for this position."""
+    table = "paper_positions" if paper else "positions"
+    await db.execute(
+        f"UPDATE {table} SET min_price_seen = ?, max_price_seen = ? WHERE position_id = ?",
+        (min_price, max_price, position_id),
+    )
+    await db.commit()
+
+
 async def close_position(
     db: aiosqlite.Connection,
     position_id: str,
@@ -284,6 +305,7 @@ async def close_position(
 ) -> None:
     """Close a position with exit data."""
     table = "paper_positions" if paper else "positions"
+    now = int(time.time())
 
     await db.execute(
         f"""
@@ -292,10 +314,11 @@ async def close_position(
             closed_at = ?,
             exit_price = ?,
             realised_pnl = ?,
-            close_reason = ?
+            close_reason = ?,
+            resolution_delay = ? - (SELECT closes_at FROM markets WHERE markets.market_id = {table}.market_id)
         WHERE position_id = ?
         """,
-        (int(time.time()), exit_price, realised_pnl, close_reason, position_id),
+        (now, exit_price, realised_pnl, close_reason, now, position_id),
     )
     await db.commit()
 
@@ -321,6 +344,25 @@ async def has_traded_market(
     )
     row = await cursor.fetchone()
     return bool(row)
+
+
+async def get_last_traded_market_close_times(
+    db: aiosqlite.Connection, paper: bool = False
+) -> List[dict]:
+    """
+    Get the question, slug, and closes_at of all traded markets to find the last trade close time.
+    """
+    table = "paper_positions" if paper else "positions"
+    cursor = await db.execute(
+        f"""
+        SELECT m.question, m.slug, m.closes_at
+        FROM {table} p
+        JOIN markets m ON p.market_id = m.market_id
+        """
+    )
+    rows = await cursor.fetchall()
+    return [dict(r) for r in rows]
+
 
 
 
@@ -352,10 +394,17 @@ async def has_open_position_for_market(
 async def count_open_positions(
     db: aiosqlite.Connection, paper: bool = False
 ) -> int:
-    """Count currently open or pending positions."""
+    """Count currently open or pending positions whose markets are still active."""
     table = "paper_positions" if paper else "positions"
+    now = int(time.time())
     cursor = await db.execute(
-        f"SELECT COUNT(*) FROM {table} WHERE order_status IN ('OPEN', 'PENDING')"
+        f"""
+        SELECT COUNT(*) FROM {table} p
+        LEFT JOIN markets m ON p.market_id = m.market_id
+        WHERE p.order_status IN ('OPEN', 'PENDING', 'PARTIAL_FILLED')
+          AND (m.closes_at IS NULL OR m.closes_at > ?)
+        """,
+        (now,),
     )
     row = await cursor.fetchone()
     return row[0] if row else 0
@@ -364,10 +413,17 @@ async def count_open_positions(
 async def get_total_exposure(
     db: aiosqlite.Connection, paper: bool = False
 ) -> float:
-    """Sum of size_usdc for all OPEN or PENDING positions."""
+    """Sum of size_usdc for all OPEN or PENDING positions whose markets are still active."""
     table = "paper_positions" if paper else "positions"
+    now = int(time.time())
     cursor = await db.execute(
-        f"SELECT COALESCE(SUM(size_usdc), 0.0) FROM {table} WHERE order_status IN ('OPEN', 'PENDING')"
+        f"""
+        SELECT COALESCE(SUM(p.size_usdc), 0.0) FROM {table} p
+        LEFT JOIN markets m ON p.market_id = m.market_id
+        WHERE p.order_status IN ('OPEN', 'PENDING', 'PARTIAL_FILLED')
+          AND (m.closes_at IS NULL OR m.closes_at > ?)
+        """,
+        (now,),
     )
     row = await cursor.fetchone()
     return float(row[0]) if row else 0.0
