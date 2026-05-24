@@ -305,6 +305,7 @@ async def close_position(
 ) -> None:
     """Close a position with exit data."""
     table = "paper_positions" if paper else "positions"
+    now = int(time.time())
 
     await db.execute(
         f"""
@@ -313,10 +314,11 @@ async def close_position(
             closed_at = ?,
             exit_price = ?,
             realised_pnl = ?,
-            close_reason = ?
+            close_reason = ?,
+            resolution_delay = ? - (SELECT closes_at FROM markets WHERE markets.market_id = {table}.market_id)
         WHERE position_id = ?
         """,
-        (int(time.time()), exit_price, realised_pnl, close_reason, position_id),
+        (now, exit_price, realised_pnl, close_reason, now, position_id),
     )
     await db.commit()
 
@@ -392,10 +394,17 @@ async def has_open_position_for_market(
 async def count_open_positions(
     db: aiosqlite.Connection, paper: bool = False
 ) -> int:
-    """Count currently open or pending positions."""
+    """Count currently open or pending positions whose markets are still active."""
     table = "paper_positions" if paper else "positions"
+    now = int(time.time())
     cursor = await db.execute(
-        f"SELECT COUNT(*) FROM {table} WHERE order_status IN ('OPEN', 'PENDING')"
+        f"""
+        SELECT COUNT(*) FROM {table} p
+        LEFT JOIN markets m ON p.market_id = m.market_id
+        WHERE p.order_status IN ('OPEN', 'PENDING', 'PARTIAL_FILLED')
+          AND (m.closes_at IS NULL OR m.closes_at > ?)
+        """,
+        (now,),
     )
     row = await cursor.fetchone()
     return row[0] if row else 0
@@ -404,10 +413,17 @@ async def count_open_positions(
 async def get_total_exposure(
     db: aiosqlite.Connection, paper: bool = False
 ) -> float:
-    """Sum of size_usdc for all OPEN or PENDING positions."""
+    """Sum of size_usdc for all OPEN or PENDING positions whose markets are still active."""
     table = "paper_positions" if paper else "positions"
+    now = int(time.time())
     cursor = await db.execute(
-        f"SELECT COALESCE(SUM(size_usdc), 0.0) FROM {table} WHERE order_status IN ('OPEN', 'PENDING')"
+        f"""
+        SELECT COALESCE(SUM(p.size_usdc), 0.0) FROM {table} p
+        LEFT JOIN markets m ON p.market_id = m.market_id
+        WHERE p.order_status IN ('OPEN', 'PENDING', 'PARTIAL_FILLED')
+          AND (m.closes_at IS NULL OR m.closes_at > ?)
+        """,
+        (now,),
     )
     row = await cursor.fetchone()
     return float(row[0]) if row else 0.0
