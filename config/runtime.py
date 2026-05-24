@@ -16,64 +16,38 @@ Immutable fields (API keys, auth, paths) delegate to the base BotConfig.
 import json
 import threading
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from config.config import BotConfig
 
 
 # Fields that can be hot-reloaded from the dashboard
 _HOT_FIELDS: Dict[str, type] = {
-    "yes_bias_threshold": float,
-    "yes_bias_max_threshold": float,
-    "min_volume_24h_usdc": float,
-    "min_time_to_close_hours": float,
-    "max_time_to_close_days": float,
     "position_size_usdc": float,
     "max_open_positions": int,
     "max_daily_loss_usdc": float,
     "max_total_exposure_usdc": float,
-    "take_profit_multiplier": float,
-    "stop_loss_multiplier": float,
+    "min_ev_threshold": float,
+    "global_cooldown": int,
+    "hold_to_resolution": bool,
     "max_no_ask_multiplier": float,
     "high_vol_ask_multiplier": float,
     "high_vol_assets": list,
-    "trailing_tp_activation_multiplier": float,
-    "trailing_tp_buffer_pct": float,
-    "min_ev_threshold": float,
     "max_spread_pct_of_ask": float,
-    "correlated_window_seconds": int,
-    "max_same_direction_entries": int,
-    "hold_to_resolution": bool,
-    "poll_interval_seconds": int,
-    "global_cooldown": int,
-    "slippage_depth_multiplier": float,
+    "ghost_guard_enabled": bool,
     "short_window_min_seconds_to_close": int,
-    "trailing_tp_enabled": bool,
-    "tp1_shares_count": int,
+    # Extended hot fields used by decision/validator (via getattr with defaults)
     "min_seconds_to_close_pre_entry": int,
     "price_velocity_max": float,
     "price_velocity_window": int,
     "_TESTING_only_15min_windows": bool,
     "early_phase_min_seconds": int,
     "early_yes_bias_max": float,
-    "early_tp1": float,
-    "early_tp2": float,
-    "early_stop_loss": float,
-    "early_cycles": int,
-    "early_imbalance": float,
     "mid_phase_min_seconds": int,
     "mid_yes_bias_max": float,
-    "mid_tp1": float,
-    "mid_tp2": float,
-    "mid_stop_loss": float,
-    "mid_cycles": int,
-    "mid_imbalance": float,
     "late_yes_bias_max": float,
-    "late_tp1": float,
-    "late_tp2": float,
-    "late_stop_loss": float,
-    "late_cycles": int,
-    "late_imbalance": float,
+    "min_entry_price": float,
+    "max_entry_price": float,
 }
 
 
@@ -98,13 +72,19 @@ class RuntimeConfig:
         else:
             self._runtime_path = Path("dashboard/runtime_config.json")
 
-        # Defaults for new hot-fields that may not yet exist in the base BotConfig
+        # Defaults for hot-fields that may not yet exist in the base BotConfig
         _FIELD_DEFAULTS: Dict[str, Any] = {
-            "min_consecutive_cycles": 8,
-            "min_seconds_to_close_pre_entry": 180,
+            "min_seconds_to_close_pre_entry": 60,
             "price_velocity_max": 0.025,
             "price_velocity_window": 5,
-            "_TESTING_only_15min_windows": False,  # Off by default; enable via JSON
+            "_TESTING_only_15min_windows": False,
+            "early_phase_min_seconds": 43200,
+            "early_yes_bias_max": 0.85,
+            "mid_phase_min_seconds": 14400,
+            "mid_yes_bias_max": 0.80,
+            "late_yes_bias_max": 0.75,
+            "min_entry_price": 0.45,
+            "max_entry_price": 0.65,
         }
 
         # Initialize all hot-reloadable fields from base config (or defaults)

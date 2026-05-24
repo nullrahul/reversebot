@@ -35,6 +35,7 @@ from src.db.queries import (
     has_open_position_for_market,
     log_event,
     update_position_notes,
+    update_position_min_max_prices,
 )
 from src.logs.log_config import get_logger
 
@@ -82,6 +83,7 @@ class PositionManager:
         self.tg = None  # Set by main.py during setup
 
         self._paper = config.paper_trade
+        self._market_cache: Dict[str, dict] = {}
         
         # SL Spike Protection: position_id -> first_seen_timestamp
         self._sl_confirmation_timers: Dict[str, float] = {}
@@ -108,8 +110,6 @@ class PositionManager:
         logger.info(
             "position_mgr_initialized",
             mode=mode,
-            tp_multiplier=config.take_profit_multiplier,
-            sl_multiplier=config.stop_loss_multiplier,
             message=f"Position manager ready in {mode} mode",
         )
 
@@ -137,23 +137,7 @@ class PositionManager:
         while True:
             try:
                 event = await self.ws.user_queue.get()
-                etype = event.get("event_type")
-                if etype == "MINED":
-                    order_id = event.get("order_id")
-                    position_id = self._active_orders.pop(order_id, None)
-                    if not position_id:
-                        continue
-                    
-                    pos = await get_position(self.db, position_id, paper=self._paper)
-                    if pos and pos.get("order_status") == "OPEN":
-                        if position_id in self._resting_tp_orders:
-                            continue
-                            
-                        no_token_id = _get_tid_from_notes(pos.get("notes"))
-                        entry_price = pos.get("entry_price", 0.5)
-                        shares = pos.get("shares_bought", 0)
-                        
-                        await self._create_resting_tp_orders(position_id, pos["market_id"], no_token_id, shares, entry_price)
+                # Obsolete parameters removed. No resting TP orders are placed.
             except Exception as e:
                 logger.error("event_processor_error", error=str(e))
 
@@ -164,14 +148,21 @@ class PositionManager:
     async def open_position(
         self,
         market_id: str,
-        no_token_id: str,
-        entry_price: float,
-        size_usdc: float,
-        shares: float,
+        target_token_id: Optional[str] = None,
+        entry_price: float = 0.0,
+        size_usdc: float = 0.0,
+        shares: float = 0.0,
+        side: str = 'NO',
+        no_token_id: Optional[str] = None,
     ) -> bool:
         """
         Open a new position with full safety guards.
         """
+        if target_token_id is None:
+            if no_token_id is not None:
+                target_token_id = no_token_id
+            else:
+                raise ValueError("Either target_token_id or no_token_id must be provided")
         lock = await get_market_lock(market_id)
 
         async with lock:
@@ -190,13 +181,14 @@ class PositionManager:
                 shares_bought=actual_shares,
                 bot_version=self.config.bot_version,
                 paper=self._paper,
-                notes=no_token_id,
+                notes=target_token_id,
+                side=side,
             )
 
             try:
                 # Place FOK order
                 order_result = await self.clob.place_order(
-                    token_id=no_token_id,
+                    token_id=target_token_id,
                     side="BUY",
                     price=entry_price,
                     size=actual_shares,
@@ -212,11 +204,10 @@ class PositionManager:
                         # Initialize tracking
                         self._partial_proceeds[position_id] = 0.0
                         self._shares_remaining[position_id] = float(actual_shares)
-                        await self._persist_tracking_data(position_id, no_token_id)
+                        await self._persist_tracking_data(position_id, target_token_id)
                         
                         if self._paper:
                             await update_position_status(self.db, position_id, "OPEN", "paper_" + uuid.uuid4().hex[:16], paper=True)
-                            await self._create_resting_tp_orders(position_id, market_id, no_token_id, actual_shares, entry_price)
                             return True
 
                         await update_position_status(self.db, position_id, "OPEN", order_id, paper=self._paper)
@@ -256,172 +247,84 @@ class PositionManager:
     # -----------------------------------------------------------------
 
     async def monitor_positions(self) -> None:
-        """Scan all open positions for TP or SL conditions."""
+        """Scan all open positions and update their last known good price."""
         open_positions = await get_open_positions(self.db, paper=self._paper)
         if not open_positions:
             return
 
         now = int(time.time())
-        hold_res = self.config.hold_to_resolution
 
         for pos in open_positions:
             position_id = pos["position_id"]
             market_id = pos["market_id"]
-            no_token_id = _get_tid_from_notes(pos.get("notes"))
+            target_token_id = _get_tid_from_notes(pos.get("notes"))
+            side = pos.get("side", "NO")
             
-            from src.db.queries import get_market
-            m_data = await get_market(self.db, market_id)
-            
-            # --- Dynamic Stop Loss by Time Regime ---
-            sl_mult = getattr(self.config, "mid_stop_loss", 0.65)
-            if m_data and m_data.get("closes_at"):
-                seconds_to_close = m_data["closes_at"] - now
-                early_min = getattr(self.config, "early_phase_min_seconds", 600)
-                early_min = int(early_min) if isinstance(early_min, (int, float)) else 600
-                mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
-                mid_min = int(mid_min) if isinstance(mid_min, (int, float)) else 180
-                
-                if seconds_to_close < mid_min:
-                    sl_mult = getattr(self.config, "late_stop_loss", 0.90)
-                elif seconds_to_close <= early_min:
-                    sl_mult = getattr(self.config, "mid_stop_loss", 0.65)
-                else:
-                    sl_mult = getattr(self.config, "early_stop_loss", 0.80)
-            
-            sl_mult = float(sl_mult) if isinstance(sl_mult, (int, float)) else 0.65
+            if market_id not in self._market_cache:
+                from src.db.queries import get_market
+                self._market_cache[market_id] = await get_market(self.db, market_id)
+            m_data = self._market_cache[market_id]
 
-            if not no_token_id:
-                no_token_id = await self._recover_no_token_id(market_id, position_id)
-                if not no_token_id: continue
+            if not target_token_id:
+                target_token_id = await self._recover_target_token_id(market_id, position_id, side)
+                if not target_token_id: continue
 
             # ─── ANTI-BLINDNESS FIX & SPREAD SUICIDE GRACE PERIOD ───
-            current_no_bid = self.ws.bid_cache.get(no_token_id)
-            current_no_ask = self.ws.ask_cache.get(no_token_id)
+            current_target_bid = self.ws.bid_cache.get(target_token_id)
+            current_target_ask = self.ws.ask_cache.get(target_token_id)
             
             opened_at = pos.get("opened_at", 0)
             
-            current_no_price = current_no_bid
-            if now - opened_at < 30 and current_no_bid and current_no_ask:
-                current_no_price = (current_no_bid + current_no_ask) / 2.0
+            current_target_price = current_target_bid
+            if now - opened_at < 30 and current_target_bid and current_target_ask:
+                current_target_price = (current_target_bid + current_target_ask) / 2.0
 
-            if current_no_price is None or current_no_price <= 0:
-                # Try implied price from YES token if NO is empty
-                if m_data and m_data.get("yes_token_id"):
-                    yes_ask = self.ws.ask_cache.get(m_data["yes_token_id"])
-                    if yes_ask is not None and yes_ask < 1.0:
-                        current_no_price = round(1.0 - yes_ask, 4)
+            if current_target_price is None or current_target_price <= 0:
+                # Try implied price from counterpart token if target is empty
+                if m_data:
+                    counterpart_tid = m_data.get("no_token_id") if side == "YES" else m_data.get("yes_token_id")
+                    if counterpart_tid:
+                        counterpart_ask = self.ws.ask_cache.get(counterpart_tid)
+                        if counterpart_ask is not None and counterpart_ask < 1.0:
+                            current_target_price = round(1.0 - counterpart_ask, 4)
 
-            if current_no_price is None or current_no_price <= 0:
-                current_no_price = self.ws.price_cache.get(no_token_id)
+            if current_target_price is None or current_target_price <= 0:
+                current_target_price = self.ws.price_cache.get(target_token_id)
             
-            if current_no_price is None or current_no_price <= 0:
-                current_no_price = self._lkgp_memory.get(position_id)
-                if current_no_price is None: continue
+            if current_target_price is None or current_target_price <= 0:
+                current_target_price = self._lkgp_memory.get(position_id)
+                if current_target_price is None: continue
             
-            self._lkgp_memory[position_id] = current_no_price
+            self._lkgp_memory[position_id] = current_target_price
+
+            # Track minimum and maximum prices reached during open position
+            max_seen = pos.get("max_price_seen")
+            min_seen = pos.get("min_price_seen")
+            entry_price = pos.get("entry_price")
+
+            if max_seen is None:
+                max_seen = entry_price if entry_price is not None else current_target_price
+            if min_seen is None:
+                min_seen = entry_price if entry_price is not None else current_target_price
+
+            new_max = max(max_seen, current_target_price)
+            new_min = min(min_seen, current_target_price)
+
+            if new_max != max_seen or new_min != min_seen:
+                pos["max_price_seen"] = new_max
+                pos["min_price_seen"] = new_min
+                await update_position_min_max_prices(
+                    self.db,
+                    position_id,
+                    new_min,
+                    new_max,
+                    paper=self._paper
+                )
+                logger.debug("position_min_max_updated", pid=position_id, min_price=new_min, max_price=new_max)
 
             # Recovery logic: Ensure memory state is consistent with database notes
             if position_id not in self._partial_proceeds:
                 await self._load_tracking_data(pos)
-
-            shares = self._shares_remaining.get(position_id, pos["shares_bought"])
-            
-            # --- LIMBO GUARD: If DB says FILLED but notes show remaining shares, keep monitoring ---
-            if pos["order_status"] == "FILLED" and shares <= 0:
-                continue 
-            
-            current_value = current_no_price * shares
-
-            # ─── MAKER EXIT CHECK: Resting TP orders ───
-            tp_orders = self._resting_tp_orders.get(position_id, [])
-            if tp_orders:
-                filled_any = False
-                for tp_order in list(tp_orders):
-                    oid = tp_order["order_id"]
-                    target = tp_order["price"]
-                    last_check = tp_order.get("last_check_ts", 0)
-                    
-                    status = None
-                    # Honest TP check: Always check in paper mode (fast), or throttle for live API
-                    if self._paper or (current_no_price >= target) or (now - last_check > 10):
-                        tp_order["last_check_ts"] = now
-                        status = await self.clob.get_order_status(oid)
-
-                    if status and status.get("status") in ("MATCHED", "FILLED"):
-                            p_shares = tp_order["shares"]
-                            p_proceeds = p_shares * target
-                            
-                            self._partial_proceeds[position_id] = self._partial_proceeds.get(position_id, 0.0) + p_proceeds
-                            self._shares_remaining[position_id] = self._shares_remaining.get(position_id, shares) - p_shares
-                            await self._persist_tracking_data(position_id, no_token_id)
-                            
-                            logger.info("tp_partial_fill", position_id=position_id, proceeds=p_proceeds)
-                            tp_orders.remove(tp_order)
-                            filled_any = True
-                
-                if not tp_orders and filled_any:
-                    await self._close_position(pos, current_no_price, "TAKE_PROFIT", skip_cancel=True)
-                    continue
-                elif filled_any:
-                    self._resting_tp_orders[position_id] = tp_orders
-
-            # ─── TAKER EXIT: Stop Loss & Auto-Kill ───
-            if not hold_res:
-                banked = self._partial_proceeds.get(position_id, 0.0)
-                if banked > 0:
-                    # True Breakeven SL: If we banked cash, protect the initial investment
-                    sl_threshold = pos["size_usdc"]
-                else:
-                    sl_threshold = pos["size_usdc"] * sl_mult
-                    
-                total_current_value = net_value(current_value) + banked
-                
-                # SL Debug (Slow log every 30s)
-                if now % 30 == 0:
-                    logger.debug("sl_check", pid=position_id, val=round(total_current_value, 3), threshold=round(sl_threshold, 3), price=current_no_price)
-
-                # Auto-Kill: If < 3 mins left and not in profit, dump it.
-                seconds_to_close = 1000
-                if m_data and m_data.get("closes_at"):
-                    seconds_to_close = m_data["closes_at"] - now
-                
-                auto_kill_triggered = False
-                if seconds_to_close < 180 and total_current_value <= pos["size_usdc"]:
-                    logger.warning("auto_kill_triggered", pid=position_id, secs_left=seconds_to_close, message="Auto-Kill triggered: < 3 mins left and not in profit.")
-                    auto_kill_triggered = True
-
-                if total_current_value <= sl_threshold or auto_kill_triggered:
-                    timer_data = self._sl_confirmation_timers.get(position_id)
-                    if timer_data is None:
-                        self._sl_confirmation_timers[position_id] = {"time": now, "price": current_no_price}
-                        logger.warning("sl_detected_starting_timer", pid=position_id, price=current_no_price, auto_kill=auto_kill_triggered)
-                    else:
-                        timer_start = timer_data["time"]
-                        start_price = timer_data["price"]
-                        
-                        # Velocity Bypass: If price drops > 15% from when timer started, don't wait.
-                        velocity_bypass = False
-                        if current_no_price < (start_price * 0.85):
-                            logger.error("sl_velocity_bypass", pid=position_id, start_p=start_price, cur_p=current_no_price, message="Velocity Bypass: Price cratered > 15% during SL confirmation window. Exiting immediately.")
-                            velocity_bypass = True
-
-                        wait_time = 2.0
-                        if (now - timer_start >= wait_time) or velocity_bypass or auto_kill_triggered:
-                            is_win = (net_value(current_value) + self._partial_proceeds.get(position_id, 0.0)) > pos["size_usdc"]
-                            
-                            # Clean Labeling
-                            if auto_kill_triggered:
-                                reason = "AUTO_KILL"
-                            else:
-                                reason = "PARTIAL_TP_EXIT" if self._partial_proceeds.get(position_id, 0.0) > 0 and is_win else "STOP_LOSS"
-                            
-                            await self._close_position(pos, current_no_price, reason)
-                            self._sl_confirmation_timers.pop(position_id, None)
-                            continue
-                else:
-                    if position_id in self._sl_confirmation_timers:
-                        logger.info("sl_cleared", pid=position_id)
-                    self._sl_confirmation_timers.pop(position_id, None)
 
     async def check_resolutions(self) -> None:
         """Check Gamma for market resolution outcomes."""
@@ -437,13 +340,18 @@ class PositionManager:
                 prices = json.loads(clob_data.get("outcomePrices", "[]"))
                 outcomes = json.loads(clob_data.get("outcomes", "[]"))
                 if len(prices) >= 2 and len(outcomes) >= 2:
-                    p_no = None
+                    side = pos.get("side", "NO")
+                    p_target = None
                     for idx, outcome in enumerate(outcomes):
-                        if str(outcome).upper() in ["NO", "DOWN"]:
-                            p_no = float(prices[idx])
+                        outcome_upper = str(outcome).upper()
+                        if side == "YES" and outcome_upper in ("YES", "UP"):
+                            p_target = float(prices[idx])
                             break
-                    if p_no is not None and p_no in (0.0, 1.0):
-                        await self._close_position(pos, p_no, "RESOLUTION")
+                        elif side == "NO" and outcome_upper in ("NO", "DOWN"):
+                            p_target = float(prices[idx])
+                            break
+                    if p_target is not None and p_target in (0.0, 1.0):
+                        await self._close_position(pos, p_target, "RESOLUTION")
             except Exception as e:
                 logger.error("resolution_check_error", market_id=market_id, error=str(e))
 
@@ -519,7 +427,11 @@ class PositionManager:
                         await self.clob.cancel_order(tp["order_id"])
                 except: pass
 
-        if shares_to_sell >= 0.1:
+        if reason == "RESOLUTION":
+            # For resolved markets, do not place any order on CLOB.
+            # The contract pays out 1.0 (win) or 0.0 (loss) per share.
+            self._partial_proceeds[pid] = self._partial_proceeds.get(pid, 0.0) + (shares_to_sell * exit_price)
+        elif shares_to_sell >= 0.1:
             sold_successfully = False
             if reason == "STOP_LOSS":
                 # Aggressive exit: 3 tries with increasing slippage (1%, 3%, 5%)
@@ -588,70 +500,7 @@ class PositionManager:
             
         return True
 
-    async def _create_resting_tp_orders(self, pid: str, mid: str, tid: str, shares: float, entry: float) -> None:
-        """Dynamic Tiered TP logic (Live or Paper) with API minimum guard and Time Regimes."""
-        from src.db.queries import get_market
-        m_data = await get_market(self.db, mid)
 
-        tp1_m = getattr(self.config, "mid_tp1", 1.15)
-        tp2_m = getattr(self.config, "mid_tp2", 2.00)
-        now = int(time.time())
-
-        if m_data and m_data.get("closes_at"):
-            seconds_to_close = m_data["closes_at"] - now
-            early_min = getattr(self.config, "early_phase_min_seconds", 600)
-            early_min = int(early_min) if isinstance(early_min, (int, float)) else 600
-            mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
-            mid_min = int(mid_min) if isinstance(mid_min, (int, float)) else 180
-
-            if seconds_to_close < mid_min:
-                tp1_m = getattr(self.config, "late_tp1", 1.06)
-                tp2_m = getattr(self.config, "late_tp2", 1.06)
-            elif seconds_to_close <= early_min:
-                tp1_m = getattr(self.config, "mid_tp1", 1.15)
-                tp2_m = getattr(self.config, "mid_tp2", 2.00)
-            else:
-                tp1_m = getattr(self.config, "early_tp1", 1.25)
-                tp2_m = getattr(self.config, "early_tp2", 2.50)
-
-        tp1_m = float(tp1_m) if isinstance(tp1_m, (int, float)) else 1.15
-        tp2_m = float(tp2_m) if isinstance(tp2_m, (int, float)) else 2.00
-
-        targets = []
-        actual_shares = int(shares)        
-        # Reduced threshold from 10 to 6 to enable splitting on smaller positions
-        if self.config.trailing_tp_enabled and actual_shares >= 6:
-            # Dynamic Split logic: Attempt 60% / 40% split
-            s1 = int(actual_shares * 0.6)
-            s2 = actual_shares - s1
-            
-            # Polymarket API requires a minimum of 5 shares per order
-            # If s1 or s2 are < 5, we can't split, so we fallback.
-            if s1 >= 5 and s2 >= 5:
-                targets.append({"s": s1, "m": tp1_m})
-                targets.append({"s": s2, "m": tp2_m})
-            else:
-                targets.append({"s": actual_shares, "m": tp1_m})
-        else:
-            # Single TP fallback:
-            # Triggered if trailing is disabled OR we mathematically cannot satisfy two 5-share limit orders
-            targets.append({"s": actual_shares, "m": tp1_m})
-            
-        orders = []
-        for t in targets:
-            # Never set target price > 0.99
-            p = round(min(entry * t["m"], 0.99), 4)
-            try:
-                res = await self.clob.place_order(tid, "SELL", p, t["s"], "GTC")
-                oid = res.get("orderID") or res.get("id") if res else None
-                if oid:
-                    orders.append({"order_id": oid, "shares": t["s"], "price": p, "multiplier": t["m"]})
-            except Exception as e:
-                logger.error("tp_fail", pid=pid, error=str(e), price=p, shares=t["s"])
-        
-        if orders:
-            self._resting_tp_orders[pid] = orders
-            logger.info("tp_ready", pid=pid, count=len(orders), targets=[{"shares": t["s"], "price": p} for t in targets])
 
     async def _persist_tracking_data(self, pid: str, tid: str) -> None:
         """Save P&L state to DB notes."""
@@ -688,13 +537,15 @@ class PositionManager:
                         )
         except: pass
 
-    async def _recover_no_token_id(self, mid: str, pid: str) -> Optional[str]:
+    async def _recover_target_token_id(self, mid: str, pid: str, side: str) -> Optional[str]:
         """Heal missing Token ID."""
         if not self.gamma: return None
         clob = await self.gamma.get_market_info(mid)
         if clob and "tokens" in clob:
+            target_outcome = "Yes" if side == "YES" else "No"
             for t in clob["tokens"]:
-                if t.get("outcome") == "No":
+                outcome = str(t.get("outcome", "")).strip()
+                if outcome.lower() == target_outcome.lower():
                     tid = t.get("token_id")
                     await update_position_notes(self.db, pid, tid, paper=self._paper)
                     return tid

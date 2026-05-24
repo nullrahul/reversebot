@@ -45,7 +45,9 @@ CREATE TABLE IF NOT EXISTS positions (
     close_reason        TEXT,
         -- TAKE_PROFIT/STOP_LOSS/RESOLUTION/MANUAL/KILL_SWITCH
     version_opened      TEXT,              -- bot version when opened
-    notes               TEXT
+    notes               TEXT,
+    max_price_seen      REAL,
+    min_price_seen      REAL
 );
 
 -- Partial unique index: prevent duplicate OPEN positions for the same market
@@ -70,7 +72,9 @@ CREATE TABLE IF NOT EXISTS paper_positions (
     realised_pnl        REAL,
     close_reason        TEXT,
     version_opened      TEXT,
-    notes               TEXT
+    notes               TEXT,
+    max_price_seen      REAL,
+    min_price_seen      REAL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_paper_positions_market_open

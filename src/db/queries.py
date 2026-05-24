@@ -206,6 +206,7 @@ async def create_position(
     bot_version: str,
     paper: bool = False,
     notes: Optional[str] = None,
+    side: str = 'NO',
 ) -> str:
     """
     Create a new position with status PENDING.
@@ -218,18 +219,22 @@ async def create_position(
         f"""
         INSERT INTO {table} (
             position_id, market_id, side, entry_price, size_usdc,
-            shares_bought, order_status, opened_at, version_opened, notes
-        ) VALUES (?, ?, 'NO', ?, ?, ?, 'PENDING', ?, ?, ?)
+            shares_bought, order_status, opened_at, version_opened, notes,
+            max_price_seen, min_price_seen
+        ) VALUES (?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?, ?, ?)
         """,
         (
             position_id,
             market_id,
+            side,
             entry_price,
             size_usdc,
             shares_bought,
             int(time.time()),
             bot_version,
             notes,
+            entry_price,
+            entry_price,
         ),
     )
     await db.commit()
@@ -270,6 +275,22 @@ async def update_position_notes(
     await db.execute(
         f"UPDATE {table} SET notes = ? WHERE position_id = ?",
         (notes, position_id),
+    )
+    await db.commit()
+
+
+async def update_position_min_max_prices(
+    db: aiosqlite.Connection,
+    position_id: str,
+    min_price: float,
+    max_price: float,
+    paper: bool = False,
+) -> None:
+    """Update tracking for lowest and highest prices observed for this position."""
+    table = "paper_positions" if paper else "positions"
+    await db.execute(
+        f"UPDATE {table} SET min_price_seen = ?, max_price_seen = ? WHERE position_id = ?",
+        (min_price, max_price, position_id),
     )
     await db.commit()
 
@@ -321,6 +342,25 @@ async def has_traded_market(
     )
     row = await cursor.fetchone()
     return bool(row)
+
+
+async def get_last_traded_market_close_times(
+    db: aiosqlite.Connection, paper: bool = False
+) -> List[dict]:
+    """
+    Get the question, slug, and closes_at of all traded markets to find the last trade close time.
+    """
+    table = "paper_positions" if paper else "positions"
+    cursor = await db.execute(
+        f"""
+        SELECT m.question, m.slug, m.closes_at
+        FROM {table} p
+        JOIN markets m ON p.market_id = m.market_id
+        """
+    )
+    rows = await cursor.fetchall()
+    return [dict(r) for r in rows]
+
 
 
 
