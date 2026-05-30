@@ -12,6 +12,7 @@ class RejectionLogger:
     def __init__(self, db_path: str = "data/rejections_rd.db"):
         self.db_path = db_path
         self._db: Optional[aiosqlite.Connection] = None
+        self._last_logged: Dict[tuple, float] = {}  # (market_id, primary_reason) -> timestamp
 
     async def init(self):
         """Initialize the rejections database and schema."""
@@ -41,7 +42,22 @@ class RejectionLogger:
         failed_checks: List[str], 
         market_data: Dict[str, Any]
     ):
-        """Log a rejected signal with full verbose context."""
+        """Log a rejected signal with full verbose context, rate-limited to once every 5 minutes."""
+        now = time.time()
+        cache_key = (market_id, primary_reason)
+        
+        # Rate-limiting: only write to DB if 5 minutes (300s) have passed since the last identical rejection
+        last_time = self._last_logged.get(cache_key, 0.0)
+        if now - last_time < 300.0:
+            return  # Skip duplicate writing to prevent database bloat
+
+        # Record this log attempt
+        self._last_logged[cache_key] = now
+
+        # Prune old cache entries to keep memory usage minimal (keeps under 1000 entries)
+        if len(self._last_logged) > 1000:
+            self._last_logged = {k: v for k, v in self._last_logged.items() if now - v < 300.0}
+
         if not self._db:
             await self.init()
             
@@ -57,7 +73,7 @@ class RejectionLogger:
                 primary_reason,
                 json.dumps(failed_checks),
                 json.dumps(market_data),
-                int(time.time())
+                int(now)
             )
         )
         await self._db.commit()

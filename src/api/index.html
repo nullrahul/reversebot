@@ -229,7 +229,7 @@
   .badge-win { background: rgba(0,214,143,0.12); color: var(--green); padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 600; }
   .badge-loss { background: rgba(255,77,109,0.12); color: var(--red); padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 600; }
   .badge-open { background: rgba(108,99,255,0.12); color: #a5a0ff; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 600; }
-  .market-name { max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .market-name { max-width: 600px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .empty-state { text-align: center; padding: 36px 20px; color: var(--text-muted); font-size: 0.88rem; }
 
   /* ── Right Sidebar ── */
@@ -343,7 +343,7 @@
 <!-- Header -->
 <header>
   <div class="header-left">
-    <div class="logo-text">Reverse<span>Bot</span></div>
+    <div id="header-title" class="logo-text">Reverse<span>Bot</span></div>
     <div id="mode-badge" class="mode-badge mode-paper">PAPER</div>
   </div>
   <div class="header-right">
@@ -354,13 +354,12 @@
 </header>
 
 <main>
-  <!-- Control Bar -->
   <div class="control-bar">
     <button class="btn btn-start" onclick="controlEngine('start')">▶ Start Engine</button>
     <button class="btn btn-stop" onclick="controlEngine('stop')">⏸ Stop Engine</button>
     <button class="btn btn-kill" onclick="openKillModal()">☠ Kill Switch</button>
     <button class="btn btn-config" onclick="toggleConfig()">⚙ Parameters</button>
-    <button class="btn" style="background: #3b82f6;" onclick="window.location.href=window.location.protocol + '//' + window.location.hostname + ':3001'">🧪 R&D (15m Crypto)</button>
+    <button id="rd-btn" class="btn" style="background: rgba(108,99,255,0.15); color: #a5a0ff; border: 1px solid rgba(108,99,255,0.3); margin-left: 10px;" onclick="window.location.href=window.location.protocol + '//' + window.location.hostname + '/rd/'">🧪 R&D Dashboard</button>
   </div>
 
   <!-- Stats -->
@@ -393,10 +392,10 @@
         <div class="table-scroll">
           <table>
             <thead>
-              <tr><th>Market</th><th>Entry</th><th>Live No</th><th>Live Yes</th><th>P&L</th><th>Shares</th><th>Vol (24h)</th><th>Actions</th></tr>
+              <tr><th>Market</th><th>Side</th><th>Timer</th><th>Entry</th><th>Live</th><th>P&L</th><th>Shares</th><th>Vol (24h)</th><th>Actions</th></tr>
             </thead>
             <tbody id="pos-table-body">
-              <tr><td colspan="8" class="empty-state">No open positions</td></tr>
+              <tr><td colspan="9" class="empty-state">No open positions</td></tr>
             </tbody>
           </table>
         </div>
@@ -411,10 +410,10 @@
         <div class="table-scroll">
           <table>
             <thead>
-              <tr><th>Market</th><th>Entry</th><th>Exit</th><th>Shares</th><th>P&L</th><th>Reason</th><th>Result</th><th></th></tr>
+              <tr><th>Market</th><th>Side</th><th>Entry</th><th>Exit</th><th>P&L</th><th>Reason</th><th>Result</th><th></th></tr>
             </thead>
             <tbody id="hist-table-body">
-              <tr><td colspan="8" class="empty-state">No closed trades yet</td></tr>
+              <tr><td colspan="9" class="empty-state">No closed trades yet</td></tr>
             </tbody>
           </table>
         </div>
@@ -440,7 +439,10 @@
 let API_KEY = localStorage.getItem('rb_key') || '';
 let ws = null;
 let pnlChart = null;
-const BASE = window.location.origin;
+
+// Dynamically handle if we are served under a reverse proxy like /rd/
+const PATH = window.location.pathname.replace(/\/$/, ""); 
+const BASE = window.location.origin + PATH;
 
 // ── Login ────────────────────────────────────────────
 function login() {
@@ -485,7 +487,9 @@ function init() {
 // ── WebSocket ─────────────────────────────────────────
 function connectWS() {
   const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  ws = new WebSocket(`${proto}://${window.location.host}/ws?key=${API_KEY}`);
+  // Include PATH if running under a proxy
+  let wsUrl = `${proto}://${window.location.host}${PATH}/ws?key=${API_KEY}`;
+  ws = new WebSocket(wsUrl);
   ws.onopen = () => {
     document.getElementById('status-dot').className = 'status-dot';
     document.getElementById('status-text').textContent = 'Connected';
@@ -551,14 +555,17 @@ function updatePositions(positions) {
   }
   tbody.innerHTML = positions.map(p => {
     const entry = parseFloat(p.entry_price || 0);
+    const side = p.side || 'NO';
     const liveNo = parseFloat(p.live_no || 0);
     const liveYes = parseFloat(p.live_yes || 0);
+    const liveBought = parseFloat(p.live_bought_price || (side === 'YES' ? liveYes : liveNo));
     const vol = parseFloat(p.total_volume || 0);
     const shares = parseFloat(p.shares_bought || 0);
     const timeLeft = p.time_left_str || '—';
     
     let pnlHtml = '<span class="neutral">—</span>';
-    if (p.live_pnl !== undefined) {
+    // Fix: d["live_pnl"] is sent from dashboard.py, use it directly
+    if (p.live_pnl !== undefined && p.live_pnl !== null) {
       const pnl = parseFloat(p.live_pnl);
       const size = parseFloat(p.size_usdc || 1);
       const pct = (pnl / size * 100).toFixed(2);
@@ -570,18 +577,19 @@ function updatePositions(positions) {
     const volStr = vol > 1000 ? (vol/1000).toFixed(1) + 'k' : vol.toFixed(0);
     const pid = p.position_id;
     
+    const sideHtml = side === 'YES' ? '<span class="badge-win">YES</span>' : '<span class="badge-loss">NO</span>';
+
     return `<tr>
       <td><div class="market-name" title="${p.question || ''}">${name}${p.question && p.question.length > 50 ? '...' : ''}</div></td>
+      <td>${sideHtml}</td>
       <td><span style="color:var(--text-dim); font-variant-numeric: tabular-nums;">${timeLeft}</span></td>
       <td>$${entry.toFixed(4)}</td>
-      <td>${liveNo > 0 ? '$' + liveNo.toFixed(4) : '⌛'}</td>
-      <td>${liveYes > 0 ? '$' + liveYes.toFixed(4) : '⌛'}</td>
+      <td style="font-variant-numeric: tabular-nums; font-weight:600; color:var(--accent)">$${liveBought.toFixed(4)}</td>
       <td>${pnlHtml}</td>
       <td>${shares.toFixed(2)}</td>
       <td>$${volStr}</td>
       <td>
         <div style="display:flex;gap:6px;">
-          <button class="btn-apply" style="padding:4px 6px; border-color:var(--border)" onclick="promptTPSL('${pid}')">⚙️</button>
           <button class="btn-apply error" style="padding:4px 6px" onclick="closePos('${pid}')">Close</button>
         </div>
       </td>
@@ -605,29 +613,14 @@ async function closePos(id) {
   }
 }
 
-async function promptTPSL(id) {
-  const tp = prompt("Enter TP Multiplier (e.g. 3.0 for 300%):", "3.0");
-  if (!tp) return;
-  const sl = prompt("Enter SL Multiplier (e.g. 0.5 for -50% loss limit):", "0.5");
-  if (!sl) return;
-  
-  try {
-    const res = await apiFetch(`/api/positions/${id}/tpsl`, {
-      method: 'POST',
-      body: JSON.stringify({tp_multiplier: parseFloat(tp), sl_multiplier: parseFloat(sl)})
-    });
-    showToast(res.message, 'green');
-  } catch(e) {
-    showToast('Error: ' + e.message, 'red');
-  }
-}
+
 
 // ── History ───────────────────────────────────────────
 async function loadHistory() {
   const history = await apiFetch('/api/history?limit=30');
   const tbody = document.getElementById('hist-table-body');
   if (!history.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No closed trades yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No closed trades yet</td></tr>';
     return;
   }
   tbody.innerHTML = history.map(h => {
@@ -636,11 +629,13 @@ async function loadHistory() {
     const pnlCls = isWin ? 'positive' : 'negative';
     const name = (h.question || h.market_id || '—').substring(0, 45);
     const closedAt = h.closed_at ? new Date(h.closed_at * 1000).toLocaleDateString() : '—';
+    const side = h.side || 'NO';
+    const sideHtml = side === 'YES' ? '<span class="badge-win">YES</span>' : '<span class="badge-loss">NO</span>';
     return `<tr>
       <td><div class="market-name" title="${h.question || ''}">${name}${h.question && h.question.length > 45 ? '...' : ''}</div></td>
+      <td>${sideHtml}</td>
       <td>$${parseFloat(h.entry_price || 0).toFixed(4)}</td>
       <td>${h.exit_price ? '$' + parseFloat(h.exit_price).toFixed(4) : '—'}</td>
-      <td>${parseFloat(h.shares_bought || 0).toFixed(2)}</td>
       <td><span class="${pnlCls}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(4)}</span></td>
       <td><span style="color:var(--text-muted);font-size:0.78rem">${h.close_reason || '—'}</span></td>
       <td><span class="${isWin ? 'badge-win' : 'badge-loss'}">${isWin ? 'WIN' : 'LOSS'}</span></td>
@@ -716,42 +711,49 @@ async function loadPnlSeries() {
 
 // ── Config ────────────────────────────────────────────
 const CONFIG_META = {
-  yes_bias_threshold: { label: 'Yes Bias Threshold', min: 0.5, max: 0.99, step: 0.01 },
-  yes_bias_max_threshold: { label: 'Yes Max (cap)', min: 0.8, max: 0.99, step: 0.01 },
-  min_volume_24h_usdc: { label: 'Min 24h Volume ($)', min: 100, max: 10000, step: 100 },
-  min_time_to_close_hours: { label: 'Min Hours to Close', min: 1, max: 48, step: 1 },
-  max_time_to_close_days: { label: 'Max Days to Close', min: 1, max: 30, step: 1 },
   position_size_usdc: { label: 'Position Size ($)', min: 1, max: 50, step: 0.5 },
   max_open_positions: { label: 'Max Open Positions', min: 1, max: 20, step: 1 },
   max_daily_loss_usdc: { label: 'Max Daily Loss ($)', min: 1, max: 200, step: 1 },
   max_total_exposure_usdc: { label: 'Max Total Exposure ($)', min: 5, max: 500, step: 5 },
-  take_profit_multiplier: { label: 'Take Profit ×', min: 1.5, max: 10, step: 0.5 },
-  stop_loss_multiplier: { label: 'Stop Loss ×', min: 0.1, max: 0.9, step: 0.05 },
-  hold_to_resolution: { label: 'Hold to Resolution (1=Yes, 0=No)', min: 0, max: 1, step: 1 },
-  poll_interval_seconds: { label: 'Poll Interval (s)', min: 1, max: 300, step: 1 },
+  min_ev_threshold: { label: 'Min EV Threshold', min: 0.001, max: 0.5, step: 0.005 },
+  global_cooldown: { label: 'Global Cooldown (s)', min: 0, max: 600, step: 10 },
+  hold_to_resolution: { label: 'Hold to Resolution (1=On, 0=Off)', min: 0, max: 1, step: 1 },
+  max_no_ask_multiplier: { label: 'Max No Ask Multiplier', min: 1.0, max: 2.0, step: 0.05 },
+  high_vol_ask_multiplier: { label: 'High Vol Ask Mult', min: 1.0, max: 2.5, step: 0.05 },
+  high_vol_assets: { label: 'High Vol Assets (csv)', type: 'text' },
+  max_spread_pct_of_ask: { label: 'Max Spread % of Ask', min: 0.1, max: 1.0, step: 0.05 },
+  short_window_min_seconds_to_close: { label: 'Min Secs to Close', min: 5, max: 300, step: 5 },
+  min_seconds_to_close_pre_entry: { label: 'Min Pre-Entry Secs', min: 5, max: 600, step: 5 },
+  early_yes_bias_max: { label: 'Early Phase Yes Max', min: 0.5, max: 1.0, step: 0.01 },
+  mid_yes_bias_max: { label: 'Mid Phase Yes Max', min: 0.5, max: 1.0, step: 0.01 },
+  late_yes_bias_max: { label: 'Late Phase Yes Max', min: 0.5, max: 1.0, step: 0.01 },
 };
+
 
 async function loadConfig() {
   const cfg = await apiFetch('/api/config');
   const body = document.getElementById('config-body');
   body.innerHTML = Object.entries(cfg).map(([key, val]) => {
     const meta = CONFIG_META[key] || { label: key };
+    const displayVal = typeof val === "boolean" ? (val ? 1 : 0) : val;
+    const isText = meta.type === 'text';
+    const inputType = isText ? 'text' : 'number';
     return `
     <div class="config-row">
       <div class="config-label">${meta.label}</div>
       <div class="config-val-group">
-        <input class="config-input" id="cfg-${key}" type="number"
-          value="${val}" min="${meta.min}" max="${meta.max}" step="${meta.step || 0.01}">
-        <button class="btn-apply" id="btn-${key}" onclick="applyConfig('${key}')">Apply</button>
+        <input class="config-input" id="cfg-${key}" type="${inputType}"
+          value="${displayVal}" min="${meta.min || 0}" max="${meta.max || 100}" step="${meta.step || 0.01}">
+        <button class="btn-apply" id="btn-${key}" onclick="applyConfig('${key}', ${isText})">Apply</button>
       </div>
     </div>`;
   }).join('');
 }
 
-async function applyConfig(key) {
+async function applyConfig(key, isText=false) {
   const input = document.getElementById(`cfg-${key}`);
   const btn = document.getElementById(`btn-${key}`);
-  const value = parseFloat(input.value);
+  const value = isText ? input.value : parseFloat(input.value);
   btn.textContent = '...';
   btn.disabled = true;
   try {
@@ -812,7 +814,21 @@ function showToast(msg, type = '') {
 }
 
 // ── Boot ─────────────────────────────────────────────
+function initDynamicUI() {
+  if (window.location.pathname.startsWith('/rd')) {
+    document.title = "R&D Bot - Dashboard";
+    document.getElementById('header-title').innerHTML = 'R&D<span>Bot</span> <span style="font-size:0.6em;color:var(--text-muted);font-weight:normal;">15m Crypto</span>';
+    const btn = document.getElementById('rd-btn');
+    btn.innerHTML = '🏠 Main Dashboard';
+    btn.style.background = 'rgba(255,255,255,0.05)';
+    btn.style.color = '#fff';
+    btn.style.border = '1px solid rgba(255,255,255,0.2)';
+    btn.onclick = () => window.location.href = window.location.protocol + '//' + window.location.host + '/';
+  }
+}
+
 window.onload = () => {
+  initDynamicUI();
   if (API_KEY) {
     apiFetch('/api/stats').then(() => {
       document.getElementById('login-overlay').classList.add('hidden');

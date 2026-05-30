@@ -31,6 +31,7 @@ from src.db.queries import (
     get_daily_realised_loss,
     log_scan,
     log_event,
+    update_position_min_max_prices,
 )
 
 
@@ -48,6 +49,7 @@ async def db():
 
 def _sample_market(market_id: str = "0xtest123", **overrides) -> dict:
     """Create a sample market dict for testing."""
+    import time
     base = {
         "market_id": market_id,
         "question": "Will BTC hit 100k?",
@@ -57,7 +59,7 @@ def _sample_market(market_id: str = "0xtest123", **overrides) -> dict:
         "yes_volume_24h": 1500.0,
         "total_volume": 50000.0,
         "resolution_source": "oracle",
-        "closes_at": 1735689600,
+        "closes_at": int(time.time()) + 86400,
         "is_flagged": 0,
         "flag_reason": None,
         "last_seen_above_threshold": None,
@@ -192,7 +194,7 @@ class TestPositions:
 
     @pytest.mark.asyncio
     async def test_close_position(self, db):
-        await upsert_market(db, _sample_market())
+        await upsert_market(db, _sample_market(closes_at=1735689600))
         pid = await create_position(db, "0xtest123", 0.15, 15.0, 100.0, "v0.1.0")
         await update_position_status(db, pid, "OPEN")
         await close_position(db, pid, 0.45, 29.10, "TAKE_PROFIT")
@@ -202,6 +204,8 @@ class TestPositions:
         assert pos["close_reason"] == "TAKE_PROFIT"
         assert pos["exit_price"] == 0.45
         assert pos["realised_pnl"] == 29.10
+        assert pos["resolution_delay"] is not None
+        assert pos["resolution_delay"] == pos["closed_at"] - 1735689600
 
     @pytest.mark.asyncio
     async def test_partial_unique_index_prevents_duplicates(self, db):
@@ -260,6 +264,26 @@ class TestPositions:
         assert abs(wrong_shares * entry_price - size_usdc) > 0.001, (
             "The wrong calculation should NOT satisfy the invariant"
         )
+
+    @pytest.mark.asyncio
+    async def test_min_max_prices_tracking(self, db):
+        """Verify min/max price columns are initialized on creation and updatable."""
+        await upsert_market(db, _sample_market())
+        pid = await create_position(db, "0xtest123", 0.48, 15.0, 31.25, "v0.1.0")
+        
+        from src.db.queries import get_position
+        pos = await get_position(db, pid)
+        # Check initial values are equal to entry price
+        assert pos["max_price_seen"] == 0.48
+        assert pos["min_price_seen"] == 0.48
+        
+        # Update prices
+        await update_position_min_max_prices(db, pid, 0.42, 0.55)
+        
+        pos = await get_position(db, pid)
+        assert pos["min_price_seen"] == 0.42
+        assert pos["max_price_seen"] == 0.55
+
 
 
 # ---------------------------------------------------------------------------
