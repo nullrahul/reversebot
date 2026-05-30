@@ -26,6 +26,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import aiohttp
 
+from src.auth.l1_auth import L1Auth
 from src.auth.l2_auth import L2Auth
 from src.api.rate_limiter import RateLimiter
 from src.exceptions import TransientNetworkError, PermanentApiError
@@ -49,11 +50,13 @@ class ClobClient:
         clob_api_url: str = "https://clob.polymarket.com",
         rate_limiter: Optional[RateLimiter] = None,
         paper_trade: bool = True,
+        l1_auth: Optional[L1Auth] = None,
     ):
         self._auth = auth
         self._base_url = clob_api_url.rstrip("/")
         self._rate_limiter = rate_limiter
         self._paper_trade = paper_trade
+        self._l1_auth = l1_auth
         self._paper_orders = {}  # Track pending paper trades
         self.ws = None           # Reference for price auditing
         self._session: Optional[aiohttp.ClientSession] = None
@@ -226,9 +229,10 @@ class ClobClient:
         price: float,
         size: float,
         order_type: str = "FOK",
+        verifying_contract: str = "0xE111180000d2663C0091e4f400237545B87B996B",
     ) -> Optional[Dict]:
         """
-        Place an order on the CLOB.
+        Place a V2 order on the CLOB.
 
         ENFORCED: Only FOK orders are accepted.
         An assertion will raise if any other order type is attempted.
@@ -239,6 +243,7 @@ class ClobClient:
             price: Limit price
             size: Number of shares (NOT USDC amount)
             order_type: Must be "FOK" — raises AssertionError otherwise
+            verifying_contract: EIP-712 verifyingExchange contract address
 
         Returns:
             Order response dict if accepted, None if rejected/error
@@ -258,22 +263,87 @@ class ClobClient:
         if self._paper_trade:
             return self._simulate_paper_order(token_id, side, price, size, order_type)
 
+        if not self._l1_auth:
+            raise ValueError(
+                "CRITICAL: L1Auth is required for live order placement. "
+                "Initialize ClobClient with l1_auth to sign orders."
+            )
+
+        import random
+        salt = int(random.randint(1, 2**32 - 1))
+
+        # Checksum addresses
+        maker = self._auth._address
+        signer = self._l1_auth.address
+
+        # Calculate makerAmount and takerAmount in atomic units (6 decimals)
+        if side.upper() == "BUY":
+            maker_amount = int(size * price * 10**6)
+            taker_amount = int(size * 10**6)
+        else:
+            maker_amount = int(size * 10**6)
+            taker_amount = int(size * price * 10**6)
+
+        # Adjust timestamp using server time in seconds, converted to milliseconds
+        adjusted_seconds = float(self._auth._get_timestamp())
+        timestamp = int(adjusted_seconds * 1000)
+
+        # Prepare order message for EIP-712 signing
+        order_to_sign = {
+            "salt": str(salt),
+            "maker": maker,
+            "signer": signer,
+            "tokenId": token_id,
+            "makerAmount": str(maker_amount),
+            "takerAmount": str(taker_amount),
+            "side": 0 if side.upper() == "BUY" else 1,
+            "signatureType": 1,  # standard EOA
+            "timestamp": str(timestamp),
+            "metadata": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "builder": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        }
+
+        try:
+            signature = self._l1_auth.sign_order(order_to_sign, verifying_contract=verifying_contract)
+        except Exception as e:
+            logger.error("order_signing_failed", error=str(e), message="Failed to sign V2 order via L1Auth")
+            return None
+
         order_body = {
-            "tokenID": token_id,
-            "side": side,
-            "price": str(price),
-            "size": str(int(size)),  # Polymarket uses integer sizes
-            "type": order_type,
+            "order": {
+                "salt": str(salt),
+                "maker": maker,
+                "signer": signer,
+                "taker": "0x0000000000000000000000000000000000000000",
+                "tokenId": token_id,
+                "makerAmount": str(maker_amount),
+                "takerAmount": str(taker_amount),
+                "expiration": "0",
+                "nonce": "0",
+                "feeRateBps": "0",
+                "side": side.upper(),
+                "signatureType": 1,
+                "timestamp": str(timestamp),
+                "metadata": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "builder": "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "signature": signature,
+            },
+            "owner": self._auth._api_key,
+            "orderType": order_type,
+            "postOnly": False
         }
 
         logger.info(
-            "placing_order",
+            "placing_order_v2",
             token_id=token_id,
             side=side,
             price=price,
             size=size,
             order_type=order_type,
-            message=f"Placing {order_type} {side} order: {size} shares @ {price}",
+            maker_amount=maker_amount,
+            taker_amount=taker_amount,
+            timestamp=timestamp,
+            message=f"Placing V2 {order_type} {side} order: {size} shares @ {price}",
         )
 
         status, data = await self._request("POST", "/order", body=order_body, is_order=True)

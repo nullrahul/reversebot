@@ -30,6 +30,18 @@
 
 ## Change History
 
+### [v3.46-clob-v2-upgrade] - 2026-05-30 15:30:00 IST (2026-05-30 10:00:00 UTC)
+- **Timestamp:** 2026-05-30T15:30:00+05:30 (2026-05-30T10:00:00Z)
+- **Action Taken:** Upgraded order signing to Polymarket CLOB V2 EIP-712 standard inside [l1_auth.py](file:///Users/rahulkumar/Documents/reversebot/src/auth/l1_auth.py) and integrated V2 order body structure and EIP-712 order signing inside `place_order()` in [clob_client.py](file:///Users/rahulkumar/Documents/reversebot/src/api/clob_client.py). Passed `l1_auth` dynamically inside [main.py](file:///Users/rahulkumar/Documents/reversebot/src/main.py) and [wallet_balance.py](file:///Users/rahulkumar/Documents/reversebot/src/wallet_balance.py).
+- **The Problem:** The user noted that the token contract ID and EIP-712 order structure may have been changed by Polymarket in recent updates. Indeed, Polymarket's V2 exchange upgrade changed the verifyingContract, EIP-712 order schema (introducing timestamp, metadata, and builder, and removing taker, nonce, expiration, and feeRateBps), and migrated the collateral token to pUSD.
+- **The Root Cause:** The legacy codebase had a mock-like or V1 EIP-712 Order schema definition that was never called during order placement, and the legacy `/order` payload structure did not construct or sign orders at all. This would have caused 100% of live trades to fail with `400 Bad Request` or `401 Unauthorized` rejections when running in real-money live production mode (`PAPER_TRADE=false`).
+- **The Solution:** Fully implemented CLOB V2 order signing:
+  1. Updated `sign_order` in `l1_auth.py` to match the exact V2 EIP-712 Order typed data structure and the production Exchange verifying contract default (`0xE111180000d2663C0091e4f400237545B87B996B` for standard binary markets), utilizing `to_checksum_address` for proper hex address normalization and prepending `0x` to ensure standard hex signature format.
+  2. Overhauled `place_order` in `clob_client.py` to accept `l1_auth` in `__init__`, dynamically generate salts and precise server-time-adjusted millisecond timestamps, calculate atomic `makerAmount` and `takerAmount` (6-decimal format) based on trade side (`BUY` vs `SELL`), sign the structure, and submit the fully compliant V2 JSON POST payload to `/order`.
+  3. Added new comprehensive unit tests to `test_auth.py` verifying that L1Auth generates compliant signatures for the new V2 typed structure.
+  4. Updated `main.py` and `wallet_balance.py` to seamlessly forward L1Auth instances.
+  All 84 unit tests verified passing.
+
 ### [v3.45-fok-retry-cascade] - 2026-05-30 14:43:00 IST (2026-05-30 09:13:00 UTC)
 - **Timestamp:** 2026-05-30T14:43:00+05:30 (2026-05-30T09:13:00Z)
 - **Action Taken:** Modified [position_mgr.py](file:///Users/rahulkumar/Documents/reversebot/src/strategy/position_mgr.py) and [decision.py](file:///Users/rahulkumar/Documents/reversebot/src/strategy/decision.py) to implement a **Dynamic FOK Retry Cascade Loop** strictly for Reversal/Recovery Trades (`streak_depth >= 3`). Added targeted unit test `test_fok_cascade_retry_success_reversal` to [test_position_mgr.py](file:///Users/rahulkumar/Documents/reversebot/tests/test_position_mgr.py).

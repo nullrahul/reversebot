@@ -21,8 +21,13 @@ async def check_proxy_balance():
     print("="*50 + "\n")
 
     try:
-        # Load configuration from .env
-        config = load_config()
+        # Load configuration from .env with fallback
+        env_file = ".env"
+        if len(sys.argv) > 1:
+            env_file = sys.argv[1]
+        elif Path(".env.rd").exists():
+            env_file = ".env.rd"
+        config = load_config(env_file)
         
         # Initialize L1 Auth to get the address
         l1 = L1Auth(config.private_key)
@@ -38,7 +43,7 @@ async def check_proxy_balance():
         )
         
         # Initialize Client (force paper_trade=False to hit real API balance)
-        client = ClobClient(l2, clob_api_url=config.clob_api_url, paper_trade=False)
+        client = ClobClient(l2, clob_api_url=config.clob_api_url, paper_trade=False, l1_auth=l1)
         
         print(f"  Wallet Address: {l2_address}")
         print("  Querying CLOB API for USDC (Asset ID: 215)...")

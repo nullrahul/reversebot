@@ -14,6 +14,7 @@ import time
 from typing import Optional, Tuple
 
 from eth_account import Account
+from eth_utils import to_checksum_address
 try:
     from eth_account.messages import encode_defunct, encode_typed_data
     
@@ -139,46 +140,65 @@ class L1Auth:
 
         return self._address, signature
 
-    def sign_order(self, order_data: dict) -> str:
+    def sign_order(self, order_data: dict, verifying_contract: str = "0xE111180000d2663C0091e4f400237545B87B996B") -> str:
         """
-        Sign an order with EIP-712 for CLOB submission.
+        Sign a V2 order with EIP-712 for CLOB submission.
 
         Args:
-            order_data: Order fields to sign
+            order_data: Order fields to sign (matching V2 types)
+            verifying_contract: The verifying contract address (defaults to standard V2 exchange)
 
         Returns:
             Hex signature string
         """
-        # Polymarket order signing uses specific EIP-712 types
-        # The exact structure depends on the CLOB API version
+        # Ensure verifying_contract is checksummed
+        contract_addr = to_checksum_address(verifying_contract)
+        
         typed_data = {
             "types": {
                 "EIP712Domain": [
                     {"name": "name", "type": "string"},
                     {"name": "version", "type": "string"},
                     {"name": "chainId", "type": "uint256"},
+                    {"name": "verifyingContract", "type": "address"},
                 ],
                 "Order": [
                     {"name": "salt", "type": "uint256"},
                     {"name": "maker", "type": "address"},
                     {"name": "signer", "type": "address"},
-                    {"name": "taker", "type": "address"},
                     {"name": "tokenId", "type": "uint256"},
                     {"name": "makerAmount", "type": "uint256"},
                     {"name": "takerAmount", "type": "uint256"},
-                    {"name": "expiration", "type": "uint256"},
-                    {"name": "nonce", "type": "uint256"},
-                    {"name": "feeRateBps", "type": "uint256"},
                     {"name": "side", "type": "uint8"},
                     {"name": "signatureType", "type": "uint8"},
+                    {"name": "timestamp", "type": "uint256"},
+                    {"name": "metadata", "type": "bytes32"},
+                    {"name": "builder", "type": "bytes32"},
                 ],
             },
             "primaryType": "Order",
             "domain": {
-                **POLY_DOMAIN,
+                "name": "Polymarket CTF Exchange",
+                "version": "2",
                 "chainId": self._chain_id,
+                "verifyingContract": contract_addr,
             },
-            "message": order_data,
+            "message": {
+                "salt": int(order_data["salt"]),
+                "maker": to_checksum_address(order_data["maker"]),
+                "signer": to_checksum_address(order_data["signer"]),
+                "tokenId": int(order_data["tokenId"]),
+                "makerAmount": int(order_data["makerAmount"]),
+                "takerAmount": int(order_data["takerAmount"]),
+                "side": int(order_data["side"]),
+                "signatureType": int(order_data["signatureType"]),
+                "timestamp": int(order_data["timestamp"]),
+                "metadata": order_data["metadata"],
+                "builder": order_data["builder"],
+            },
         }
 
-        return self.sign_eip712(typed_data)
+        sig = self.sign_eip712(typed_data)
+        if not sig.startswith("0x"):
+            sig = "0x" + sig
+        return sig

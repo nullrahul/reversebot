@@ -133,3 +133,32 @@ class TestL2Auth401Tracking:
         # This should log but NOT include the secret
         auth.log_auth_failure_details("GET", "/test", 401, "unauthorized")
         # If we get here without error, the method works
+
+
+from src.auth.l1_auth import L1Auth
+
+class TestL1AuthOrderSigning:
+
+    def test_l1_auth_signs_v2_order(self):
+        """L1Auth must successfully sign a V2 order returning a valid hex signature."""
+        private_key = "0x5f9a5e172ec8cfc17cce7f9094b4ac37c34d502ccfcdd22b9786b4541872aff3"
+        l1 = L1Auth(private_key)
+
+        order_data = {
+            "salt": "12345",
+            "maker": l1.address,
+            "signer": l1.address,
+            "tokenId": "729371089201948301",
+            "makerAmount": "5000000",  # $5.00 USDC
+            "takerAmount": "10000000",  # 10.0 shares
+            "side": 0,  # BUY
+            "signatureType": 1,
+            "timestamp": "1713398400000",
+            "metadata": "0x" + "0" * 64,
+            "builder": "0x" + "0" * 64,
+        }
+
+        sig = l1.sign_order(order_data)
+        assert isinstance(sig, str)
+        assert sig.startswith("0x")
+        assert len(sig) == 132  # 65 bytes = 130 hex chars + 0x prefix

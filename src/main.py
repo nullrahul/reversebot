@@ -420,6 +420,7 @@ async def main():
         clob_api_url=config.clob_api_url,
         rate_limiter=rate_limiter,
         paper_trade=config.paper_trade,
+        l1_auth=l1_auth,
     )
 
     ws_client = WebSocketClient()
