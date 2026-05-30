@@ -17,6 +17,7 @@ build/
 venv/
 .venv/
 env/
+venv_local/
 
 # IDE
 .vscode/
@@ -46,3 +47,4 @@ node_modules
 
 .gemini/
 gha-creds-*.json
+.env.rd

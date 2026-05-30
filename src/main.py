@@ -39,6 +39,7 @@ from src.api.rate_limiter import RateLimiter
 from src.api.gamma_client import GammaClient
 from src.api.clob_client import ClobClient
 from src.api.websocket import WebSocketClient
+from src.api.binance_ws import BinanceWSClient
 from src.strategy.scanner import MarketScanner
 from src.strategy.validator import SignalValidator
 from src.strategy.decision import DecisionEngine
@@ -124,6 +125,9 @@ class TradingEngine:
         except asyncio.CancelledError:
             pass
         self._task = None
+        
+        if hasattr(self.decision, "binance_ws") and self.decision.binance_ws:
+            await self.decision.binance_ws.stop()
         return True
 
     async def run(self):
@@ -135,6 +139,8 @@ class TradingEngine:
         await self.health_monitor.start()
         await self.scanner.start_discovery()
         await self.position_mgr.start()
+        if hasattr(self.decision, "binance_ws") and self.decision.binance_ws:
+            await self.decision.binance_ws.start()
         if self.ghost_guard:
             await self.ghost_guard.start()
 
@@ -143,6 +149,9 @@ class TradingEngine:
 
         try:
             last_scan_time = 0.0
+            last_resolution_check_time = 0.0
+            last_position_monitor_time = 0.0
+            last_regime_time = 0.0
             while not self.kill_switch.is_triggered:
                 try:
                     cycle_start = time.time()
@@ -152,24 +161,47 @@ class TradingEngine:
                     # all sub-engines (scanner, decision, PM, validator) see changes instantly
                     self.config.reload_from_disk()
 
-                    # ─── FAST LANE: MONITOR POSITIONS & SIGNALS (EVERY 1S) ───
-                    # Uses WebSocket cache, free of API rate limits
-                    await self.position_mgr.monitor_positions()
+                    # ─── FAST LANE: MONITOR POSITIONS & SIGNALS ───
+                    # Monitor active positions every 2.0 seconds to eliminate DB queries
+                    if cycle_start - last_position_monitor_time >= 2.0:
+                        last_position_monitor_time = cycle_start
+                        await self.position_mgr.monitor_positions()
                     
                     signals = await self.scanner.get_entry_signals()
+                    # A4: Position Manager Priority Logic - Sort YES signals before NO signals
+                    signals = sorted(signals, key=lambda s: 0 if s.get("target_side") == "YES" else 1)
                     orders_placed = 0
                     for signal_market in signals:
                         if self.kill_switch.is_triggered: break
-                        success, reason = await self.decision.process_signal(
-                            signal_market,
-                            no_token_id=signal_market.get("no_token_id"),
-                        )
+                        
+                        # Skip if already evaluated in this scan cycle
+                        market_id = signal_market.get("market_id")
+                        if market_id:
+                            # Flaw B Fix: Clear evaluated markets cache every 1.0 seconds instead of waiting for 5s REST scan count
+                            now_time = time.time()
+                            if not hasattr(self.decision, "_last_cache_clear_time"):
+                                self.decision._last_cache_clear_time = now_time
+                            if now_time - self.decision._last_cache_clear_time >= 1.0:
+                                self.decision._evaluated_markets.clear()
+                                self.decision._last_cache_clear_time = now_time
+                            if market_id in self.decision._evaluated_markets:
+                                continue
+                            self.decision._evaluated_markets.add(market_id)
+
+                        # Flaw A Fix: Wrap the entire signal evaluation in the global entry lock to serialize risk/exposure checks
+                        from src.strategy.decision import _global_entry_lock
+                        async with _global_entry_lock:
+                            success, reason = await self.decision.process_signal(
+                                signal_market,
+                                target_token_id=signal_market.get("target_token_id"),
+                                side=signal_market.get("target_side", "NO"),
+                            )
                         if success: orders_placed += 1
                         else: logger.info("position_rejected", market_id=signal_market.get("market_id"), reason=reason)
 
                     # ─── SLOW LANE: MARKET DISCOVERY (THROTTLED) ───
                     # Uses REST API calls, limited to 90/min
-                    discovery_interval = 20 # Seconds
+                    discovery_interval = 5.0 # Seconds
                     if cycle_start - last_scan_time >= discovery_interval:
                         last_scan_time = cycle_start
                         
@@ -187,11 +219,6 @@ class TradingEngine:
 
                         # Run scan cycle (Updates market list from Gamma)
                         scanned, flagged = await self.scanner.run_scan_cycle()
-                        
-                        # ─── New: Resolution Checker ───
-                        # Check if any open positions belong to markets that have resolved
-                        await self.position_mgr.check_resolutions()
-                        
                         self.last_scan_duration_ms = int((time.time() - cycle_start) * 1000)
 
                         # Log scan cycle
@@ -203,6 +230,52 @@ class TradingEngine:
                             orders_placed=orders_placed,
                             bot_version=self.config.bot_version,
                         )
+
+                    # ─── RESOLUTION CHECK LANE (THROTTLED) ───
+                    # Polled every 10 seconds to avoid API rate limits when positions are expiring
+                    resolution_interval = 10.0 # Seconds
+                    if cycle_start - last_resolution_check_time >= resolution_interval:
+                        last_resolution_check_time = cycle_start
+                        await self.position_mgr.check_resolutions()
+
+                    # ─── MARKET REGIME SNAPSHOT LANE (60s) ───
+                    regime_interval = 60.0 # Seconds
+                    if cycle_start - last_regime_time >= regime_interval:
+                        last_regime_time = cycle_start
+                        try:
+                            from src.db.queries import log_market_regime
+                            binance_ws = self.decision.binance_ws
+                            if binance_ws:
+                                btc_price = binance_ws.get_last_price("BTC")
+                                eth_price = binance_ws.get_last_price("ETH")
+                                
+                                cvd_60s_btc, cvd_5m_btc = binance_ws.get_cvd_metrics("BTC")
+                                cvd_60s_eth, cvd_5m_eth = binance_ws.get_cvd_metrics("ETH")
+                                
+                                rolling_spread_median = 0.005 # neutral default
+                                spread_multiplier = 1.0
+                                iv_proxy = 0.0
+                                label = "NORMAL"
+                                session = "UNKNOWN"
+                                
+                                await log_market_regime(
+                                    self.db,
+                                    symbol="BTC",
+                                    btc_price=btc_price,
+                                    eth_price=eth_price,
+                                    cvd_60s_btc=cvd_60s_btc,
+                                    cvd_60s_eth=cvd_60s_eth,
+                                    cvd_5m_btc=cvd_5m_btc,
+                                    cvd_5m_eth=cvd_5m_eth,
+                                    rolling_spread_median=rolling_spread_median,
+                                    spread_multiplier=spread_multiplier,
+                                    iv_proxy=iv_proxy,
+                                    label=label,
+                                    session=session
+                                )
+                                logger.info("market_regime_logged", btc_price=btc_price, eth_price=eth_price, cvd_btc_60s=cvd_60s_btc)
+                        except Exception as reg_err:
+                            logger.error("market_regime_logging_failed", error=str(reg_err))
 
                     # Check auth kill trigger
                     if self.l2_auth.should_kill:
@@ -351,6 +424,7 @@ async def main():
 
     ws_client = WebSocketClient()
     clob_client.ws = ws_client
+    binance_ws = BinanceWSClient()
     
     # ─── New: Init Rejection Logger ───
     rejection_logger = RejectionLogger(db_path="data/rejections_rd.db")
@@ -364,7 +438,7 @@ async def main():
     scanner = MarketScanner(runtime_config, gamma_client, ws_client, clob_client, db)
     validator = SignalValidator(runtime_config, clob_client, db, rejection_logger=rejection_logger)
     position_mgr = PositionManager(runtime_config, clob_client, db, ws_client=ws_client, gamma_client=gamma_client)
-    decision = DecisionEngine(runtime_config, validator, position_mgr, clob_client, db, rejection_logger=rejection_logger, scanner=scanner)
+    decision = DecisionEngine(runtime_config, validator, position_mgr, clob_client, db, rejection_logger=rejection_logger, scanner=scanner, binance_ws=binance_ws)
 
     # ─── Step 7: Init Risk ───
     kill_switch = KillSwitch(clob_client, ws_client, db, config.bot_version)
@@ -467,9 +541,9 @@ async def main():
     logger.info(
         "bot_running",
         mode=mode,
-        poll_interval=config.poll_interval_seconds,
-        message=f"Bot is LIVE — scanning every {config.poll_interval_seconds}s | Dashboard: :{dashboard_port}",
+        message=f"Bot is LIVE — WebSocket-driven 1s loop | Dashboard: :{dashboard_port}",
     )
+
 
     # ─── Main Execution ───
     try:
@@ -495,6 +569,8 @@ async def main():
         await health_monitor.stop()
         await scanner.stop_discovery()
         await position_mgr.stop()
+        if binance_ws:
+            await binance_ws.stop()
         if ghost_guard:
             await ghost_guard.stop()
         

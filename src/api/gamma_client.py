@@ -140,6 +140,75 @@ class GammaClient:
             logger.debug("server_time_sync_failed", error=str(e))
         return time.time()
 
+    async def fetch_daily_weekly_crypto_markets(self, limit: int = 1000) -> List[Dict[str, Any]]:
+        """
+        Fetches active markets matching 'Bitcoin' or 'Ethereum' with duration strictly less than 7 days.
+        """
+        markets = []
+        import re
+        from datetime import datetime
+        
+        offset = 0
+        while offset < limit:
+            params = {
+                "limit": 100,
+                "offset": offset,
+                "active": "true",
+                "closed": "false",
+                "order": "createdAt",
+                "ascending": "false",
+            }
+            data = await self._get("/markets", params=params)
+
+            if not data or not isinstance(data, list):
+                break
+
+            for raw_market in data:
+                q = raw_market.get("question", "")
+                if "Bitcoin" in q or "BTC" in q or "Ethereum" in q or "ETH" in q:
+                    # Filter out micro-markets (5m, 15m) by checking the time range in the title
+                    is_micro = False
+                    match = re.search(r'(\d{1,2}(?::\d{2})?\s*[AP]M)\s*-\s*(\d{1,2}(?::\d{2})?\s*[AP]M)\s*ET', q, re.I)
+                    if match:
+                        try:
+                            def to_mins(t_str):
+                                m_match = re.search(r'(\d{1,2}):?(\d{2})?\s*(AM|PM)', t_str, re.I)
+                                h, m = int(m_match.group(1)), int(m_match.group(2) or 0)
+                                if m_match.group(3).upper() == "PM" and h < 12: h += 12
+                                if m_match.group(3).upper() == "AM" and h == 12: h = 0
+                                return h * 60 + m
+                            start_m = to_mins(match.group(1))
+                            end_m = to_mins(match.group(2))
+                            duration = end_m - start_m
+                            if duration < 0: duration += 1440
+                            if duration <= 15:
+                                is_micro = True
+                        except: pass
+                    
+                    if not is_micro:
+                        ed = raw_market.get("endDate")
+                        if ed:
+                            try:
+                                import time
+                                ed_clean = re.sub(r'\.\d+', '', ed).replace('Z', '+00:00')
+                                e_dt = datetime.fromisoformat(ed_clean)
+                                time_to_close = e_dt.timestamp() - time.time()
+                                
+                                # Time to close: Max 7 days
+                                if 0 < time_to_close <= 7 * 24 * 3600:
+                                    parsed = self._parse_market(raw_market)
+                                    if parsed:
+                                        markets.append(parsed)
+                            except Exception:
+                                pass
+            
+            if len(data) < 100:
+                break
+            offset += 100
+
+        logger.info("daily_weekly_discovery_complete", count=len(markets))
+        return markets
+
     async def fetch_ephemeral_crypto_markets(self, limit: int = 5000) -> List[Dict[str, Any]]:
         """
         ULTIMATE FIX: Predictive Slug Hashing.

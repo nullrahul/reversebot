@@ -1,11 +1,10 @@
 """
-Market Scanner — Poll & Threshold Detection for Polymarket Reverse Bot.
+Market Scanner — Streak Momentum Poll & Discovery for Polymarket Reverse Bot.
 """
 
 import asyncio
 import re
 import time
-from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 from config.config import BotConfig
@@ -14,8 +13,6 @@ from src.api.websocket import WebSocketClient
 from src.db.queries import (
     upsert_market,
     get_market,
-    update_market_threshold_tracking,
-    reset_market_threshold_tracking,
 )
 from src.api.clob_client import ClobClient
 from src.logs.log_config import get_logger
@@ -30,14 +27,80 @@ class MarketScanner:
         self.clob = clob_client
         self.db = db
         self.tracked_markets: Dict[str, dict] = {}
-        self._dead_count: Dict[str, int] = {} # Safety: Grace period for missing markets
+        self._dead_count: Dict[str, int] = {}  # Safety: Grace period for missing markets
         self._discovery_task: Optional[asyncio.Task] = None
         self._should_run_discovery = False
-        # ── Price History for Velocity Filter (Change 7) ──
-        # Structure: {yes_token_id: deque of (timestamp, price) tuples}
-        self._price_history: Dict[str, list] = {}
+        
+        # Outcome cache (slug -> 'UP', 'DOWN', or '?')
+        self._outcome_cache: Dict[str, str] = {}
+
+        # Streak reset tracking registry: (symbol, window_minutes) -> last_traded_closes_at
+        self.last_traded_close_ts: Dict[Tuple[str, int], int] = {}
+        self.scan_count = 0
+        self._last_latency_check = 0.0
+        self.last_api_latency_ms = 0.0
+
+    def _get_market_key_info(self, market: dict) -> Tuple[str, int]:
+        """
+        Extract the symbol (e.g. 'BTC', 'ETH', 'SOL') and window size in minutes (e.g. 5, 15) from a market.
+        """
+        slug = (market.get("slug") or "").lower()
+        question = (market.get("question") or "").lower()
+        
+        # 1. Parse window minutes
+        window = market.get("window_minutes")
+        if not window:
+            if "-5m-" in slug or "5-minute" in question:
+                window = 5
+            elif "-15m-" in slug or "15-minute" in question:
+                window = 15
+            else:
+                window = 5 # default fallback
+                
+        # 2. Parse symbol
+        symbol = "BTC"
+        if "eth" in slug or "ethereum" in question or "eth" in question:
+            symbol = "ETH"
+        elif "sol" in slug or "solana" in question or "sol" in question:
+            symbol = "SOL"
+        elif "btc" in slug or "bitcoin" in question or "btc" in question:
+            symbol = "BTC"
+        else:
+            # Fallback to checking target config
+            for target in self.config.target_crypto_symbols:
+                if target.lower() in question or target.lower() in slug:
+                    symbol = target.upper()
+                    break
+                    
+        return symbol, window
+
+    async def _init_last_traded_close_times(self):
+        """
+        Query the database for all previously traded markets and initialize the
+        last_traded_close_ts mapping.
+        """
+        from src.db.queries import get_last_traded_market_close_times
+        try:
+            traded_markets = await get_last_traded_market_close_times(self.db, paper=self.config.paper_trade)
+            self.last_traded_close_ts = {}
+            for row in traded_markets:
+                q = row.get("question") or ""
+                slug = row.get("slug") or ""
+                closes_at = row.get("closes_at")
+                if closes_at:
+                    closes_at = int(closes_at)
+                    temp_m = {"question": q, "slug": slug}
+                    symbol, window = self._get_market_key_info(temp_m)
+                    key = (symbol, window)
+                    if key not in self.last_traded_close_ts or closes_at > self.last_traded_close_ts[key]:
+                        self.last_traded_close_ts[key] = closes_at
+            logger.info("initialized_last_traded_close_times", mapping=str(self.last_traded_close_ts))
+        except Exception as e:
+            logger.error("failed_to_init_last_traded_close_times", error=str(e))
+            self.last_traded_close_ts = {}
 
     async def start_discovery(self):
+        await self._init_last_traded_close_times()
         self._should_run_discovery = True
         self._discovery_task = asyncio.create_task(self._discovery_loop())
         logger.info("discovery_started")
@@ -46,15 +109,17 @@ class MarketScanner:
         self._should_run_discovery = False
         if self._discovery_task:
             self._discovery_task.cancel()
-            try: await self._discovery_task
-            except asyncio.CancelledError: pass
+            try:
+                await self._discovery_task
+            except asyncio.CancelledError:
+                pass
         logger.info("discovery_stopped")
 
     async def _discovery_loop(self):
         while self._should_run_discovery:
             try:
                 true_now = await self.gamma.get_true_now()
-                markets = await self.gamma.fetch_ephemeral_crypto_markets(limit=200)
+                markets = await self.gamma.fetch_ephemeral_crypto_markets()
 
                 valid_markets = {}
                 for m in markets:
@@ -63,15 +128,31 @@ class MarketScanner:
                         valid_markets[mid] = m
                 
                 new_ids = set(valid_markets.keys()) - set(self.tracked_markets.keys())
+                btc_price_open = None
+                if new_ids:
+                    try:
+                        import aiohttp
+                        async with aiohttp.ClientSession() as session:
+                            async with session.get("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT", timeout=aiohttp.ClientTimeout(total=5)) as resp:
+                                if resp.status == 200:
+                                    data = await resp.json()
+                                    btc_price_open = float(data.get("price", 0.0))
+                                    logger.info("fetched_btc_price_for_new_markets", btc_price=btc_price_open)
+                    except Exception as e:
+                        logger.error("failed_to_fetch_btc_price_for_new_markets", error=str(e))
+
                 for mid in new_ids:
                     m = valid_markets[mid]
-                    # --- ARCHITECTURAL UPGRADE: Token Verification ---
+                    
+                    # Verify Token Mapping
                     verified_m = await self._verify_token_mapping(m)
                     if not verified_m:
                         logger.error("token_verification_failed", market_id=mid, message="Skipping market due to unverified token IDs")
                         continue
                     
-                    m.update(verified_m) # Apply verified IDs
+                    m.update(verified_m)  # Apply verified IDs
+                    if btc_price_open:
+                        m["btc_price_at_market_open"] = btc_price_open
                     
                     self.tracked_markets[mid] = m
                     await upsert_market(self.db, m)
@@ -83,7 +164,8 @@ class MarketScanner:
                         condition_id=m.get("condition_id"), 
                         push_state=False
                     )
-                # --- NEW: Process Market Removal (With Grace Period) ---
+                        
+                # Process Market Removal (With Grace Period)
                 dead_ids = set(self.tracked_markets.keys()) - set(valid_markets.keys())
 
                 # Reset grace counter for markets that are currently valid
@@ -91,15 +173,15 @@ class MarketScanner:
                     self._dead_count.pop(mid, None)
 
                 for mid in dead_ids:
-                    # 1. Increment death counter
+                    # Increment death counter
                     self._dead_count[mid] = self._dead_count.get(mid, 0) + 1
 
-                    # 2. Only unsubscribe if missing for 3+ consecutive cycles (60 seconds)
+                    # Only unsubscribe if missing for 3+ consecutive cycles (30 seconds)
                     if self._dead_count[mid] < 3:
                         logger.debug("unsub_grace_period_active", market_id=mid, cycles=self._dead_count[mid])
                         continue
 
-                    # 3. SAFETY: Don't unsubscribe if we are currently holding a position!
+                    # SAFETY: Don't unsubscribe if we are currently holding a position!
                     from src.db.queries import has_open_position_for_market
                     still_holding = await has_open_position_for_market(self.db, mid, paper=self.config.paper_trade)
                     if not still_holding:
@@ -131,36 +213,6 @@ class MarketScanner:
             # RAM OPTIMIZED DISCOVERY: Only find new markets every 10s
             await asyncio.sleep(10)
 
-    def _get_current_et_minutes(self, now: int) -> int:
-        """Returns the current minute of the day in ET, handling DST automatically."""
-        import datetime
-        # Polymarket uses ET. We can use a simple offset but check for DST 
-        # (EDT is -4, EST is -5). Or better: just use the UTC timestamp 
-        # from Gamma to compare with closes_at.
-        utc_dt = datetime.datetime.fromtimestamp(now, tz=datetime.timezone.utc)
-        
-        # Simple Eastern Time conversion (approximate for April-Nov)
-        et_dt = utc_dt - datetime.timedelta(hours=4) 
-        return et_dt.hour * 60 + et_dt.minute
-
-    def _parse_time_to_minutes(self, time_str: str) -> int:
-        """Parses '1:20AM' or '11:00PM' into minutes of the day."""
-        try:
-            match = re.search(r'(\d{1,2}):(\d{2})\s*(AM|PM)', time_str, re.I)
-            if not match:
-                # Handle cases like '1AM' (no minutes)
-                match = re.search(r'(\d{1,2})\s*(AM|PM)', time_str, re.I)
-                if not match: return -1
-                h, ampm = int(match.group(1)), match.group(2).upper()
-                m = 0
-            else:
-                h, m, ampm = int(match.group(1)), int(match.group(2)), match.group(3).upper()
-            
-            if ampm == "PM" and h < 12: h += 12
-            if ampm == "AM" and h == 12: h = 0
-            return h * 60 + m
-        except: return -1
-
     def _should_track_market(self, market: Dict[str, Any], now_override: Optional[int] = None) -> bool:
         mid = market.get("market_id")
         if not market.get("accepting_orders"): return False
@@ -169,73 +221,232 @@ class MarketScanner:
         now = now_override if now_override is not None else int(time.time())
         closes_at = market.get("closes_at", 0)
         
-        # 1. Hard expiry guard
+        # Hard expiry guard (at least 60 seconds remaining to allow fast entries)
         if now > closes_at - 60: return False
 
-        # 2. ET Window Target Logic
+        # Only track configured target crypto symbols micro-markets (5m, 15m)
         q = market.get("question", "")
-        # Extract the ET time range e.g. "1:20AM-1:25AM ET"
-        match = re.search(r'(\d{1,2}(?::\d{2})?\s*[AP]M)\s*-\s*(\d{1,2}(?::\d{2})?\s*[AP]M)\s*ET', q, re.I)
-        if not match: return False
+        if "Up or Down" not in q: return False
 
-        start_str, end_str = match.group(1), match.group(2)
-        m_start = self._parse_time_to_minutes(start_str)
-        m_end = self._parse_time_to_minutes(end_str)
+        symbol_map = {
+            "BTC": ["BITCOIN", "BTC"],
+            "ETH": ["ETHEREUM", "ETH"],
+            "SOL": ["SOLANA", "SOL"],
+        }
         
-        if m_start == -1 or m_end == -1: return False
+        matched_any = False
+        q_upper = q.upper()
+        for sym in self.config.target_crypto_symbols:
+            sym_upper = sym.upper()
+            terms = symbol_map.get(sym_upper, [sym_upper])
+            if any(term in q_upper for term in terms):
+                matched_any = True
+                break
 
-        # ── TESTING FLAG: Temporarily restrict to 15-minute windows only ──
-        # Set "_TESTING_only_15min_windows": true in runtime_config_rd.json to enable.
-        # Set to false to re-enable 5-min markets. 5-min logic below is fully preserved.
-        window_duration_mins = m_end - m_start
-        only_15min = getattr(self.config, "_TESTING_only_15min_windows", False)
-        if only_15min and window_duration_mins != 15:
-            logger.debug(
-                "market_skipped_not_15min",
-                mid=mid,
-                q=q[:50],
-                window_mins=window_duration_mins,
-                message=f"[TESTING] Skipping {window_duration_mins}-min window (only_15min_windows=True)"
-            )
+        if not matched_any:
             return False
 
-        current_et_m = self._get_current_et_minutes(now)
-        
-        # Target windows: 
-        # - Current active window (e.g. it's 1:23, we want 1:20-1:25)
-        # - Upcoming window (e.g. it's 1:23, we want 1:25-1:30)
-        # FIX: Reduced future window from 20 mins to 3 mins to prevent 
-        # locking into illiquid future markets which triggers false wicks.
-        is_relevant_window = (m_start <= current_et_m + 3) and (m_end >= current_et_m - 2)
-
-        if not is_relevant_window:
+        win_mins = market.get("window_minutes")
+        if win_mins not in (5, 15):
             return False
-            
-        logger.info("ACCEPTING_MARKET", mid=mid, q=q, closes_at=closes_at, et_m=current_et_m, window_mins=window_duration_mins)
+
+        logger.info("ACCEPTING_MARKET", mid=mid, q=q, closes_at=closes_at)
         return True
 
+    async def _get_binance_candle_data(self, coin: str, duration: int, start_time: int) -> Tuple[float, float, str, float]:
+        """
+        Fetch kline from Binance and calculate open, close, outcome, and delta_bps.
+        Returns: Tuple[open_price, close_price, outcome, delta_bps]
+        """
+        symbol = f"{coin.upper()}USDT"
+        interval = f"{duration}m"
+        start_time_ms = start_time * 1000
+        
+        url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&startTime={start_time_ms}&limit=1"
+        logger.info("fetching_binance_candle_data", symbol=symbol, interval=interval, start_time=start_time)
+        try:
+            session = await self.gamma._ensure_session()
+            async with session.get(url, timeout=10) as resp:
+                if resp.status == 200:
+                    klines = await resp.json()
+                    if klines and len(klines) > 0:
+                        k = klines[0]
+                        returned_start = int(k[0] // 1000)
+                        if abs(returned_start - start_time) > 10:
+                            logger.warning("binance_timestamp_mismatch", requested=start_time, returned=returned_start)
+                            return 0.0, 0.0, "?", 0.0
+                            
+                        open_price = float(k[1])
+                        close_price = float(k[4])
+                        outcome = "UP" if close_price > open_price else "DOWN"
+                        delta_bps = 0.0
+                        if open_price > 0:
+                            delta_bps = ((close_price - open_price) / open_price) * 10000.0
+                        logger.info("binance_candle_resolved", symbol=symbol, start_time=start_time, outcome=outcome, delta_bps=delta_bps)
+                        return open_price, close_price, outcome, delta_bps
+                logger.warning("binance_api_candle_error", status=resp.status, url=url)
+        except Exception as e:
+            logger.error("binance_candle_fetch_failed", symbol=symbol, start_time=start_time, error=str(e))
+        return 0.0, 0.0, "?", 0.0
+
+    async def _get_binance_outcome(self, coin: str, duration: int, start_time: int) -> str:
+        """
+        Fetch the outcome of a completed candle from the public Binance Klines API.
+        Returns: 'UP', 'DOWN', or '?'
+        """
+        # Safety check: Is the candle fully completed?
+        now = int(time.time())
+        if now < start_time + duration * 60:
+            logger.debug("binance_candle_not_yet_completed", coin=coin, start_time=start_time)
+            return "?"
+
+        _, _, outcome, _ = await self._get_binance_candle_data(coin, duration, start_time)
+        return outcome
+
+    async def _get_historical_outcomes(self, asset: str, duration: int, closes_at: int) -> dict:
+        """
+        Derive slugs for the last 6 completed markets and fetch their outcomes + deltas.
+        Returns: Dict containing out1..out6, sources, deltas, and combined source.
+        """
+        dur_secs = duration * 60
+        t1 = closes_at - (2 * dur_secs)
+        t2 = closes_at - (3 * dur_secs)
+        t3 = closes_at - (4 * dur_secs)
+        t4 = closes_at - (5 * dur_secs)
+        t5 = closes_at - (6 * dur_secs)
+        t6 = closes_at - (7 * dur_secs)
+        
+        asset_lower = asset.lower()
+        if 'bitcoin' in asset_lower or 'btc' in asset_lower:
+            coin = 'btc'
+        elif 'ethereum' in asset_lower or 'eth' in asset_lower:
+            coin = 'eth'
+        else:
+            return {
+                "out1": "?", "out2": "?", "out3": "?", "out4": "?", "out5": "?", "out6": "?",
+                "src1": "UNKNOWN", "src2": "UNKNOWN", "src3": "UNKNOWN", "src4": "UNKNOWN", "src5": "UNKNOWN", "src6": "UNKNOWN",
+                "delta1": 0.0, "delta2": 0.0, "delta3": 0.0, "delta4": 0.0, "delta5": 0.0, "delta6": 0.0,
+                "source": "UNKNOWN"
+            }
+            
+        slug1 = f"{coin}-updown-{duration}m-{t1}"
+        slug2 = f"{coin}-updown-{duration}m-{t2}"
+        slug3 = f"{coin}-updown-{duration}m-{t3}"
+        slug4 = f"{coin}-updown-{duration}m-{t4}"
+        slug5 = f"{coin}-updown-{duration}m-{t5}"
+        slug6 = f"{coin}-updown-{duration}m-{t6}"
+        
+        results = []
+        for slug, t_start in ((slug1, t1), (slug2, t2), (slug3, t3), (slug4, t4), (slug5, t5), (slug6, t6)):
+            if slug in self._outcome_cache and isinstance(self._outcome_cache[slug], dict):
+                results.append(self._outcome_cache[slug])
+                continue
+                
+            logger.info("fetching_historical_outcome", slug=slug)
+            outcome = "?"
+            source = "GAMMA"
+            delta_bps = 0.0
+            
+            try:
+                # 1. Try Gamma first
+                data = await self.gamma._get("/events", params={"slug": slug})
+                if data and isinstance(data, list) and len(data) > 0:
+                    markets = data[0].get("markets", [])
+                    if markets and len(markets) > 0:
+                        m = markets[0]
+                        closed = m.get("closed", False)
+                        if closed:
+                            op = m.get("outcomePrices")
+                            if op:
+                                import json
+                                op_list = json.loads(op) if isinstance(op, str) else op
+                                if op_list and len(op_list) > 0:
+                                    yes_final = float(op_list[0])
+                                    outcome = "UP" if yes_final > 0.5 else "DOWN"
+                                    source = "GAMMA"
+                                    # Fetch Binance candle details to log delta_bps even if Gamma resolved
+                                    _, _, _, delta_bps = await self._get_binance_candle_data(coin, duration, t_start)
+                                    
+                                    val = {"outcome": outcome, "source": source, "delta_bps": delta_bps}
+                                    if len(self._outcome_cache) >= 200 and slug not in self._outcome_cache:
+                                        try:
+                                            oldest_key = next(iter(self._outcome_cache))
+                                            del self._outcome_cache[oldest_key]
+                                            logger.debug("outcome_cache_pruned", evicted_key=oldest_key)
+                                        except Exception as cache_err:
+                                            logger.warning("failed_to_prune_outcome_cache", error=str(cache_err))
+                                    self._outcome_cache[slug] = val
+                                    results.append(val)
+                                    continue
+                
+                # 2. Fall back to Binance if Gamma unresolved
+                logger.info("gamma_outcome_missing_falling_back_to_binance", slug=slug, start_time=t_start)
+                _, _, b_outcome, b_delta = await self._get_binance_candle_data(coin, duration, t_start)
+                if b_outcome != "?":
+                    outcome = b_outcome
+                    source = "BINANCE_FALLBACK"
+                    delta_bps = b_delta
+                    
+                    val = {"outcome": outcome, "source": source, "delta_bps": delta_bps}
+                    if len(self._outcome_cache) >= 200 and slug not in self._outcome_cache:
+                        try:
+                            oldest_key = next(iter(self._outcome_cache))
+                            del self._outcome_cache[oldest_key]
+                            logger.debug("outcome_cache_pruned", evicted_key=oldest_key)
+                        except Exception as cache_err:
+                            logger.warning("failed_to_prune_outcome_cache", error=str(cache_err))
+                    self._outcome_cache[slug] = val
+                    results.append(val)
+                else:
+                    results.append({"outcome": "?", "source": "UNKNOWN", "delta_bps": 0.0})
+            except Exception as e:
+                logger.warning("failed_fetching_historical_outcome", slug=slug, error=str(e))
+                results.append({"outcome": "?", "source": "ERROR", "delta_bps": 0.0})
+                
+        res1 = results[0]
+        res2 = results[1]
+        res3 = results[2]
+        res4 = results[3]
+        res5 = results[4]
+        res6 = results[5]
+        
+        combined_source = "GAMMA"
+        if any(r["source"] == "BINANCE_FALLBACK" for r in results):
+            combined_source = "BINANCE_FALLBACK"
+        elif any(r["source"] == "UNKNOWN" for r in results):
+            combined_source = "UNKNOWN"
+            
+        return {
+            "out1": res1["outcome"],
+            "out2": res2["outcome"],
+            "out3": res3["outcome"],
+            "out4": res4["outcome"],
+            "out5": res5["outcome"],
+            "out6": res6["outcome"],
+            "src1": res1["source"],
+            "src2": res2["source"],
+            "src3": res3["source"],
+            "src4": res4["source"],
+            "src5": res5["source"],
+            "src6": res6["source"],
+            "delta1": res1["delta_bps"],
+            "delta2": res2["delta_bps"],
+            "delta3": res3["delta_bps"],
+            "delta4": res4["delta_bps"],
+            "delta5": res5["delta_bps"],
+            "delta6": res6["delta_bps"],
+            "source": combined_source
+        }
 
     async def get_entry_signals(self) -> List[Dict[str, Any]]:
         """
-        FAST LANE: Check thresholds for all tracked markets using WebSocket cache.
-        Runs every 1 second. No API calls.
-
-        Quality filters applied (from strategy_diagnosis.md):
-        - Change 4: min_consecutive_cycles — price must stay in zone for N cycles
-        - Change 5: min_seconds_to_close_pre_entry — no entry in final N secs of market
-        - Change 7: price velocity check — reject if YES price is still accelerating up
+        Check for Streak Momentum entry signals across all tracked markets using WebSocket cache.
+        Checks if the last 2 completed micro-markets resolved to the same side (UP-UP or DOWN-DOWN).
         """
         confirmed = []
         now = int(time.time())
 
-        # Read quality-filter params (hot-reloadable)
-        min_cycles   = getattr(self.config, "min_consecutive_cycles", 8)
-        min_ttc      = getattr(self.config, "min_seconds_to_close_pre_entry", 180)
-        vel_max      = getattr(self.config, "price_velocity_max", 0.025)
-        vel_window   = max(2, int(getattr(self.config, "price_velocity_window", 5)))
-
         for mid, market in list(self.tracked_markets.items()):
-            # Memory Leak Fix: Remove resolved/ended markets
             closes_at = market.get("closes_at", 0)
             if closes_at > 0 and now > closes_at:
                 await self.ws.unsubscribe_market(
@@ -245,129 +456,239 @@ class MarketScanner:
                     push_state=True
                 )
                 del self.tracked_markets[mid]
-                self._price_history.pop(market.get("yes_token_id", mid), None)
+                continue
+            duration = market.get("window_minutes")
+            if duration not in (5, 15):
                 continue
 
-            # Use real WebSocket BOOK prices by token_id
+            symbol, window = self._get_market_key_info(market)
+            
+            # --- TICK-BY-TICK SPREAD LOGGING FOR QUANT ANALYSIS ---
+            # Retrieve real-time L2 best bid and ask from the WebSocket client
+            yes_tid = market.get("yes_token_id")
+            no_tid = market.get("no_token_id")
+            if yes_tid and no_tid:
+                yes_bid = self.ws.bid_cache.get(yes_tid)
+                yes_ask = self.ws.ask_cache.get(yes_tid)
+                no_bid = self.ws.bid_cache.get(no_tid)
+                no_ask = self.ws.ask_cache.get(no_tid)
+                
+                # We analyze bid-ask spread on the YES side (or counterpart NO side)
+                # Let's log if at least YES or NO best levels are cached
+                best_bid = yes_bid if yes_bid is not None else (round(1.0 - no_ask, 4) if no_ask is not None else None)
+                best_ask = yes_ask if yes_ask is not None else (round(1.0 - no_bid, 4) if no_bid is not None else None)
+                
+                if best_bid is not None and best_ask is not None:
+                    spread_amount = best_ask - best_bid
+                    spread_pct = spread_amount / best_ask if best_ask > 0 else 0.0
+                    
+                    # Calculate FOK sweep in-memory using WS book_cache
+                    budget = float(self.config.position_size_usdc)
+                    
+                    # 1. YES sweep
+                    yes_book = self.ws.book_cache.get(yes_tid) if yes_tid else None
+                    yes_asks = yes_book.get("asks", {}) if yes_book else {}
+                    yes_fok_price, yes_slippage, yes_fillable = self._simulate_fok_sweep(yes_asks, budget)
+                    
+                    # 2. NO sweep
+                    no_book = self.ws.book_cache.get(no_tid) if no_tid else None
+                    no_asks = no_book.get("asks", {}) if no_book else {}
+                    no_fok_price, no_slippage, no_fillable = self._simulate_fok_sweep(no_asks, budget)
+                    
+                    # 3. Latency measurement (throttled background task)
+                    now_time = time.time()
+                    if now_time - self._last_latency_check >= 5.0:
+                        self._last_latency_check = now_time
+                        asyncio.create_task(self._measure_api_latency())
+                    
+                    # Store tick in the high-performance spread_logs table
+                    from src.db.queries import log_spread_tick
+                    asyncio.create_task(log_spread_tick(
+                        self.db,
+                        market_id=mid,
+                        symbol=symbol,
+                        window_minutes=window,
+                        best_bid=float(best_bid),
+                        best_ask=float(best_ask),
+                        spread_amount=float(spread_amount),
+                        spread_pct=float(spread_pct),
+                        sim_fok_yes_price=float(yes_fok_price),
+                        sim_fok_yes_slippage=float(yes_slippage),
+                        sim_fok_yes_fillable=int(yes_fillable),
+                        sim_fok_no_price=float(no_fok_price),
+                        sim_fok_no_slippage=float(no_slippage),
+                        sim_fok_no_fillable=int(no_fillable),
+                        api_latency_ms=float(self.last_api_latency_ms)
+                    ))
+
+            # Only check outcomes/signals once the market's active trading window has started.
+            # Prevents polling historical outcomes for future markets that haven't reached their active candle yet.
+            start_time = closes_at - (duration * 60)
+            if now < start_time:
+                continue
+            dur_secs = duration * 60
+            q = market.get("question", "")
+            asset = "BTC" if ("Bitcoin" in q or "BTC" in q) else "ETH"
+
+            # 1. Fetch historical outcomes
+            res = await self._get_historical_outcomes(asset, duration, closes_at)
+            out1 = res["out1"]
+            out2 = res["out2"]
+            out3 = res["out3"]
+            out4 = res["out4"]
+            out5 = res["out5"]
+            out6 = res["out6"]
+            
+            if out1 == "?" or out2 == "?":
+                # Outcomes not yet resolved (waiting for Chainlink settlement)
+                logger.debug("historical_outcomes_lagging", market_id=mid, slug=market.get("slug"), out1=out1, out2=out2)
+                continue
+                
+            # 2. Streak Momentum Match
+            if out1 != out2:
+                # Oscillating/choppy market — stay out
+                continue
+
+            # Determine dynamic streak depth
+            streak_depth = 2
+            if out3 != "?" and out1 == out2 == out3:
+                streak_depth = 3
+                if out4 != "?" and out1 == out2 == out3 == out4:
+                    streak_depth = 4
+                    if out5 != "?" and out1 == out2 == out3 == out4 == out5:
+                        streak_depth = 5
+                        if out6 != "?" and out1 == out2 == out3 == out4 == out5 == out6:
+                            streak_depth = 6
+
+            # Enforce Streak Reset Guard: Ensure both completed markets used for the streak
+            # closed strictly after the close time of the last traded market.
+            # Bypassed for Mean Reversion scaling when streak_depth >= 3 (continuous fade)
+            if streak_depth < 3:
+                key = (symbol, window)
+                last_traded = self.last_traded_close_ts.get(key, 0)
+                dur_secs = duration * 60
+                m_prev2_close = closes_at - (2 * dur_secs)
+                if m_prev2_close < last_traded:
+                    logger.debug(
+                        "streak_reset_guard_active",
+                        market_id=mid,
+                        symbol=symbol,
+                        window=window,
+                        m_prev2_close=m_prev2_close,
+                        last_traded=last_traded,
+                        message="Streak reset: waiting for completely fresh resolved markets."
+                    )
+                    continue
+
+            # Determine dynamic regime side based on timeframe window size and streak depth:
+            # 5m window:
+            #   - Streak depth 2: Trend-Following (buy SAME direction as the streak)
+            #   - Streak depth 3 or more: Mean Reversion / Reversal (buy OPPOSITE direction to the streak)
+            # 15m window:
+            #   - Always Mean Reversion / Fade (buy OPPOSITE direction to the streak)
+            if window == 5:
+                if streak_depth >= 3:
+                    # Scale-in reversal / fade for 5m
+                    target_side = "NO" if out1 == "UP" else "YES"
+                else:
+                    # Standard trend-following for 5m
+                    target_side = "YES" if out1 == "UP" else "NO"
+            else:
+                # Always fade for 15m
+                target_side = "NO" if out1 == "UP" else "YES"
+            
             yes_token_id = market.get("yes_token_id")
             no_token_id  = market.get("no_token_id")
-
-            # 1. Strictly prioritize real ASK prices (what we must pay to enter)
-            # 2. SMART-LOCK FALLBACK: Use price_cache (last trade) if book is empty
+            
             live_yes = self.ws.ask_cache.get(yes_token_id) or self.ws.price_cache.get(yes_token_id)
             live_no  = self.ws.ask_cache.get(no_token_id)  or self.ws.price_cache.get(no_token_id)
 
-            # 3. Final fallback to Gamma seed data
             if live_yes is None:
-                live_yes = float(market.get("yes_price") or 0.0)
+                live_yes = float(market.get("yes_price") or 0.5)
             if live_no is None:
-                live_no = float(market.get("no_price") or 0.0)
+                live_no = float(market.get("no_price") or 0.5)
 
-            # 4. Infer missing price if one side is known
             if live_yes <= 0.0 and live_no > 0.0:
                 live_yes = round(1.0 - live_no, 4)
             elif live_no <= 0.0 and live_yes > 0.0:
                 live_no = round(1.0 - live_yes, 4)
-            elif live_yes <= 0.0 and live_no <= 0.0:
-                live_yes, live_no = 0.5, 0.5
-
-            # ── VELOCITY TRACKING ──
-            # Maintain a rolling window of (timestamp, price) for this token
-            tid_key = yes_token_id or mid
-            history = self._price_history.setdefault(tid_key, [])
-            history.append((now, live_yes))
-            # Keep only the last vel_window + a few extra ticks
-            if len(history) > vel_window * 2:
-                self._price_history[tid_key] = history[-(vel_window * 2):]
-
-            # Log individual price watch
-            logger.info(
-                "price_watch",
-                q=market.get("question")[:40],
-                p=live_yes,
-                n=live_no,
-                y_tid=yes_token_id[-8:] if yes_token_id else "None",
-                n_tid=no_token_id[-8:] if no_token_id else "None"
-            )
 
             market["yes_price"] = live_yes
             market["no_price"]  = live_no
+            
+            # Determine correct price and token ID for execution
+            target_price = live_yes if target_side == "YES" else live_no
+            target_token_id = yes_token_id if target_side == "YES" else no_token_id
+            
+            coin = 'btc' if asset == 'BTC' else 'eth'
+            
+            logger.info(
+                "streak_watch",
+                q=q[:40],
+                streak=f"{out1}-{out2}",
+                streak_depth=streak_depth,
+                regime="TREND_FOLLOWING" if window == 5 else "MEAN_REVERSION_FADE",
+                target=target_side,
+                price=target_price,
+            )
 
-            # ── PRIMARY THRESHOLD CHECK ──
-            condition_met = self.config.yes_bias_threshold <= live_yes < self.config.yes_bias_max_threshold
-            if condition_met:
-                # IN-MEMORY TRACKING (No DB Spam)
-                last_seen   = market.get("last_seen_above_threshold") or 0
-                consecutive = (market.get("consecutive_cycles_above", 0) + 1) if (now - last_seen) < 5 else 1
-
-                market["last_seen_above_threshold"] = now
-                market["consecutive_cycles_above"]  = consecutive
-                time_left = closes_at - now if closes_at else 9999
-
-                if consecutive == 1 or consecutive % 10 == 0:
-                    await update_market_threshold_tracking(self.db, mid, now, consecutive)
-
-                # ── QUALITY FILTER 1: Minimum Consecutive Cycles (Change 4) ──
-                # Price must hold in the zone for min_cycles before we trust it.
-                # This kills the 117 instant-death "flash spike" entries.
-                if consecutive < min_cycles:
-                    logger.info(
-                        "quality_filter_consecutive",
-                        market_id=mid,
-                        cycle=consecutive,
-                        min_required=min_cycles,
-                        message=f"Waiting for price to stabilise: {consecutive}/{min_cycles} cycles in zone"
-                    )
-                    continue
-
-                # ── QUALITY FILTER 2: Time-to-Close Guard (Change 5) ──
-                # Reject entry if we are in the final min_ttc seconds of the market.
-                # Theta decay makes late-expiry NO tokens near-worthless as noise.
-                if time_left < min_ttc:
-                    logger.info(
-                        "quality_filter_ttc",
-                        market_id=mid,
-                        time_left=time_left,
-                        min_required=min_ttc,
-                        message=f"Market too close to expiry: {time_left}s left < {min_ttc}s required"
-                    )
-                    continue
-
-                # ── QUALITY FILTER 3: Price Velocity (Change 7) ──
-                # Measure the rate of change of YES price over the last vel_window ticks.
-                # If YES is RISING quickly (momentum against our NO bet), skip entry.
-                recent_history = self._price_history.get(tid_key, [])
-                if len(recent_history) >= vel_window:
-                    # Average velocity over the window (positive = YES rising = bad for NO)
-                    prices_in_window = [p for _, p in recent_history[-vel_window:]]
-                    velocity = (prices_in_window[-1] - prices_in_window[0]) / vel_window
-                    market["price_velocity"] = round(velocity, 4)
-
-                    if velocity > vel_max:
-                        logger.info(
-                            "quality_filter_velocity",
-                            market_id=mid,
-                            velocity=round(velocity, 4),
-                            max_allowed=vel_max,
-                            yes_price=live_yes,
-                            message=f"YES price accelerating upward ({velocity:.4f} > {vel_max}): skipping NO entry"
-                        )
-                        continue
-
-                confirmed.append(market)
+            # 3. Apply Entry Price Band Guard (Floor + Ceiling)
+            # Read from config: defaults to $0.45 floor / $0.65 ceiling
+            min_entry_price = getattr(self.config, "min_entry_price", 0.45)
+            max_entry_price = getattr(self.config, "max_entry_price", 0.65)
+            
+            is_reversal = (streak_depth >= 3) if duration == 5 else (streak_depth >= 2)
+            
+            if not is_reversal and target_price < min_entry_price:
                 logger.info(
-                    "signal_confirmed",
-                    q=market.get("question"),
-                    p=live_yes,
-                    cycle=consecutive,
-                    ttc=time_left,
-                    vel=market.get("price_velocity", "n/a")
+                    "quality_filter_price_floor",
+                    market_id=mid,
+                    target_side=target_side,
+                    target_price=target_price,
+                    min_entry=min_entry_price,
+                    message=f"Target price {target_price} below minimum floor {min_entry_price} — Deep Value Trap filter"
                 )
-            else:
-                if market.get("consecutive_cycles_above", 0) > 0:
-                    market["last_seen_above_threshold"] = 0
-                    market["consecutive_cycles_above"]  = 0
-                    await reset_market_threshold_tracking(self.db, mid)
+                continue
+
+            if not is_reversal and target_price > max_entry_price:
+                logger.info(
+                    "quality_filter_price_ceiling",
+                    market_id=mid,
+                    target_side=target_side,
+                    target_price=target_price,
+                    max_entry=max_entry_price,
+                    message=f"Target price {target_price} exceeds maximum ceiling {max_entry_price}"
+                )
+                continue
+
+            # Signal verified and filled with dynamic side payload
+            signal_payload = market.copy()
+            signal_payload["target_side"] = target_side
+            signal_payload["target_token_id"] = target_token_id
+            signal_payload["target_price"] = target_price
+            signal_payload["streak_depth"] = streak_depth
+            
+            # Add quantitative streak details and telemetry
+            signal_payload["t1_market_id"] = f"{coin.upper()}-updown-{duration}m-{closes_at - 2 * dur_secs}"
+            signal_payload["t1_result"] = out1
+            signal_payload["t2_market_id"] = f"{coin.upper()}-updown-{duration}m-{closes_at - 3 * dur_secs}"
+            signal_payload["t2_result"] = out2
+            signal_payload["t3_market_id"] = f"{coin.upper()}-updown-{duration}m-{closes_at - 4 * dur_secs}" if out3 != "?" else None
+            signal_payload["t3_result"] = out3 if out3 != "?" else None
+            signal_payload["outcome_source"] = res["source"]
+            signal_payload["candle_1_delta_bps"] = res["delta1"]
+            signal_payload["candle_2_delta_bps"] = res["delta2"]
+            signal_payload["time_since_candle_close_secs"] = float(now - (closes_at - dur_secs))
+            
+            confirmed.append(signal_payload)
+            logger.info(
+                "signal_confirmed",
+                q=q,
+                streak=f"{out1}-{out2}",
+                streak_depth=streak_depth,
+                target_side=target_side,
+                target_price=target_price
+            )
 
         return confirmed
 
@@ -375,7 +696,6 @@ class MarketScanner:
         """
         Verify YES/NO token IDs against CLOB REST API (Source of Truth).
         """
-        # CLOB API requires the condition_id (hash), not the market_id (numeric)
         cid = market.get("condition_id") or market["market_id"]
         clob_data = await self.clob.get_market_info(cid)
         if not clob_data:
@@ -400,10 +720,53 @@ class MarketScanner:
 
     async def run_scan_cycle(self) -> Tuple[int, int]:
         """
-        SLOW LANE: Sync tracked markets with Gamma API.
-        Runs every 20 seconds.
+        Sync tracked markets stats.
         """
+        self.scan_count += 1
         scanned = len(self.tracked_markets)
         flagged = sum(1 for m in self.tracked_markets.values() if m.get("consecutive_cycles_above", 0) > 0)
         return scanned, flagged
 
+    def _simulate_fok_sweep(self, book_side: Dict[float, float], budget_usdc: float) -> Tuple[float, float, int]:
+        """
+        Simulates sweeping the order book side (asks) for a given budget in USDC.
+        
+        Returns:
+            (avg_price, slippage_cents, fillable)
+        """
+        if not book_side:
+            return 0.0, 0.0, 0
+            
+        sorted_levels = sorted(book_side.items(), key=lambda x: x[0])
+        remaining_budget = budget_usdc
+        total_shares = 0.0
+        
+        for price, size in sorted_levels:
+            if price <= 0:
+                continue
+            max_cost = price * size
+            if remaining_budget >= max_cost:
+                total_shares += size
+                remaining_budget -= max_cost
+            else:
+                total_shares += remaining_budget / price
+                remaining_budget = 0.0
+                break
+                
+        if remaining_budget > 0.01:
+            return 0.0, 0.0, 0
+            
+        avg_price = budget_usdc / total_shares if total_shares > 0 else 0.0
+        best_price = sorted_levels[0][0]
+        slippage_cents = (avg_price - best_price) * 100
+        
+        return round(avg_price, 4), round(slippage_cents, 4), 1
+
+    async def _measure_api_latency(self):
+        """Measures network round-trip time to Polymarket server to simulate/mimic FOK order delay."""
+        t0 = time.time()
+        try:
+            await self.gamma.get_true_now()
+            self.last_api_latency_ms = (time.time() - t0) * 1000.0
+        except:
+            self.last_api_latency_ms = 0.0

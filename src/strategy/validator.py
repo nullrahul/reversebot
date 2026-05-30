@@ -31,6 +31,9 @@ from src.db.queries import (
     count_open_positions,
     get_total_exposure,
     get_daily_realised_loss,
+    get_market,
+    get_open_positions,
+    log_event,
 )
 from src.db.rejections import RejectionLogger
 from src.logs.log_config import get_logger
@@ -75,17 +78,73 @@ class SignalValidator:
         self.db = db
         self.rejection_logger = rejection_logger
 
+    async def _check_and_log_resolution_block(
+        self,
+        failed_check: str,
+        current_val: float,
+        limit_val: float,
+        market_id: str,
+        question: str,
+        paper: bool,
+    ) -> None:
+        """
+        Check if we are blocked from entering a trade due to closed-but-unresolved positions.
+        If so, calculate the wait time and log a RESOLUTION_BLOCK event to the database.
+        """
+        open_positions = await get_open_positions(self.db, paper=paper)
+        now = int(time.time())
+        waiting_positions = []
+        for pos in open_positions:
+            pid = pos["position_id"]
+            mid = pos["market_id"]
+            m_data = await get_market(self.db, mid)
+            if m_data:
+                closes_at = m_data.get("closes_at", 0)
+                if closes_at > 0 and now > closes_at:
+                    wait_time = now - closes_at
+                    waiting_positions.append({
+                        "position_id": pid,
+                        "market_id": mid,
+                        "question": m_data.get("question", ""),
+                        "closes_at": closes_at,
+                        "wait_time_seconds": wait_time
+                    })
+        if waiting_positions:
+            logger.warning(
+                "resolution_block_detected",
+                failed_check=failed_check,
+                current_val=current_val,
+                limit_val=limit_val,
+                waiting_positions_count=len(waiting_positions),
+                message=f"Signal {market_id} blocked by {failed_check} ({current_val} vs limit {limit_val}), "
+                        f"but {len(waiting_positions)} positions are closed and waiting for resolution."
+            )
+            await log_event(
+                self.db,
+                event_type="RESOLUTION_BLOCK",
+                bot_version=self.config.bot_version,
+                market_id=market_id,
+                payload={
+                    "failed_check": failed_check,
+                    "current_value": current_val,
+                    "limit_value": limit_val,
+                    "question": question,
+                    "blocked_by_positions": waiting_positions,
+                    "timestamp": now
+                }
+            )
+
     async def validate(
         self,
         market: Dict[str, Any],
-        no_token_id: Optional[str] = None,
+        target_token_id: Optional[str] = None,
     ) -> ValidationResult:
         """
         Run ALL 9 validation checks on a signal.
 
         Args:
             market: Market dict from scanner
-            no_token_id: Token ID for the "No" side (for orderbook check)
+            target_token_id: Token ID for the target side (for orderbook check)
 
         Returns:
             ValidationResult with pass/fail for each check
@@ -96,7 +155,11 @@ class SignalValidator:
 
         # 1. LIQUIDITY CHECK
         volume_24h = market.get("yes_volume_24h", 0.0)
-        if self.config.target_market_mode == "crypto_short_window":
+        q = market.get("question", "")
+        q_lower = q.lower()
+        is_short_window = "up or down" in q_lower and any(kw in q_lower for kw in ["bitcoin", "btc", "ethereum", "eth"])
+
+        if self.config.target_market_mode == "crypto_short_window" or is_short_window:
             check_1 = True  # Short window markets often have 0 volume at creation
         else:
             check_1 = volume_24h >= self.config.min_volume_24h_usdc
@@ -112,8 +175,8 @@ class SignalValidator:
         spread_pct = 0.0
         check_2 = True
         book = None
-        if no_token_id:
-            book = await self.clob.get_orderbook(no_token_id)
+        if target_token_id:
+            book = await self.clob.get_orderbook(target_token_id)
             if book:
                 bids = book.get("bids", [])
                 asks = book.get("asks", [])
@@ -127,9 +190,22 @@ class SignalValidator:
                     check_2 = False
                     spread_pct = 1.0
                 result.available_depth = self.clob.get_available_volume_at_ask(book)
+                # Depth Monitor: Check if the orderbook depth is sufficient to execute the trade
+                required_depth = float(self.config.position_size_usdc)
+                if result.available_depth < required_depth:
+                    check_2 = False
+                    result.reasons.append(
+                        f"Insufficient ask depth: available_depth={result.available_depth:.2f} USDC < required_depth={required_depth:.2f} USDC"
+                    )
+                if not check_2:
+                    result.reasons.append(
+                        f"Spread too wide: spread_pct={spread_pct:.2%} "
+                        f"(spread={no_spread:.4f}, best_bid={best_bid:.4f}, best_ask={best_ask:.4f}) "
+                        f"exceeds max_allowed={self.config.max_spread_pct_of_ask:.2%}"
+                    )
             else:
                 check_2 = False
-                result.reasons.append("Could not fetch No orderbook")
+                result.reasons.append("Could not fetch target orderbook")
 
         result.no_spread = no_spread
         result.checks["2_spread"] = check_2
@@ -139,13 +215,15 @@ class SignalValidator:
         check_3 = True
         now = int(time.time())
         if closes_at:
-            if self.config.target_market_mode == "crypto_short_window":
+            if self.config.target_market_mode == "crypto_short_window" or is_short_window:
                 # Relaxed window check since scanner already vetted it
                 seconds_to_close = closes_at - now
-                check_3 = seconds_to_close >= self.config.short_window_min_seconds_to_close
+                duration = market.get("window_minutes") or 5
+                min_ttc = 60 if duration == 5 else 120
+                check_3 = seconds_to_close >= min_ttc
                 if not check_3:
                     result.reasons.append(
-                        f"Short-window timing invalid: seconds_to_close={seconds_to_close}, min_required={self.config.short_window_min_seconds_to_close}"
+                        f"Short-window timing invalid: seconds_to_close={seconds_to_close}, min_required={min_ttc}"
                     )
             else:
                 hours_to_close = (closes_at - now) / 3600.0
@@ -180,6 +258,14 @@ class SignalValidator:
             result.reasons.append(
                 f"Exposure would exceed max: {new_exposure:.2f} > {self.config.max_total_exposure_usdc}"
             )
+            await self._check_and_log_resolution_block(
+                failed_check="exposure_limit",
+                current_val=new_exposure,
+                limit_val=self.config.max_total_exposure_usdc,
+                market_id=market_id,
+                question=q,
+                paper=paper
+            )
 
         # 6. DAILY LOSS CHECK
         daily_loss = await get_daily_realised_loss(self.db, paper=paper)
@@ -198,27 +284,40 @@ class SignalValidator:
             result.reasons.append(
                 f"Max positions reached: {open_count} >= {self.config.max_open_positions}"
             )
+            await self._check_and_log_resolution_block(
+                failed_check="position_count_limit",
+                current_val=open_count,
+                limit_val=self.config.max_open_positions,
+                market_id=market_id,
+                question=q,
+                paper=paper
+            )
 
         # 8. PRICE STABILITY CHECK
-        consecutive_cycles = market.get("consecutive_cycles_above", 0)
-        
-        closes_at = market.get("closes_at", 0)
-        seconds_to_close = max(0, closes_at - int(time.time())) if closes_at else 1000
-        early_min = getattr(self.config, "early_phase_min_seconds", 600)
-        early_min = int(early_min) if isinstance(early_min, (int, float)) else 600
-        mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
-        mid_min = int(mid_min) if isinstance(mid_min, (int, float)) else 180
-        
-        if seconds_to_close < mid_min:
-            required_cycles = getattr(self.config, "late_cycles", 3)
-        elif seconds_to_close <= early_min:
-            required_cycles = getattr(self.config, "mid_cycles", 2)
+        if self.config.target_market_mode == "crypto_short_window" or is_short_window:
+            check_8 = True
+            consecutive_cycles = market.get("consecutive_cycles_above", 0)
+            required_cycles = 0
         else:
-            required_cycles = getattr(self.config, "early_cycles", 1)
+            consecutive_cycles = market.get("consecutive_cycles_above", 0)
+            
+            closes_at = market.get("closes_at", 0)
+            seconds_to_close = max(0, closes_at - int(time.time())) if closes_at else 1000
+            early_min = getattr(self.config, "early_phase_min_seconds", 600)
+            early_min = int(early_min) if isinstance(early_min, (int, float)) else 600
+            mid_min = getattr(self.config, "mid_phase_min_seconds", 180)
+            mid_min = int(mid_min) if isinstance(mid_min, (int, float)) else 180
+            
+            if seconds_to_close < mid_min:
+                required_cycles = getattr(self.config, "late_cycles", 3)
+            elif seconds_to_close <= early_min:
+                required_cycles = getattr(self.config, "mid_cycles", 2)
+            else:
+                required_cycles = getattr(self.config, "early_cycles", 1)
 
-        required_cycles = int(required_cycles) if isinstance(required_cycles, (int, float)) else 1
+            required_cycles = int(required_cycles) if isinstance(required_cycles, (int, float)) else 1
 
-        check_8 = consecutive_cycles >= required_cycles
+            check_8 = consecutive_cycles >= required_cycles
         result.checks["8_price_stability"] = check_8
         if not check_8:
             result.reasons.append(
@@ -229,8 +328,11 @@ class SignalValidator:
         category_str = (market.get("category") or "").strip()
         tags = [t.strip() for t in category_str.split(",") if t.strip()]
         
-        # Bypass category check in crypto mode like scanner does
-        if self.config.target_market_mode == "crypto_short_window":
+        # Bypass category check in crypto mode or if the question explicitly contains crypto keywords
+        q_upper = market.get("question", "").upper()
+        is_crypto_q = any(kw in q_upper for kw in ["BITCOIN", "ETHEREUM", "BTC", "ETH"])
+        
+        if self.config.target_market_mode == "crypto_short_window" or is_crypto_q:
             check_9 = True
         else:
             check_9 = any(t in self.config.category_whitelist for t in tags)
@@ -243,29 +345,8 @@ class SignalValidator:
 
         # 10. SPREAD VACUUM DETECTOR (Flash Crash / Wick Guard)
         check_10 = True
-        if book:
-            bids = book.get("bids", [])
-            asks = book.get("asks", [])
-            
-            best_bid = float(bids[0]["price"]) if bids else 0.0
-            best_ask = float(asks[0]["price"]) if asks else 1.0
-            
-            # A true flash crash sweeps the orderbook, leaving a massive gap (wide spread) 
-            # between the remaining bids and the pulled market maker asks.
-            # If the spread is tight (e.g., < 3%), it's a normal trending market, NOT a wick.
-            
-            if best_ask > 0:
-                spread_pct = (best_ask - best_bid) / best_ask
-                
-                # We require at least a 4% spread gap to confirm a liquidity vacuum
-                min_required_spread = 0.04
-                
-                if spread_pct < min_required_spread:
-                    check_10 = False
-                    result.reasons.append(f"Wick Guard: Spread too tight ({spread_pct*100:.1f}% < {min_required_spread*100:.1f}%). This is a trend, not a flash crash.")
-            else:
-                # If Ask is 0, book is broken (good for wicks)
-                pass
+        # DISABLED for Z-Score Architecture (Daily/Weekly markets may have tight spreads during a valid Z-score spike)
+        result.checks["10_wick_guard"] = check_10
 
         result.checks["10_wick_guard"] = check_10
 

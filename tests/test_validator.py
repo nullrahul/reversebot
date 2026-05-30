@@ -43,8 +43,6 @@ def _mock_config(**overrides):
         "max_open_positions": 5,
         "max_daily_loss_usdc": 75.0,
         "max_total_exposure_usdc": 100.0,
-        "take_profit_multiplier": 3.0,
-        "stop_loss_multiplier": 0.5,
         "paper_trade": True,
         "bot_version": "v0.1.0",
         "category_whitelist": ["Crypto", "Politics", "Sports"],
@@ -288,6 +286,56 @@ class TestValidatorChecks:
         assert result.checks["7_position_count"] is False
 
     @pytest.mark.asyncio
+    async def test_resolution_block_monitoring_and_logging(self, db):
+        """Verify that when a signal is blocked due to position count and there are closed-but-unresolved markets, it logs a RESOLUTION_BLOCK event."""
+        from src.strategy.validator import SignalValidator
+
+        config = _mock_config(max_open_positions=1)
+        clob = AsyncMock()
+        clob.get_orderbook = AsyncMock(return_value=None)
+
+        # 1. Create a market that closed in the past
+        past_time = int(time.time()) - 600
+        closed_market = _sample_market(market_id="0xclosed_market", closes_at=past_time)
+        await upsert_market(db, closed_market)
+
+        # 2. Create an open position on that closed market (still unresolved)
+        pid = await create_position(db, "0xclosed_market", 0.15, 15.0, 100.0, "v0.1.0", paper=True)
+        await update_position_status(db, pid, "OPEN", paper=True)
+
+        # 3. Create an active open position in another market (closes in the future)
+        active_market = _sample_market(market_id="0xactive_market", closes_at=int(time.time()) + 3600)
+        await upsert_market(db, active_market)
+        pid_active = await create_position(db, "0xactive_market", 0.20, 20.0, 100.0, "v0.1.0", paper=True)
+        await update_position_status(db, pid_active, "OPEN", paper=True)
+
+        # 4. Validate a signal for a new market
+        new_market = _sample_market(market_id="0xnewmarket")
+        await upsert_market(db, new_market)
+
+        validator = SignalValidator(config, clob, db)
+        result = await validator.validate(new_market)
+
+        # Check 7 (position count limit) should fail because max_open_positions = 1 and we have 1 active open position (and 1 closed excluded one)
+        assert result.checks["7_position_count"] is False
+
+        # 5. Check if RESOLUTION_BLOCK event was logged in the database
+        cursor = await db.execute("SELECT * FROM events_log WHERE event_type = 'RESOLUTION_BLOCK'")
+        events = await cursor.fetchall()
+        assert len(events) == 1
+        event = dict(events[0])
+        assert event["market_id"] == "0xnewmarket"
+        
+        # Verify payload contains the blocked_by_positions info
+        import json
+        payload = json.loads(event["payload"])
+        assert payload["failed_check"] == "position_count_limit"
+        assert len(payload["blocked_by_positions"]) == 1
+        assert payload["blocked_by_positions"][0]["position_id"] == pid
+        assert payload["blocked_by_positions"][0]["market_id"] == "0xclosed_market"
+        assert payload["blocked_by_positions"][0]["wait_time_seconds"] >= 600
+
+    @pytest.mark.asyncio
     async def test_check_8_price_stability(self, db):
         """Should pass check 8 on the second cycle."""
         from src.strategy.validator import SignalValidator
@@ -312,7 +360,7 @@ class TestValidatorChecks:
         clob = AsyncMock()
         clob.get_orderbook = AsyncMock(return_value=None)
 
-        market = _sample_market(category="Entertainment")
+        market = _sample_market(category="Entertainment", question="Who will win the Oscar?")
         await upsert_market(db, market)
 
         validator = SignalValidator(config, clob, db)
@@ -382,6 +430,7 @@ class TestShortWindowScannerFilter:
         config = _mock_config(
             target_market_mode="crypto_short_window",
             category_whitelist=["Crypto"],
+            target_crypto_symbols=["BTC", "ETH", "SOL"],
             _TESTING_only_15min_windows=False
         )
         scanner = MarketScanner(config, AsyncMock(), AsyncMock(), AsyncMock(), AsyncMock())

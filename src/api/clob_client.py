@@ -193,18 +193,25 @@ class ClobClient:
 
     def get_available_volume_at_ask(self, orderbook: Dict, side: str = "NO") -> float:
         """
-        Calculate total available volume at current ask price for a side.
+        Calculate total available volume at current best ask price for a side.
         Used for slippage guard.
         """
         asks = orderbook.get("asks", [])
         if not asks:
             return 0.0
 
+        best_ask = float(asks[0].get("price", 0))
+        if best_ask <= 0:
+            return 0.0
+
         total_volume = 0.0
         for ask in asks:
             price = float(ask.get("price", 0))
-            size = float(ask.get("size", 0))
-            total_volume += price * size
+            if abs(price - best_ask) < 0.0001:
+                size = float(ask.get("size", 0))
+                total_volume += price * size
+            else:
+                break
 
         return total_volume
 
