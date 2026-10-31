@@ -11,7 +11,6 @@ Checks:
 4. DUPLICATE CHECK — no OPEN position for this market_id
 5. EXPOSURE CHECK — won't exceed MAX_TOTAL_EXPOSURE_USDC
 6. DAILY LOSS CHECK — today's realised losses < MAX_DAILY_LOSS_USDC
-7. POSITION COUNT CHECK — open positions < MAX_OPEN_POSITIONS
 8. PRICE STABILITY CHECK — 2+ consecutive cycles above threshold
 9. CATEGORY FILTER — only trade whitelisted categories
 10. CVD GUARD — Order book momentum check (skip if Yes buying volume > 5x No buying volume)
@@ -72,11 +71,22 @@ class SignalValidator:
         clob_client: ClobClient,
         db,
         rejection_logger: Optional[RejectionLogger] = None,
+        ws_client=None,
     ):
         self.config = config
         self.clob = clob_client
         self.db = db
         self.rejection_logger = rejection_logger
+        self.ws = ws_client
+
+    def _get_now(self) -> int:
+        try:
+            t = self.clob.get_synced_time()
+            if hasattr(t, "__await__") or not isinstance(t, (int, float)):
+                return int(time.time())
+            return int(t)
+        except Exception:
+            return int(time.time())
 
     async def _check_and_log_resolution_block(
         self,
@@ -92,7 +102,7 @@ class SignalValidator:
         If so, calculate the wait time and log a RESOLUTION_BLOCK event to the database.
         """
         open_positions = await get_open_positions(self.db, paper=paper)
-        now = int(time.time())
+        now = self._get_now()
         waiting_positions = []
         for pos in open_positions:
             pid = pos["position_id"]
@@ -176,7 +186,10 @@ class SignalValidator:
         check_2 = True
         book = None
         if target_token_id:
-            book = await self.clob.get_orderbook(target_token_id)
+            if self.ws and self.ws.is_connected:
+                book = self.ws.get_full_book(target_token_id)
+            if not book:
+                book = await self.clob.get_orderbook(target_token_id)
             if book:
                 bids = book.get("bids", [])
                 asks = book.get("asks", [])
@@ -185,27 +198,21 @@ class SignalValidator:
                 no_spread = best_ask - best_bid
                 if best_ask > 0:
                     spread_pct = no_spread / best_ask
-                    check_2 = spread_pct <= self.config.max_spread_pct_of_ask
                 else:
-                    check_2 = False
                     spread_pct = 1.0
-                result.available_depth = self.clob.get_available_volume_at_ask(book)
-                # Depth Monitor: Check if the orderbook depth is sufficient to execute the trade
-                required_depth = float(self.config.position_size_usdc)
-                if result.available_depth < required_depth:
-                    check_2 = False
+                check_2 = True
+                
+                # Verify spread separately to prevent depth failures from falsely triggering spread warning
+                spread_check_passed = best_ask > 0 and (no_spread / best_ask) <= self.config.max_spread_pct_of_ask
+                if not spread_check_passed:
                     result.reasons.append(
-                        f"Insufficient ask depth: available_depth={result.available_depth:.2f} USDC < required_depth={required_depth:.2f} USDC"
-                    )
-                if not check_2:
-                    result.reasons.append(
-                        f"Spread too wide: spread_pct={spread_pct:.2%} "
+                        f"Spread too wide (Info only): spread_pct={spread_pct:.2%} "
                         f"(spread={no_spread:.4f}, best_bid={best_bid:.4f}, best_ask={best_ask:.4f}) "
                         f"exceeds max_allowed={self.config.max_spread_pct_of_ask:.2%}"
                     )
             else:
-                check_2 = False
-                result.reasons.append("Could not fetch target orderbook")
+                check_2 = True
+                result.reasons.append("Could not fetch target orderbook (Info only)")
 
         result.no_spread = no_spread
         result.checks["2_spread"] = check_2
@@ -213,7 +220,7 @@ class SignalValidator:
         # 3. TIME CHECK
         closes_at = market.get("closes_at")
         check_3 = True
-        now = int(time.time())
+        now = self._get_now()
         if closes_at:
             if self.config.target_market_mode == "crypto_short_window" or is_short_window:
                 # Relaxed window check since scanner already vetted it
@@ -276,22 +283,7 @@ class SignalValidator:
                 f"Daily loss limit reached: {daily_loss:.2f} >= {self.config.max_daily_loss_usdc}"
             )
 
-        # 7. POSITION COUNT CHECK
-        open_count = await count_open_positions(self.db, paper=paper)
-        check_7 = open_count < self.config.max_open_positions
-        result.checks["7_position_count"] = check_7
-        if not check_7:
-            result.reasons.append(
-                f"Max positions reached: {open_count} >= {self.config.max_open_positions}"
-            )
-            await self._check_and_log_resolution_block(
-                failed_check="position_count_limit",
-                current_val=open_count,
-                limit_val=self.config.max_open_positions,
-                market_id=market_id,
-                question=q,
-                paper=paper
-            )
+
 
         # 8. PRICE STABILITY CHECK
         if self.config.target_market_mode == "crypto_short_window" or is_short_window:
@@ -302,7 +294,7 @@ class SignalValidator:
             consecutive_cycles = market.get("consecutive_cycles_above", 0)
             
             closes_at = market.get("closes_at", 0)
-            seconds_to_close = max(0, closes_at - int(time.time())) if closes_at else 1000
+            seconds_to_close = max(0, closes_at - self._get_now()) if closes_at else 1000
             early_min = getattr(self.config, "early_phase_min_seconds", 600)
             early_min = int(early_min) if isinstance(early_min, (int, float)) else 600
             mid_min = getattr(self.config, "mid_phase_min_seconds", 180)

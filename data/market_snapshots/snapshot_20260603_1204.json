@@ -1,0 +1,66 @@
+{
+  "captured_at_utc": "2026-06-03T12:04:44Z",
+  "captured_at_ist": "2026-06-03 17:34 IST",
+  "fear_greed": {
+    "score": 11,
+    "classification": "Extreme Fear",
+    "yesterday_score": 23,
+    "yesterday_classification": "Extreme Fear",
+    "source": "alternative.me/fng"
+  },
+  "btc_price": {
+    "price_usd": 67088.0,
+    "close_14d_ago_usd": 77552.23,
+    "change_14d_pct": -13.49,
+    "source": "api.binance.com/klines"
+  },
+  "funding_rate": {
+    "last_funding_rate_raw": 4.005e-05,
+    "annualized_pct": 4.3855,
+    "mark_price": 67068.72,
+    "is_negative": false,
+    "source": "fapi.binance.com/premiumIndex"
+  },
+  "open_interest": {
+    "oi_btc": 107550.38,
+    "oi_usd_approx": 7215340162.0,
+    "source": "fapi.binance.com/openInterest"
+  },
+  "realized_vol": {
+    "realized_vol_7d_annualized_pct": 46.65,
+    "daily_vol_pct": 2.4417,
+    "num_days": 8,
+    "source": "binance_klines_computed"
+  },
+  "liquidations": {
+    "liq_24h_proxy_usd": 79093046.33,
+    "liq_count_24h": -1,
+    "btc_futures_24h_vol_usd": 26364348777.0,
+    "btc_24h_price_change_pct": -3.47,
+    "note": "Estimated from 24h futures volume heuristic (allForceOrders unavailable)",
+    "source": "fapi.binance.com/ticker/24hr (fallback)"
+  },
+  "bot_pnl": {
+    "pnl_3d_usdc": 0,
+    "consecutive_losses": 0,
+    "error": "no such table: paper_positions",
+    "source": "sqlite_local"
+  },
+  "danger_zone": {
+    "signals": {
+      "extreme_fear_fg_lt_20": true,
+      "btc_14d_trend_lt_neg10pct": true,
+      "funding_rate_negative": false,
+      "realized_vol_lt_20pct": false,
+      "liquidation_event_large": true,
+      "consecutive_bot_losses_gte_5": false,
+      "session_loss_gt_threshold": false,
+      "fg_sharp_drop_gt_10pts": true,
+      "btc_oversold_cascade_proxy": false
+    },
+    "triggered": 4,
+    "total": 9,
+    "color": "ORANGE",
+    "verdict": "\ud83d\udfe0 CAUTION \u2014 Multiple danger signals active. Reduce sizing or paper-only."
+  }
+}

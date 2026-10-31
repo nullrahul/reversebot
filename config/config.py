@@ -94,12 +94,14 @@ class BotConfig:
 
     # --- Core Strategy ---
     position_size_usdc: float
-    max_open_positions: int
     max_daily_loss_usdc: float
     max_total_exposure_usdc: float
     min_ev_threshold: float
-    global_cooldown: int
     hold_to_resolution: bool
+    take_profit_threshold: float
+    trailing_tp_enabled: bool
+    trailing_tp_trigger: float
+    trailing_tp_trail: float
 
     # --- Spread & Pricing Guards ---
     max_no_ask_multiplier: float
@@ -123,13 +125,27 @@ class BotConfig:
 
     # --- Optional / With Defaults ---
     poly_address: Optional[str] = None
+    poly_signature_type: int = 2
     category_whitelist: List[str] = field(default_factory=lambda: ["Crypto"])
+    timeframe_15m_enabled: bool = False
+    min_streak_quality_score: float = 0.45
+    streak_quality_window: int = 7
+    lossmomentum_skip_enabled: bool = True
+    reversal_toggling_enabled: bool = True
+    reversal_lookback_n: int = 10
+    reversal_switch_threshold: float = 0.45
+    reversal_spread_penalty: float = 0.0
+    reversal_lookback_window_seconds: int = 86400
+    regime_filter_enabled: bool = True
+    stop_loss_enabled: bool = True
+    stop_loss_pct: float = 0.12
 
     # --- Market Targeting ---
     target_market_mode: str = "crypto_short_window"
     target_crypto_symbols: List[str] = field(default_factory=list)
     target_window_minutes: List[int] = field(default_factory=list)
     short_window_min_seconds_to_close: int = 60
+    live_profile_only: str = "livemode"
 
     # --- Paths ---
     db_path: str = "data/reversebot.db"
@@ -142,9 +158,6 @@ class BotConfig:
 
         if self.position_size_usdc <= 0:
             errors.append(f"POSITION_SIZE_USDC must be > 0, got {self.position_size_usdc}")
-
-        if self.max_open_positions < 1:
-            errors.append(f"MAX_OPEN_POSITIONS must be >= 1, got {self.max_open_positions}")
 
         if self.max_daily_loss_usdc <= 0:
             errors.append(f"MAX_DAILY_LOSS_USDC must be > 0, got {self.max_daily_loss_usdc}")
@@ -197,6 +210,7 @@ def load_config(env_path: Optional[str] = None) -> BotConfig:
         poly_api_secret=_require_env("POLY_API_SECRET"),
         poly_passphrase=_require_env("POLY_PASSPHRASE"),
         poly_address=os.getenv("POLY_ADDRESS"),
+        poly_signature_type=_env_int("POLY_SIGNATURE_TYPE", 2),
 
         # Network
         chain_id=_env_int("CHAIN_ID", 137),
@@ -206,12 +220,14 @@ def load_config(env_path: Optional[str] = None) -> BotConfig:
 
         # Core Strategy
         position_size_usdc=_env_float("POSITION_SIZE_USDC", 2.0),
-        max_open_positions=_env_int("MAX_OPEN_POSITIONS", 2),
-        max_daily_loss_usdc=_env_float("MAX_DAILY_LOSS_USDC", 5.0),
+        max_daily_loss_usdc=_env_float("MAX_DAILY_LOSS_USDC", 20.0),
         max_total_exposure_usdc=_env_float("MAX_TOTAL_EXPOSURE_USDC", 5.0),
         min_ev_threshold=_env_float("MIN_EV_THRESHOLD", 0.02),
-        global_cooldown=_env_int("GLOBAL_COOLDOWN", 60),
         hold_to_resolution=_env_bool("HOLD_TO_RESOLUTION", False),
+        take_profit_threshold=_env_float("TAKE_PROFIT_THRESHOLD", 0.98),
+        trailing_tp_enabled=_env_bool("TRAILING_TP_ENABLED", True),
+        trailing_tp_trigger=_env_float("TRAILING_TP_TRIGGER", 0.90),
+        trailing_tp_trail=_env_float("TRAILING_TP_TRAIL", 0.05),
 
         # Spread & Pricing Guards
         max_no_ask_multiplier=_env_float("MAX_NO_ASK_MULTIPLIER", 1.35),
@@ -230,7 +246,19 @@ def load_config(env_path: Optional[str] = None) -> BotConfig:
 
         # Mode
         paper_trade=_env_bool("PAPER_TRADE", True),
-        bot_version=os.getenv("BOT_VERSION", "v0.1.0").strip(),
+        timeframe_15m_enabled=_env_bool("TIMEFRAME_15M_ENABLED", False),
+        min_streak_quality_score=_env_float("MIN_STREAK_QUALITY_SCORE", 0.45),
+        streak_quality_window=_env_int("STREAK_QUALITY_WINDOW", 7),
+        lossmomentum_skip_enabled=_env_bool("LOSSMOMENTUM_SKIP_ENABLED", True),
+        reversal_toggling_enabled=_env_bool("REVERSAL_TOGGLING_ENABLED", True),
+        reversal_lookback_n=_env_int("REVERSAL_LOOKBACK_N", 10),
+        reversal_switch_threshold=_env_float("REVERSAL_SWITCH_THRESHOLD", 0.45),
+        reversal_spread_penalty=_env_float("REVERSAL_SPREAD_PENALTY", 0.0),
+        reversal_lookback_window_seconds=_env_int("REVERSAL_LOOKBACK_WINDOW_SECONDS", 86400),
+        regime_filter_enabled=_env_bool("REGIME_FILTER_ENABLED", True),
+        stop_loss_enabled=_env_bool("STOP_LOSS_ENABLED", True),
+        stop_loss_pct=_env_float("STOP_LOSS_PCT", 0.12),
+        bot_version=os.getenv("BOT_VERSION", "v3.2-audit-fixed").strip(),
         dashboard_password=os.getenv("DASHBOARD_PASSWORD", "reversebot2025").strip(),
 
         # Categories (used by validator.py check 9 for non-crypto fallback)
@@ -241,6 +269,7 @@ def load_config(env_path: Optional[str] = None) -> BotConfig:
         target_crypto_symbols=[symbol.upper() for symbol in _env_list("TARGET_CRYPTO_SYMBOLS", ["BTC", "ETH"])],
         target_window_minutes=_env_int_list("TARGET_WINDOW_MINUTES", [5, 15]),
         short_window_min_seconds_to_close=_env_int("SHORT_WINDOW_MIN_SECONDS_TO_CLOSE", 60),
+        live_profile_only=os.getenv("LIVE_PROFILE_ONLY", "livemode").strip().lower(),
 
         # Paths
         db_path=os.getenv("DB_PATH", "data/reversebot.db").strip(),
@@ -265,8 +294,42 @@ def load_runtime_overrides(base_config: "BotConfig") -> "BotConfig":
     # R&D mode uses its own isolated runtime config
     if getattr(base_config, "target_market_mode", "") == "crypto_short_window":
         runtime_path = Path("dashboard/runtime_config_rd.json")
+        env_path = Path(".env.rd")
     else:
         runtime_path = Path("dashboard/runtime_config.json")
+        env_path = Path(".env")
+
+    # --- Self-Healing Env Override Guard ---
+    # If the env file has been modified more recently than the runtime config overrides,
+    # it means the user edited the env file. We scan for explicitly defined env keys
+    # and pop them from the overrides, forcing them to fall back to the env configurations.
+    if env_path.exists() and runtime_path.exists():
+        try:
+            env_mtime = env_path.stat().st_mtime
+            runtime_mtime = runtime_path.stat().st_mtime
+            if env_mtime > runtime_mtime:
+                env_keys = set()
+                with open(env_path, "r") as f:
+                    for line in f:
+                        line = line.strip()
+                        if "=" in line and not line.startswith("#"):
+                            k = line.split("=", 1)[0].strip().lower()
+                            env_keys.add(k)
+                
+                try:
+                    overrides = json.loads(runtime_path.read_text())
+                    modified_overrides = False
+                    for rt_key in list(overrides.keys()):
+                        if rt_key.lower() in env_keys:
+                            overrides.pop(rt_key)
+                            modified_overrides = True
+                    if modified_overrides:
+                        runtime_path.write_text(json.dumps(overrides, indent=2))
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
     if not runtime_path.exists():
         return base_config
 
@@ -278,12 +341,14 @@ def load_runtime_overrides(base_config: "BotConfig") -> "BotConfig":
     # Mapping from runtime_config keys → BotConfig fields
     field_map = {
         "position_size_usdc": ("position_size_usdc", float),
-        "max_open_positions": ("max_open_positions", int),
         "max_daily_loss_usdc": ("max_daily_loss_usdc", float),
         "max_total_exposure_usdc": ("max_total_exposure_usdc", float),
         "min_ev_threshold": ("min_ev_threshold", float),
-        "global_cooldown": ("global_cooldown", int),
         "hold_to_resolution": ("hold_to_resolution", bool),
+        "take_profit_threshold": ("take_profit_threshold", float),
+        "trailing_tp_enabled": ("trailing_tp_enabled", bool),
+        "trailing_tp_trigger": ("trailing_tp_trigger", float),
+        "trailing_tp_trail": ("trailing_tp_trail", float),
         "max_no_ask_multiplier": ("max_no_ask_multiplier", float),
         "high_vol_ask_multiplier": ("high_vol_ask_multiplier", float),
         "high_vol_assets": ("high_vol_assets", list),
@@ -291,6 +356,17 @@ def load_runtime_overrides(base_config: "BotConfig") -> "BotConfig":
 
         "ghost_guard_enabled": ("ghost_guard_enabled", bool),
         "short_window_min_seconds_to_close": ("short_window_min_seconds_to_close", int),
+        "min_streak_quality_score": ("min_streak_quality_score", float),
+        "streak_quality_window": ("streak_quality_window", int),
+        "lossmomentum_skip_enabled": ("lossmomentum_skip_enabled", bool),
+        "reversal_toggling_enabled": ("reversal_toggling_enabled", bool),
+        "reversal_lookback_n": ("reversal_lookback_n", int),
+        "reversal_switch_threshold": ("reversal_switch_threshold", float),
+        "reversal_spread_penalty": ("reversal_spread_penalty", float),
+        "reversal_lookback_window_seconds": ("reversal_lookback_window_seconds", int),
+        "regime_filter_enabled": ("regime_filter_enabled", bool),
+        "stop_loss_enabled": ("stop_loss_enabled", bool),
+        "stop_loss_pct": ("stop_loss_pct", float),
     }
 
     for rt_key, (cfg_field, cast_fn) in field_map.items():

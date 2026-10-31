@@ -1,0 +1,141 @@
+POLYMARKET REVERSEBOT (RUFLO V3) — COMPREHENSIVE PROJECT AUDIT & ARCHITECTURE REPORT
+================================================================================
+
+1. PROJECT MISSION & CORE LOGIC
+-------------------------------
+The Polymarket ReverseBot (RuFlo V3) is a high-performance algorithmic trading system designed 
+for micro-timeframe prediction markets. Specifically, it targets the "Crypto Up or Down" markets
+on Polymarket with 5-minute and 15-minute expiration intervals.
+
+The bot operates on a "Streak Momentum" reversal strategy. 
+- Core Principle: The bot identifies short-term streaks (consecutive identical candle outcomes).
+- Active Strategy: If the last two completed candles (T-1 and T-2) for BTC or ETH resolved in 
+  the same direction (e.g., UP-UP), the bot evaluates an entry for a continuation bet (YES/UP).
+- Reverse Logic: Despite the "Reverse" name, the current v3.2 production version is optimized
+  for trend-following within specific price bands to capture short-lived momentum bursts.
+
+2. BOT EXECUTION PIPELINE (THE EVENT LOOP)
+------------------------------------------
+The bot runs an asynchronous event loop in `src/main.py` with three distinct "lanes" to bypass
+REST API bottlenecks and rate limits:
+
+LANE A: THE FAST LANE (Monitoring & Signals)
+- Frequency: Runs every 0.1 seconds.
+- Action: Polls the Market Scanner for entry signals and monitors existing open positions.
+- Optimization: Uses a WebSocket cache to get real-time L2 orderbook prices (Zero-latency).
+
+LANE B: THE DISCOVERY LANE (Scanning)
+- Frequency: Runs every 5.0 seconds.
+- Action: Discovers new micro-markets using "Predictive Slug Hashing."
+- Logic: Since Polymarket's search index is laggy, the bot mathematically predicts the URL 
+  slugs for upcoming 5m/15m markets based on the current UTC timestamp and blasts them to 
+  the Gamma API to find them before they appear in the UI.
+
+LANE C: THE RESOLUTION LANE (Settlement)
+- Frequency: Runs every 10.0 seconds.
+- Action: Checks the Gamma API to see if finished trades have officially resolved to 1.0 or 0.0.
+
+3. THE 10 MANDATORY SIGNAL GUARDS (src/strategy/validator.py)
+------------------------------------------------------------
+Before any trade is executed, a signal must pass 10 strict validation gates:
+
+1. LIQUIDITY GUARD: Ensures 24h taker-side volume meets the minimum USDC threshold.
+2. SPREAD GUARD: Rejects trades if the bid-ask spread is wider than 60% of the ask price.
+3. TIME-TO-CLOSE GUARD: Rejects entries if there is less than 60s (5m) or 120s (15m) remaining.
+4. DUPLICATE GUARD: Prevents opening multiple positions in the exact same market.
+5. EXPOSURE GUARD: Hard cap on the total USDC amount currently locked in active trades.
+6. DAILY LOSS GUARD: Real-time kill switch if realized PnL drops below a specific USDC limit.
+7. CONCURRENCY GUARD: Limits the absolute number of active "slots" (e.g., max 2 positions).
+8. STABILITY GUARD: Requires price to remain above the threshold for 2 consecutive scan cycles.
+9. CATEGORY GUARD: Whitelists specific tags (e.g., "Crypto") to prevent noise.
+10. CVD GUARD (Binance): Cross-references the Binance Spot CVD. If Yes-buying volume on 
+    Polymarket is 5x greater than No-buying volume, the signal is rejected as "Overcrowded."
+
+4. DATABASE ARCHITECTURE (SQLite / src/db/schema.sql)
+-----------------------------------------------------
+The bot uses a persistent SQLite database with Write-Ahead Logging (WAL) for high-speed I/O.
+
+TABLE: markets
+- market_id (PK): The unique Polymarket condition ID.
+- question: The full text (e.g., "Bitcoin Up or Down - May 22, 11:35AM").
+- yes_price / no_price: The last seen taker prices.
+- closes_at: The Unix timestamp when the trading window ends.
+- consecutive_cycles_above: Counter for the Stability Guard.
+
+TABLE: paper_positions / positions
+- position_id: UUID4 unique identifier.
+- entry_price: Price at match time.
+- realised_pnl: Final profit/loss after fees.
+- max_price_seen / min_price_seen: Verbose tracking of wicks for SL/TP optimization.
+- resolution_delay: Time difference between market close and oracle resolution.
+
+TABLE: spread_logs
+- Stores tick-by-tick bid/ask spreads, slippage metrics, and API latency for quant analysis.
+
+5. ACTIVE PARAMETERS & RISK VALUES (v3.2-audit-fixed)
+-----------------------------------------------------
+- position_size_usdc: 2.0 (The base stake per trade).
+- max_open_positions: 15 (Max concurrent trades in R&D mode).
+- max_daily_loss_usdc: 75.0 (Emergency daily shutdown limit).
+- max_total_exposure_usdc: 50.0 (Total capital locked cap).
+- global_cooldown: 60 (Seconds to wait between ANY entry).
+- min_entry_price: 0.45 (The "Floor" for buying NO).
+- max_entry_price: 0.65 (The "Ceiling" for buying NO).
+- takerBaseFee: 1000 (1.0% taking fee currently set by Polymarket).
+
+6. CORE ARCHITECTURAL GUARDS
+----------------------------
+MISTAKE 2 GUARD: GTC Orders are Forbidden. The bot uses FOK (Fill-Or-Kill) only to prevent 
+leaving resting orders that can be sniped by bots during news events.
+MISTAKE 3 GUARD: PnL is calculated by shares (size / price), not just sizing.
+MISTAKE 5 GUARD: Health Monitor. If the WebSocket heartbeats stop for >90s, the bot 
+triggers an emergency shutdown and cancels all orders via the REST API.
+STREAK RESET GUARD: Once a trade closes at `closes_at`, the bot must wait for a 
+completely non-overlapping T-1 and T-2 resolution before firing again.
+
+7. LOGGING & TELEMETRY (src/logs/log_config.py)
+----------------------------------------------
+The bot uses Structured JSON Logging via `structlog`.
+- Every log line includes: `timestamp`, `version`, `module`, `level`, `market_id`, and `msg`.
+- DASHBOARD_CALLBACK: Direct pipe that forwards JSON logs to the Web Dashboard over WebSockets.
+- Rotation: 10MB log files with single-file backup to keep disk usage low on cheap VPS instances.
+
+8. AUTHENTICATION & SECURITY (src/auth/)
+----------------------------------------
+- L1 Auth: EIP-712 wallet signing for Polygon. Private keys are never stored in the DB.
+- L2 Auth: HMAC-SHA256 headers for the CLOB API. Includes a UUID4 nonce per request.
+- Clock Sync: The bot polls `GET /time` on startup and maintains a `_time_offset` to 
+  ensure it is perfectly synchronized with the exchange clock.
+
+9. AUDIT FINDINGS: LOGICAL BUGS & STRUCTURAL FLAWS
+-------------------------------------------------
+FLAW A: THE TAKER FEE DRAIN
+The bot currently pays ~3.5% in fees per trade because it uses FOK orders. In micro-markets, 
+this requires a win rate of >56% just to break even.
+STRIKE: Shift to `POST_ONLY` limit orders to pay 0% fees and collect a 20% Maker Rebate.
+
+FLAW B: EXECUTION LATENCY
+The bot polls Binance Klines via REST. 
+STRIKE: Transition to the `btcusdt@aggTrade` WebSocket to get price updates in 
+milliseconds instead of seconds.
+
+FLAW C: SLIPPAGE MIRAGE
+The bot assumes a flat 50 bps slippage. In reality, micro-market depth is non-linear. 
+STRIKE: Implement a dynamic orderbook sweep calculation in `clob_client.py` that 
+recalculates fill price based on the actual volume resting at each tick.
+
+FLAW D: CORRELATION RISK
+Trading BTC and ETH simultaneously doubles risk on the same market move. 
+STRIKE: Add a `CorrelationGuard` to the Validator to block secondary asset entries 
+if an active position exists in a correlated asset for the same window.
+
+10. WEB DASHBOARD (FastAPI / src/api/dashboard.py)
+--------------------------------------------------
+A real-time dashboard is available at port 8080.
+- Dashboard Features: Real-time P&L Chart, Open Position monitor, Trade History, 
+  and a Live Parameters panel for hot-reloading `.env` settings without restarting.
+- Candle Resolutions Tab: A dedicated v3.5 feature that displays the T-1 and T-2 
+  completed outcomes for the 4 major micro-market quadrants (BTC/ETH 5m/15m).
+
+================================================================================
+END OF REPORT

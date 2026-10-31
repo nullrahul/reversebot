@@ -1,1 +1,0 @@
-{"nodes": [{"id": "prompt_yesbias", "label": "Yes Bias Strategy", "file_type": "document", "source_file": "POLYMARKET_BOT_AGENT_PROMPT.md", "source_location": "Thesis"}, {"id": "risk_killswitch", "label": "Kill Switch System", "file_type": "document", "source_file": "POLYMARKET_BOT_AGENT_PROMPT.md", "source_location": "Safety"}], "edges": [], "hyperedges": []}

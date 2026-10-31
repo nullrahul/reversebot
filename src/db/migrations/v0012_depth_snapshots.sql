@@ -1,0 +1,38 @@
+-- v0012: Depth Snapshots table for orderbook depth monitoring (v3.56)
+-- Purely observational — records orderbook state at signal time for overnight analysis.
+
+CREATE TABLE IF NOT EXISTS depth_snapshots (
+    snapshot_id TEXT PRIMARY KEY,
+    market_id TEXT NOT NULL,
+    token_id TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    side TEXT NOT NULL,
+    requested_shares REAL NOT NULL,
+    entry_price REAL NOT NULL,
+    streak_depth INTEGER DEFAULT 2,
+    book_asks_json TEXT,
+    book_bids_json TEXT,
+    total_ask_depth_shares REAL DEFAULT 0,
+    total_bid_depth_shares REAL DEFAULT 0,
+    chunked_n_levels INTEGER DEFAULT 0,
+    chunked_fillable_shares REAL DEFAULT 0,
+    chunked_avg_price REAL DEFAULT 0,
+    chunked_max_price REAL DEFAULT 0,
+    chunked_full_fill INTEGER DEFAULT 0,
+    chunked_detail_json TEXT,
+    partial_filled_shares REAL DEFAULT 0,
+    partial_filled_pct REAL DEFAULT 0,
+    partial_avg_price REAL DEFAULT 0,
+    partial_recovery_pct REAL DEFAULT 0,
+    deferred_delay_ms INTEGER DEFAULT 500,
+    deferred_book_asks_json TEXT,
+    deferred_total_ask_depth REAL DEFAULT 0,
+    deferred_fillable_shares REAL DEFAULT 0,
+    deferred_avg_price REAL DEFAULT 0,
+    deferred_full_fill INTEGER DEFAULT 0,
+    deferred_book_changed INTEGER DEFAULT 0,
+    deferred_detail_json TEXT,
+    window_minutes INTEGER DEFAULT 5,
+    symbol TEXT,
+    is_reversal INTEGER DEFAULT 0
+);

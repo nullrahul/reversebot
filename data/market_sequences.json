@@ -1,0 +1,5464 @@
+{
+  "btc_5m": [
+    {
+      "slug": "btc-updown-5m-1779494400",
+      "timestamp": 1779494400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 8:00PM-8:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779494700",
+      "timestamp": 1779494700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 8:05PM-8:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779495000",
+      "timestamp": 1779495000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 8:10PM-8:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779495300",
+      "timestamp": 1779495300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 8:15PM-8:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779495600",
+      "timestamp": 1779495600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 8:20PM-8:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779495900",
+      "timestamp": 1779495900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 8:25PM-8:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779496200",
+      "timestamp": 1779496200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 8:30PM-8:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779496500",
+      "timestamp": 1779496500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 8:35PM-8:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779496800",
+      "timestamp": 1779496800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 8:40PM-8:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779497100",
+      "timestamp": 1779497100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 8:45PM-8:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779497400",
+      "timestamp": 1779497400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 8:50PM-8:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779497700",
+      "timestamp": 1779497700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 8:55PM-9:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779498000",
+      "timestamp": 1779498000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:00PM-9:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779498300",
+      "timestamp": 1779498300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:05PM-9:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779498600",
+      "timestamp": 1779498600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 9:10PM-9:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779498900",
+      "timestamp": 1779498900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:15PM-9:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779499200",
+      "timestamp": 1779499200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 9:20PM-9:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779499500",
+      "timestamp": 1779499500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:25PM-9:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779499800",
+      "timestamp": 1779499800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 9:30PM-9:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779500100",
+      "timestamp": 1779500100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:35PM-9:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779500400",
+      "timestamp": 1779500400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 9:40PM-9:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779500700",
+      "timestamp": 1779500700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 9:45PM-9:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779501000",
+      "timestamp": 1779501000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:50PM-9:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779501300",
+      "timestamp": 1779501300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:55PM-10:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779501600",
+      "timestamp": 1779501600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 10:00PM-10:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779501900",
+      "timestamp": 1779501900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:05PM-10:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779502200",
+      "timestamp": 1779502200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 10:10PM-10:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779502500",
+      "timestamp": 1779502500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:15PM-10:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779502800",
+      "timestamp": 1779502800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 10:20PM-10:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779503100",
+      "timestamp": 1779503100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 10:25PM-10:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779503400",
+      "timestamp": 1779503400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:30PM-10:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779503700",
+      "timestamp": 1779503700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:35PM-10:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779504000",
+      "timestamp": 1779504000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 10:40PM-10:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779504300",
+      "timestamp": 1779504300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:45PM-10:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779504600",
+      "timestamp": 1779504600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:50PM-10:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779504900",
+      "timestamp": 1779504900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:55PM-11:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779505200",
+      "timestamp": 1779505200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 11:00PM-11:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779505500",
+      "timestamp": 1779505500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 11:05PM-11:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779505800",
+      "timestamp": 1779505800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 11:10PM-11:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779506100",
+      "timestamp": 1779506100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 11:15PM-11:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779506400",
+      "timestamp": 1779506400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 11:20PM-11:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779506700",
+      "timestamp": 1779506700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 11:25PM-11:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779507000",
+      "timestamp": 1779507000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 11:30PM-11:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779507300",
+      "timestamp": 1779507300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 11:35PM-11:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779507600",
+      "timestamp": 1779507600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 11:40PM-11:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779507900",
+      "timestamp": 1779507900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 11:45PM-11:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779508200",
+      "timestamp": 1779508200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 11:50PM-11:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779508500",
+      "timestamp": 1779508500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 11:55PM-12:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779508800",
+      "timestamp": 1779508800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:00AM-12:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779509100",
+      "timestamp": 1779509100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:05AM-12:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779509400",
+      "timestamp": 1779509400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:10AM-12:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779509700",
+      "timestamp": 1779509700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:15AM-12:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779510000",
+      "timestamp": 1779510000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:20AM-12:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779510300",
+      "timestamp": 1779510300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:25AM-12:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779510600",
+      "timestamp": 1779510600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:30AM-12:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779510900",
+      "timestamp": 1779510900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:35AM-12:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779511200",
+      "timestamp": 1779511200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:40AM-12:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779511500",
+      "timestamp": 1779511500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:45AM-12:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779511800",
+      "timestamp": 1779511800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:50AM-12:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779512100",
+      "timestamp": 1779512100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:55AM-1:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779512400",
+      "timestamp": 1779512400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:00AM-1:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779512700",
+      "timestamp": 1779512700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:05AM-1:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779513000",
+      "timestamp": 1779513000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:10AM-1:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779513300",
+      "timestamp": 1779513300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:15AM-1:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779513600",
+      "timestamp": 1779513600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:20AM-1:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779513900",
+      "timestamp": 1779513900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:25AM-1:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779514200",
+      "timestamp": 1779514200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:30AM-1:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779514500",
+      "timestamp": 1779514500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:35AM-1:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779514800",
+      "timestamp": 1779514800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:40AM-1:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779515100",
+      "timestamp": 1779515100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:45AM-1:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779515400",
+      "timestamp": 1779515400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:50AM-1:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779515700",
+      "timestamp": 1779515700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:55AM-2:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779516000",
+      "timestamp": 1779516000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:00AM-2:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779516300",
+      "timestamp": 1779516300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:05AM-2:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779516600",
+      "timestamp": 1779516600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:10AM-2:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779516900",
+      "timestamp": 1779516900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:15AM-2:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779517200",
+      "timestamp": 1779517200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:20AM-2:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779517500",
+      "timestamp": 1779517500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:25AM-2:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779517800",
+      "timestamp": 1779517800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:30AM-2:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779518100",
+      "timestamp": 1779518100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:35AM-2:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779518400",
+      "timestamp": 1779518400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:40AM-2:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779518700",
+      "timestamp": 1779518700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:45AM-2:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779519000",
+      "timestamp": 1779519000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:50AM-2:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779519300",
+      "timestamp": 1779519300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:55AM-3:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779519600",
+      "timestamp": 1779519600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:00AM-3:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779519900",
+      "timestamp": 1779519900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:05AM-3:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779520200",
+      "timestamp": 1779520200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:10AM-3:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779520500",
+      "timestamp": 1779520500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:15AM-3:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779520800",
+      "timestamp": 1779520800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:20AM-3:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779521100",
+      "timestamp": 1779521100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:25AM-3:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779521400",
+      "timestamp": 1779521400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:30AM-3:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779521700",
+      "timestamp": 1779521700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:35AM-3:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779522000",
+      "timestamp": 1779522000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:40AM-3:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779522300",
+      "timestamp": 1779522300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:45AM-3:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779522600",
+      "timestamp": 1779522600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:50AM-3:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779522900",
+      "timestamp": 1779522900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:55AM-4:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779523200",
+      "timestamp": 1779523200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:00AM-4:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779523500",
+      "timestamp": 1779523500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:05AM-4:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779523800",
+      "timestamp": 1779523800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:10AM-4:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779524100",
+      "timestamp": 1779524100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:15AM-4:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779524400",
+      "timestamp": 1779524400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:20AM-4:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779524700",
+      "timestamp": 1779524700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:25AM-4:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779525000",
+      "timestamp": 1779525000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:30AM-4:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779525300",
+      "timestamp": 1779525300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:35AM-4:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779525600",
+      "timestamp": 1779525600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:40AM-4:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779525900",
+      "timestamp": 1779525900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:45AM-4:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779526200",
+      "timestamp": 1779526200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:50AM-4:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779526500",
+      "timestamp": 1779526500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:55AM-5:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779526800",
+      "timestamp": 1779526800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:00AM-5:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779527100",
+      "timestamp": 1779527100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:05AM-5:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779527400",
+      "timestamp": 1779527400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:10AM-5:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779527700",
+      "timestamp": 1779527700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:15AM-5:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779528000",
+      "timestamp": 1779528000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:20AM-5:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779528300",
+      "timestamp": 1779528300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:25AM-5:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779528600",
+      "timestamp": 1779528600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:30AM-5:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779528900",
+      "timestamp": 1779528900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:35AM-5:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779529200",
+      "timestamp": 1779529200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:40AM-5:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779529500",
+      "timestamp": 1779529500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:45AM-5:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779529800",
+      "timestamp": 1779529800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:50AM-5:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779530100",
+      "timestamp": 1779530100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:55AM-6:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779530400",
+      "timestamp": 1779530400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:00AM-6:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779530700",
+      "timestamp": 1779530700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:05AM-6:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779531000",
+      "timestamp": 1779531000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:10AM-6:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779531300",
+      "timestamp": 1779531300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:15AM-6:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779531600",
+      "timestamp": 1779531600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:20AM-6:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779531900",
+      "timestamp": 1779531900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:25AM-6:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779532200",
+      "timestamp": 1779532200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:30AM-6:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779532500",
+      "timestamp": 1779532500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:35AM-6:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779532800",
+      "timestamp": 1779532800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:40AM-6:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779533100",
+      "timestamp": 1779533100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:45AM-6:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779533400",
+      "timestamp": 1779533400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:50AM-6:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779533700",
+      "timestamp": 1779533700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:55AM-7:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779534000",
+      "timestamp": 1779534000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:00AM-7:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779534300",
+      "timestamp": 1779534300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:05AM-7:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779534600",
+      "timestamp": 1779534600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:10AM-7:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779534900",
+      "timestamp": 1779534900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:15AM-7:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779535200",
+      "timestamp": 1779535200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:20AM-7:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779535500",
+      "timestamp": 1779535500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:25AM-7:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779535800",
+      "timestamp": 1779535800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:30AM-7:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779536100",
+      "timestamp": 1779536100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:35AM-7:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779536400",
+      "timestamp": 1779536400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:40AM-7:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779536700",
+      "timestamp": 1779536700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:45AM-7:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779537000",
+      "timestamp": 1779537000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:50AM-7:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779537300",
+      "timestamp": 1779537300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:55AM-8:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779537600",
+      "timestamp": 1779537600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:00AM-8:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779537900",
+      "timestamp": 1779537900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:05AM-8:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779538200",
+      "timestamp": 1779538200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:10AM-8:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779538500",
+      "timestamp": 1779538500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:15AM-8:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779538800",
+      "timestamp": 1779538800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:20AM-8:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779539100",
+      "timestamp": 1779539100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:25AM-8:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779539400",
+      "timestamp": 1779539400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:30AM-8:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779539700",
+      "timestamp": 1779539700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:35AM-8:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779540000",
+      "timestamp": 1779540000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:40AM-8:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779540300",
+      "timestamp": 1779540300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:45AM-8:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779540600",
+      "timestamp": 1779540600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:50AM-8:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779540900",
+      "timestamp": 1779540900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:55AM-9:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779541200",
+      "timestamp": 1779541200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:00AM-9:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779541500",
+      "timestamp": 1779541500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:05AM-9:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779541800",
+      "timestamp": 1779541800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 9:10AM-9:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779542100",
+      "timestamp": 1779542100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:15AM-9:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779542400",
+      "timestamp": 1779542400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:20AM-9:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779542700",
+      "timestamp": 1779542700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:25AM-9:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779543000",
+      "timestamp": 1779543000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 9:30AM-9:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779543300",
+      "timestamp": 1779543300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 9:35AM-9:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779543600",
+      "timestamp": 1779543600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:40AM-9:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779543900",
+      "timestamp": 1779543900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:45AM-9:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779544200",
+      "timestamp": 1779544200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:50AM-9:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779544500",
+      "timestamp": 1779544500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 9:55AM-10:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779544800",
+      "timestamp": 1779544800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 10:00AM-10:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779545100",
+      "timestamp": 1779545100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:05AM-10:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779545400",
+      "timestamp": 1779545400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 10:10AM-10:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779545700",
+      "timestamp": 1779545700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:15AM-10:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779546000",
+      "timestamp": 1779546000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:20AM-10:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779546300",
+      "timestamp": 1779546300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:25AM-10:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779546600",
+      "timestamp": 1779546600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:30AM-10:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779546900",
+      "timestamp": 1779546900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:35AM-10:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779547200",
+      "timestamp": 1779547200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:40AM-10:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779547500",
+      "timestamp": 1779547500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 10:45AM-10:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779547800",
+      "timestamp": 1779547800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:50AM-10:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779548100",
+      "timestamp": 1779548100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:55AM-11:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779548400",
+      "timestamp": 1779548400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:00AM-11:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779548700",
+      "timestamp": 1779548700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:05AM-11:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779549000",
+      "timestamp": 1779549000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:10AM-11:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779549300",
+      "timestamp": 1779549300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:15AM-11:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779549600",
+      "timestamp": 1779549600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:20AM-11:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779549900",
+      "timestamp": 1779549900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:25AM-11:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779550200",
+      "timestamp": 1779550200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:30AM-11:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779550500",
+      "timestamp": 1779550500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:35AM-11:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779550800",
+      "timestamp": 1779550800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:40AM-11:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779551100",
+      "timestamp": 1779551100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:45AM-11:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779551400",
+      "timestamp": 1779551400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:50AM-11:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779551700",
+      "timestamp": 1779551700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:55AM-12:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779552000",
+      "timestamp": 1779552000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:00PM-12:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779552300",
+      "timestamp": 1779552300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:05PM-12:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779552600",
+      "timestamp": 1779552600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:10PM-12:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779552900",
+      "timestamp": 1779552900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:15PM-12:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779553200",
+      "timestamp": 1779553200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:20PM-12:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779553500",
+      "timestamp": 1779553500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:25PM-12:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779553800",
+      "timestamp": 1779553800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:30PM-12:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779554100",
+      "timestamp": 1779554100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:35PM-12:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779554400",
+      "timestamp": 1779554400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:40PM-12:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779554700",
+      "timestamp": 1779554700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:45PM-12:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779555000",
+      "timestamp": 1779555000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:50PM-12:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779555300",
+      "timestamp": 1779555300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:55PM-1:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779555600",
+      "timestamp": 1779555600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:00PM-1:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779555900",
+      "timestamp": 1779555900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:05PM-1:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779556200",
+      "timestamp": 1779556200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:10PM-1:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779556500",
+      "timestamp": 1779556500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:15PM-1:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779556800",
+      "timestamp": 1779556800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:20PM-1:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779557100",
+      "timestamp": 1779557100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:25PM-1:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779557400",
+      "timestamp": 1779557400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:30PM-1:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779557700",
+      "timestamp": 1779557700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:35PM-1:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779558000",
+      "timestamp": 1779558000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:40PM-1:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779558300",
+      "timestamp": 1779558300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:45PM-1:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779558600",
+      "timestamp": 1779558600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:50PM-1:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779558900",
+      "timestamp": 1779558900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:55PM-2:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779559200",
+      "timestamp": 1779559200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:00PM-2:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779559500",
+      "timestamp": 1779559500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:05PM-2:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779559800",
+      "timestamp": 1779559800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:10PM-2:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779560100",
+      "timestamp": 1779560100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:15PM-2:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779560400",
+      "timestamp": 1779560400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:20PM-2:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779560700",
+      "timestamp": 1779560700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:25PM-2:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779561000",
+      "timestamp": 1779561000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:30PM-2:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779561300",
+      "timestamp": 1779561300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:35PM-2:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779561600",
+      "timestamp": 1779561600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:40PM-2:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779561900",
+      "timestamp": 1779561900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:45PM-2:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779562200",
+      "timestamp": 1779562200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 2:50PM-2:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779562500",
+      "timestamp": 1779562500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:55PM-3:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779562800",
+      "timestamp": 1779562800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:00PM-3:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779563100",
+      "timestamp": 1779563100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:05PM-3:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779563400",
+      "timestamp": 1779563400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:10PM-3:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779563700",
+      "timestamp": 1779563700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:15PM-3:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779564000",
+      "timestamp": 1779564000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:20PM-3:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779564300",
+      "timestamp": 1779564300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:25PM-3:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779564600",
+      "timestamp": 1779564600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:30PM-3:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779564900",
+      "timestamp": 1779564900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:35PM-3:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779565200",
+      "timestamp": 1779565200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:40PM-3:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779565500",
+      "timestamp": 1779565500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:45PM-3:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779565800",
+      "timestamp": 1779565800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:50PM-3:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779566100",
+      "timestamp": 1779566100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:55PM-4:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779566400",
+      "timestamp": 1779566400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:00PM-4:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779566700",
+      "timestamp": 1779566700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:05PM-4:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779567000",
+      "timestamp": 1779567000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:10PM-4:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779567300",
+      "timestamp": 1779567300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:15PM-4:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779567600",
+      "timestamp": 1779567600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:20PM-4:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779567900",
+      "timestamp": 1779567900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:25PM-4:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779568200",
+      "timestamp": 1779568200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:30PM-4:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779568500",
+      "timestamp": 1779568500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:35PM-4:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779568800",
+      "timestamp": 1779568800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:40PM-4:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779569100",
+      "timestamp": 1779569100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:45PM-4:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779569400",
+      "timestamp": 1779569400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:50PM-4:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779569700",
+      "timestamp": 1779569700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:55PM-5:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779570000",
+      "timestamp": 1779570000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:00PM-5:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779570300",
+      "timestamp": 1779570300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:05PM-5:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779570600",
+      "timestamp": 1779570600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:10PM-5:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779570900",
+      "timestamp": 1779570900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:15PM-5:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779571200",
+      "timestamp": 1779571200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:20PM-5:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779571500",
+      "timestamp": 1779571500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:25PM-5:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779571800",
+      "timestamp": 1779571800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:30PM-5:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779572100",
+      "timestamp": 1779572100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:35PM-5:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779572400",
+      "timestamp": 1779572400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:40PM-5:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779572700",
+      "timestamp": 1779572700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:45PM-5:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779573000",
+      "timestamp": 1779573000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:50PM-5:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779573300",
+      "timestamp": 1779573300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:55PM-6:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779573600",
+      "timestamp": 1779573600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:00PM-6:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779573900",
+      "timestamp": 1779573900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:05PM-6:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779574200",
+      "timestamp": 1779574200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:10PM-6:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779574500",
+      "timestamp": 1779574500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:15PM-6:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779574800",
+      "timestamp": 1779574800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:20PM-6:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779575100",
+      "timestamp": 1779575100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:25PM-6:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779575400",
+      "timestamp": 1779575400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:30PM-6:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779575700",
+      "timestamp": 1779575700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:35PM-6:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779576000",
+      "timestamp": 1779576000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:40PM-6:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779576300",
+      "timestamp": 1779576300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:45PM-6:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779576600",
+      "timestamp": 1779576600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:50PM-6:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779576900",
+      "timestamp": 1779576900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:55PM-7:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779577200",
+      "timestamp": 1779577200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:00PM-7:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779577500",
+      "timestamp": 1779577500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:05PM-7:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779577800",
+      "timestamp": 1779577800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:10PM-7:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779578100",
+      "timestamp": 1779578100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:15PM-7:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779578400",
+      "timestamp": 1779578400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:20PM-7:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779578700",
+      "timestamp": 1779578700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:25PM-7:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779579000",
+      "timestamp": 1779579000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:30PM-7:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779579300",
+      "timestamp": 1779579300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:35PM-7:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779579600",
+      "timestamp": 1779579600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:40PM-7:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779579900",
+      "timestamp": 1779579900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:45PM-7:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779580200",
+      "timestamp": 1779580200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:50PM-7:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779580500",
+      "timestamp": 1779580500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:55PM-8:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779580800",
+      "timestamp": 1779580800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:00PM-8:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779581100",
+      "timestamp": 1779581100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:05PM-8:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779581400",
+      "timestamp": 1779581400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:10PM-8:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779581700",
+      "timestamp": 1779581700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:15PM-8:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779582000",
+      "timestamp": 1779582000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:20PM-8:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779582300",
+      "timestamp": 1779582300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:25PM-8:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779582600",
+      "timestamp": 1779582600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:30PM-8:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779582900",
+      "timestamp": 1779582900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:35PM-8:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779583200",
+      "timestamp": 1779583200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:40PM-8:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779583500",
+      "timestamp": 1779583500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:45PM-8:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779583800",
+      "timestamp": 1779583800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:50PM-8:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779584100",
+      "timestamp": 1779584100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:55PM-9:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779584400",
+      "timestamp": 1779584400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:00PM-9:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779584700",
+      "timestamp": 1779584700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 9:05PM-9:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779585000",
+      "timestamp": 1779585000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:10PM-9:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779585300",
+      "timestamp": 1779585300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:15PM-9:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779585600",
+      "timestamp": 1779585600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:20PM-9:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779585900",
+      "timestamp": 1779585900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:25PM-9:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779586200",
+      "timestamp": 1779586200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:30PM-9:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779586500",
+      "timestamp": 1779586500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 9:35PM-9:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779586800",
+      "timestamp": 1779586800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 9:40PM-9:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779587100",
+      "timestamp": 1779587100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:45PM-9:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779587400",
+      "timestamp": 1779587400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 9:50PM-9:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779587700",
+      "timestamp": 1779587700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 9:55PM-10:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779588000",
+      "timestamp": 1779588000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:00PM-10:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779588300",
+      "timestamp": 1779588300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:05PM-10:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779588600",
+      "timestamp": 1779588600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:10PM-10:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779588900",
+      "timestamp": 1779588900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:15PM-10:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779589200",
+      "timestamp": 1779589200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 10:20PM-10:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779589500",
+      "timestamp": 1779589500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:25PM-10:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779589800",
+      "timestamp": 1779589800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:30PM-10:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779590100",
+      "timestamp": 1779590100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:35PM-10:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779590400",
+      "timestamp": 1779590400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:40PM-10:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779590700",
+      "timestamp": 1779590700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 10:45PM-10:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779591000",
+      "timestamp": 1779591000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 10:50PM-10:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779591300",
+      "timestamp": 1779591300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 10:55PM-11:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779591600",
+      "timestamp": 1779591600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:00PM-11:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779591900",
+      "timestamp": 1779591900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:05PM-11:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779592200",
+      "timestamp": 1779592200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:10PM-11:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779592500",
+      "timestamp": 1779592500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:15PM-11:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779592800",
+      "timestamp": 1779592800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:20PM-11:25PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779593100",
+      "timestamp": 1779593100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:25PM-11:30PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779593400",
+      "timestamp": 1779593400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:30PM-11:35PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779593700",
+      "timestamp": 1779593700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:35PM-11:40PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779594000",
+      "timestamp": 1779594000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:40PM-11:45PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779594300",
+      "timestamp": 1779594300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 11:45PM-11:50PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779594600",
+      "timestamp": 1779594600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:50PM-11:55PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779594900",
+      "timestamp": 1779594900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 11:55PM-12:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779595200",
+      "timestamp": 1779595200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:00AM-12:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779595500",
+      "timestamp": 1779595500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 12:05AM-12:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779595800",
+      "timestamp": 1779595800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:10AM-12:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779596100",
+      "timestamp": 1779596100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 12:15AM-12:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779596400",
+      "timestamp": 1779596400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 12:20AM-12:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779596700",
+      "timestamp": 1779596700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 12:25AM-12:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779597000",
+      "timestamp": 1779597000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 12:30AM-12:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779597300",
+      "timestamp": 1779597300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 12:35AM-12:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779597600",
+      "timestamp": 1779597600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:40AM-12:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779597900",
+      "timestamp": 1779597900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:45AM-12:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779598200",
+      "timestamp": 1779598200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:50AM-12:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779598500",
+      "timestamp": 1779598500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 12:55AM-1:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779598800",
+      "timestamp": 1779598800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:00AM-1:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779599100",
+      "timestamp": 1779599100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:05AM-1:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779599400",
+      "timestamp": 1779599400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:10AM-1:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779599700",
+      "timestamp": 1779599700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:15AM-1:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779600000",
+      "timestamp": 1779600000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:20AM-1:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779600300",
+      "timestamp": 1779600300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:25AM-1:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779600600",
+      "timestamp": 1779600600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 1:30AM-1:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779600900",
+      "timestamp": 1779600900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:35AM-1:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779601200",
+      "timestamp": 1779601200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:40AM-1:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779601500",
+      "timestamp": 1779601500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 1:45AM-1:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779601800",
+      "timestamp": 1779601800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 1:50AM-1:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779602100",
+      "timestamp": 1779602100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 1:55AM-2:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779602400",
+      "timestamp": 1779602400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 2:00AM-2:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779602700",
+      "timestamp": 1779602700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 2:05AM-2:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779603000",
+      "timestamp": 1779603000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 2:10AM-2:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779603300",
+      "timestamp": 1779603300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 2:15AM-2:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779603600",
+      "timestamp": 1779603600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 2:20AM-2:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779603900",
+      "timestamp": 1779603900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 2:25AM-2:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779604200",
+      "timestamp": 1779604200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 2:30AM-2:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779604500",
+      "timestamp": 1779604500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 2:35AM-2:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779604800",
+      "timestamp": 1779604800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 2:40AM-2:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779605100",
+      "timestamp": 1779605100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 2:45AM-2:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779605400",
+      "timestamp": 1779605400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 2:50AM-2:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779605700",
+      "timestamp": 1779605700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 2:55AM-3:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779606000",
+      "timestamp": 1779606000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 3:00AM-3:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779606300",
+      "timestamp": 1779606300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 3:05AM-3:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779606600",
+      "timestamp": 1779606600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 3:10AM-3:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779606900",
+      "timestamp": 1779606900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 3:15AM-3:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779607200",
+      "timestamp": 1779607200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 3:20AM-3:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779607500",
+      "timestamp": 1779607500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 3:25AM-3:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779607800",
+      "timestamp": 1779607800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 3:30AM-3:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779608100",
+      "timestamp": 1779608100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 3:35AM-3:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779608400",
+      "timestamp": 1779608400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 3:40AM-3:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779608700",
+      "timestamp": 1779608700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 3:45AM-3:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779609000",
+      "timestamp": 1779609000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 3:50AM-3:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779609300",
+      "timestamp": 1779609300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 3:55AM-4:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779609600",
+      "timestamp": 1779609600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 4:00AM-4:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779609900",
+      "timestamp": 1779609900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 4:05AM-4:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779610200",
+      "timestamp": 1779610200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 4:10AM-4:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779610500",
+      "timestamp": 1779610500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 4:15AM-4:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779610800",
+      "timestamp": 1779610800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 4:20AM-4:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779611100",
+      "timestamp": 1779611100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 4:25AM-4:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779611400",
+      "timestamp": 1779611400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 4:30AM-4:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779611700",
+      "timestamp": 1779611700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 4:35AM-4:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779612000",
+      "timestamp": 1779612000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 4:40AM-4:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779612300",
+      "timestamp": 1779612300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 4:45AM-4:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779612600",
+      "timestamp": 1779612600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 4:50AM-4:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779612900",
+      "timestamp": 1779612900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 4:55AM-5:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779613200",
+      "timestamp": 1779613200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:00AM-5:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779613500",
+      "timestamp": 1779613500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:05AM-5:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779613800",
+      "timestamp": 1779613800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:10AM-5:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779614100",
+      "timestamp": 1779614100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:15AM-5:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779614400",
+      "timestamp": 1779614400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:20AM-5:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779614700",
+      "timestamp": 1779614700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 5:25AM-5:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779615000",
+      "timestamp": 1779615000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 5:30AM-5:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779615300",
+      "timestamp": 1779615300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:35AM-5:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779615600",
+      "timestamp": 1779615600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:40AM-5:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779615900",
+      "timestamp": 1779615900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 5:45AM-5:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779616200",
+      "timestamp": 1779616200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:50AM-5:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779616500",
+      "timestamp": 1779616500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 5:55AM-6:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779616800",
+      "timestamp": 1779616800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:00AM-6:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779617100",
+      "timestamp": 1779617100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 6:05AM-6:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779617400",
+      "timestamp": 1779617400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:10AM-6:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779617700",
+      "timestamp": 1779617700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 6:15AM-6:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779618000",
+      "timestamp": 1779618000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:20AM-6:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779618300",
+      "timestamp": 1779618300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 6:25AM-6:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779618600",
+      "timestamp": 1779618600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:30AM-6:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779618900",
+      "timestamp": 1779618900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:35AM-6:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779619200",
+      "timestamp": 1779619200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:40AM-6:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779619500",
+      "timestamp": 1779619500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:45AM-6:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779619800",
+      "timestamp": 1779619800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:50AM-6:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779620100",
+      "timestamp": 1779620100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 6:55AM-7:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779620400",
+      "timestamp": 1779620400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:00AM-7:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779620700",
+      "timestamp": 1779620700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:05AM-7:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779621000",
+      "timestamp": 1779621000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 7:10AM-7:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779621300",
+      "timestamp": 1779621300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 7:15AM-7:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779621600",
+      "timestamp": 1779621600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:20AM-7:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779621900",
+      "timestamp": 1779621900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 7:25AM-7:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779622200",
+      "timestamp": 1779622200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:30AM-7:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779622500",
+      "timestamp": 1779622500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 7:35AM-7:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779622800",
+      "timestamp": 1779622800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:40AM-7:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779623100",
+      "timestamp": 1779623100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 7:45AM-7:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779623400",
+      "timestamp": 1779623400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:50AM-7:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779623700",
+      "timestamp": 1779623700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:55AM-8:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779624000",
+      "timestamp": 1779624000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:00AM-8:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779624300",
+      "timestamp": 1779624300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:05AM-8:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779624600",
+      "timestamp": 1779624600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:10AM-8:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779624900",
+      "timestamp": 1779624900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:15AM-8:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779625200",
+      "timestamp": 1779625200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:20AM-8:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779625500",
+      "timestamp": 1779625500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:25AM-8:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779625800",
+      "timestamp": 1779625800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:30AM-8:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779626100",
+      "timestamp": 1779626100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 8:35AM-8:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779626400",
+      "timestamp": 1779626400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 8:40AM-8:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779626700",
+      "timestamp": 1779626700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:45AM-8:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779627000",
+      "timestamp": 1779627000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:50AM-8:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779627300",
+      "timestamp": 1779627300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 8:55AM-9:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779627600",
+      "timestamp": 1779627600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:00AM-9:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779627900",
+      "timestamp": 1779627900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:05AM-9:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779628200",
+      "timestamp": 1779628200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:10AM-9:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779628500",
+      "timestamp": 1779628500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 9:15AM-9:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779628800",
+      "timestamp": 1779628800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:20AM-9:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779629100",
+      "timestamp": 1779629100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:25AM-9:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779629400",
+      "timestamp": 1779629400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:30AM-9:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779629700",
+      "timestamp": 1779629700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:35AM-9:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779630000",
+      "timestamp": 1779630000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 9:40AM-9:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779630300",
+      "timestamp": 1779630300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:45AM-9:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779630600",
+      "timestamp": 1779630600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:50AM-9:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779630900",
+      "timestamp": 1779630900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 9:55AM-10:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779631200",
+      "timestamp": 1779631200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:00AM-10:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779631500",
+      "timestamp": 1779631500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 10:05AM-10:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779631800",
+      "timestamp": 1779631800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:10AM-10:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779632100",
+      "timestamp": 1779632100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:15AM-10:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779632400",
+      "timestamp": 1779632400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 10:20AM-10:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779632700",
+      "timestamp": 1779632700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:25AM-10:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779633000",
+      "timestamp": 1779633000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 10:30AM-10:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779633300",
+      "timestamp": 1779633300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 10:35AM-10:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779633600",
+      "timestamp": 1779633600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:40AM-10:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779633900",
+      "timestamp": 1779633900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:45AM-10:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779634200",
+      "timestamp": 1779634200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 10:50AM-10:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779634500",
+      "timestamp": 1779634500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:55AM-11:00AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779634800",
+      "timestamp": 1779634800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 11:00AM-11:05AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779635100",
+      "timestamp": 1779635100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:05AM-11:10AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779635400",
+      "timestamp": 1779635400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 11:10AM-11:15AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779635700",
+      "timestamp": 1779635700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:15AM-11:20AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779636000",
+      "timestamp": 1779636000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:20AM-11:25AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779636300",
+      "timestamp": 1779636300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:25AM-11:30AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779636600",
+      "timestamp": 1779636600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:30AM-11:35AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779636900",
+      "timestamp": 1779636900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 11:35AM-11:40AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779637200",
+      "timestamp": 1779637200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 11:40AM-11:45AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779637500",
+      "timestamp": 1779637500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 11:45AM-11:50AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779637800",
+      "timestamp": 1779637800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:50AM-11:55AM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779638100",
+      "timestamp": 1779638100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:55AM-12:00PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779638400",
+      "timestamp": 1779638400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:00PM-12:05PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779638700",
+      "timestamp": 1779638700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:05PM-12:10PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779639000",
+      "timestamp": 1779639000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:10PM-12:15PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779639300",
+      "timestamp": 1779639300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:15PM-12:20PM ET"
+    },
+    {
+      "slug": "btc-updown-5m-1779639600",
+      "timestamp": 1779639600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 12:20PM-12:25PM ET"
+    }
+  ],
+  "eth_5m": [
+    {
+      "slug": "eth-updown-5m-1779494400",
+      "timestamp": 1779494400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:00PM-8:05PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779494700",
+      "timestamp": 1779494700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:05PM-8:10PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779495000",
+      "timestamp": 1779495000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 8:10PM-8:15PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779495300",
+      "timestamp": 1779495300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 8:15PM-8:20PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779495600",
+      "timestamp": 1779495600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:20PM-8:25PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779495900",
+      "timestamp": 1779495900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:25PM-8:30PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779496200",
+      "timestamp": 1779496200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 8:30PM-8:35PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779496500",
+      "timestamp": 1779496500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 8:35PM-8:40PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779496800",
+      "timestamp": 1779496800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 8:40PM-8:45PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779497100",
+      "timestamp": 1779497100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:45PM-8:50PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779497400",
+      "timestamp": 1779497400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:50PM-8:55PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779497700",
+      "timestamp": 1779497700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:55PM-9:00PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779498000",
+      "timestamp": 1779498000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:00PM-9:05PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779498300",
+      "timestamp": 1779498300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:05PM-9:10PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779498600",
+      "timestamp": 1779498600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 9:10PM-9:15PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779498900",
+      "timestamp": 1779498900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:15PM-9:20PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779499200",
+      "timestamp": 1779499200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:20PM-9:25PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779499500",
+      "timestamp": 1779499500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:25PM-9:30PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779499800",
+      "timestamp": 1779499800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 9:30PM-9:35PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779500100",
+      "timestamp": 1779500100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:35PM-9:40PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779500400",
+      "timestamp": 1779500400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 9:40PM-9:45PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779500700",
+      "timestamp": 1779500700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 9:45PM-9:50PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779501000",
+      "timestamp": 1779501000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:50PM-9:55PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779501300",
+      "timestamp": 1779501300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 9:55PM-10:00PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779501600",
+      "timestamp": 1779501600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:00PM-10:05PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779501900",
+      "timestamp": 1779501900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 10:05PM-10:10PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779502200",
+      "timestamp": 1779502200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:10PM-10:15PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779502500",
+      "timestamp": 1779502500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:15PM-10:20PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779502800",
+      "timestamp": 1779502800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 10:20PM-10:25PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779503100",
+      "timestamp": 1779503100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:25PM-10:30PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779503400",
+      "timestamp": 1779503400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:30PM-10:35PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779503700",
+      "timestamp": 1779503700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:35PM-10:40PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779504000",
+      "timestamp": 1779504000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 10:40PM-10:45PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779504300",
+      "timestamp": 1779504300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 10:45PM-10:50PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779504600",
+      "timestamp": 1779504600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 10:50PM-10:55PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779504900",
+      "timestamp": 1779504900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:55PM-11:00PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779505200",
+      "timestamp": 1779505200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:00PM-11:05PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779505500",
+      "timestamp": 1779505500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 11:05PM-11:10PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779505800",
+      "timestamp": 1779505800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:10PM-11:15PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779506100",
+      "timestamp": 1779506100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 11:15PM-11:20PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779506400",
+      "timestamp": 1779506400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:20PM-11:25PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779506700",
+      "timestamp": 1779506700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 11:25PM-11:30PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779507000",
+      "timestamp": 1779507000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:30PM-11:35PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779507300",
+      "timestamp": 1779507300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:35PM-11:40PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779507600",
+      "timestamp": 1779507600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 11:40PM-11:45PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779507900",
+      "timestamp": 1779507900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:45PM-11:50PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779508200",
+      "timestamp": 1779508200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:50PM-11:55PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779508500",
+      "timestamp": 1779508500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 11:55PM-12:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779508800",
+      "timestamp": 1779508800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 12:00AM-12:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779509100",
+      "timestamp": 1779509100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 12:05AM-12:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779573600",
+      "timestamp": 1779573600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:00PM-6:05PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779573900",
+      "timestamp": 1779573900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:05PM-6:10PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779574200",
+      "timestamp": 1779574200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:10PM-6:15PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779574500",
+      "timestamp": 1779574500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:15PM-6:20PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779574800",
+      "timestamp": 1779574800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:20PM-6:25PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779575100",
+      "timestamp": 1779575100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:25PM-6:30PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779575400",
+      "timestamp": 1779575400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:30PM-6:35PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779575700",
+      "timestamp": 1779575700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:35PM-6:40PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779576000",
+      "timestamp": 1779576000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:40PM-6:45PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779576300",
+      "timestamp": 1779576300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:45PM-6:50PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779576600",
+      "timestamp": 1779576600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:50PM-6:55PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779576900",
+      "timestamp": 1779576900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:55PM-7:00PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779577200",
+      "timestamp": 1779577200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:00PM-7:05PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779577500",
+      "timestamp": 1779577500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:05PM-7:10PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779577800",
+      "timestamp": 1779577800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:10PM-7:15PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779578100",
+      "timestamp": 1779578100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:15PM-7:20PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779578400",
+      "timestamp": 1779578400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:20PM-7:25PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779578700",
+      "timestamp": 1779578700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:25PM-7:30PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779579000",
+      "timestamp": 1779579000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:30PM-7:35PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779579300",
+      "timestamp": 1779579300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:35PM-7:40PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779579600",
+      "timestamp": 1779579600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:40PM-7:45PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779579900",
+      "timestamp": 1779579900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:45PM-7:50PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779580200",
+      "timestamp": 1779580200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:50PM-7:55PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779580500",
+      "timestamp": 1779580500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:55PM-8:00PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779580800",
+      "timestamp": 1779580800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:00PM-8:05PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779581100",
+      "timestamp": 1779581100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:05PM-8:10PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779581400",
+      "timestamp": 1779581400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:10PM-8:15PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779581700",
+      "timestamp": 1779581700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:15PM-8:20PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779582000",
+      "timestamp": 1779582000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:20PM-8:25PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779582300",
+      "timestamp": 1779582300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:25PM-8:30PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779582600",
+      "timestamp": 1779582600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:30PM-8:35PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779582900",
+      "timestamp": 1779582900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:35PM-8:40PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779583200",
+      "timestamp": 1779583200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:40PM-8:45PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779583500",
+      "timestamp": 1779583500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:45PM-8:50PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779583800",
+      "timestamp": 1779583800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:50PM-8:55PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779584100",
+      "timestamp": 1779584100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:55PM-9:00PM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779599400",
+      "timestamp": 1779599400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:10AM-1:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779599700",
+      "timestamp": 1779599700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:15AM-1:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779600000",
+      "timestamp": 1779600000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:20AM-1:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779600300",
+      "timestamp": 1779600300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 1:25AM-1:30AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779600600",
+      "timestamp": 1779600600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 1:30AM-1:35AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779600900",
+      "timestamp": 1779600900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:35AM-1:40AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779601200",
+      "timestamp": 1779601200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:40AM-1:45AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779601500",
+      "timestamp": 1779601500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 1:45AM-1:50AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779601800",
+      "timestamp": 1779601800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 1:50AM-1:55AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779602100",
+      "timestamp": 1779602100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:55AM-2:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779602400",
+      "timestamp": 1779602400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:00AM-2:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779602700",
+      "timestamp": 1779602700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:05AM-2:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779603000",
+      "timestamp": 1779603000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 2:10AM-2:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779603300",
+      "timestamp": 1779603300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 2:15AM-2:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779603600",
+      "timestamp": 1779603600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 2:20AM-2:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779603900",
+      "timestamp": 1779603900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:25AM-2:30AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779604200",
+      "timestamp": 1779604200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 2:30AM-2:35AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779604500",
+      "timestamp": 1779604500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:35AM-2:40AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779604800",
+      "timestamp": 1779604800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:40AM-2:45AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779605100",
+      "timestamp": 1779605100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:45AM-2:50AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779605400",
+      "timestamp": 1779605400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:50AM-2:55AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779605700",
+      "timestamp": 1779605700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:55AM-3:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779606000",
+      "timestamp": 1779606000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 3:00AM-3:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779606300",
+      "timestamp": 1779606300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:05AM-3:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779606600",
+      "timestamp": 1779606600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:10AM-3:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779606900",
+      "timestamp": 1779606900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 3:15AM-3:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779607200",
+      "timestamp": 1779607200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:20AM-3:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779607500",
+      "timestamp": 1779607500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 3:25AM-3:30AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779607800",
+      "timestamp": 1779607800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:30AM-3:35AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779608100",
+      "timestamp": 1779608100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 3:35AM-3:40AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779608400",
+      "timestamp": 1779608400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:40AM-3:45AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779608700",
+      "timestamp": 1779608700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:45AM-3:50AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779609000",
+      "timestamp": 1779609000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 3:50AM-3:55AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779609300",
+      "timestamp": 1779609300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 3:55AM-4:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779609600",
+      "timestamp": 1779609600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 4:00AM-4:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779609900",
+      "timestamp": 1779609900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:05AM-4:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779610200",
+      "timestamp": 1779610200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:10AM-4:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779610500",
+      "timestamp": 1779610500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 4:15AM-4:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779610800",
+      "timestamp": 1779610800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 4:20AM-4:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779611100",
+      "timestamp": 1779611100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:25AM-4:30AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779611400",
+      "timestamp": 1779611400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:30AM-4:35AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779611700",
+      "timestamp": 1779611700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:35AM-4:40AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779612000",
+      "timestamp": 1779612000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:40AM-4:45AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779612300",
+      "timestamp": 1779612300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 4:45AM-4:50AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779612600",
+      "timestamp": 1779612600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:50AM-4:55AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779612900",
+      "timestamp": 1779612900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 4:55AM-5:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779613200",
+      "timestamp": 1779613200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 5:00AM-5:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779613500",
+      "timestamp": 1779613500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:05AM-5:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779613800",
+      "timestamp": 1779613800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 5:10AM-5:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779614100",
+      "timestamp": 1779614100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:15AM-5:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779614400",
+      "timestamp": 1779614400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:20AM-5:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779614700",
+      "timestamp": 1779614700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 5:25AM-5:30AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779615000",
+      "timestamp": 1779615000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 5:30AM-5:35AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779615300",
+      "timestamp": 1779615300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:35AM-5:40AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779615600",
+      "timestamp": 1779615600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:40AM-5:45AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779615900",
+      "timestamp": 1779615900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 5:45AM-5:50AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779616200",
+      "timestamp": 1779616200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:50AM-5:55AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779616500",
+      "timestamp": 1779616500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:55AM-6:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779616800",
+      "timestamp": 1779616800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:00AM-6:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779617100",
+      "timestamp": 1779617100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 6:05AM-6:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779617400",
+      "timestamp": 1779617400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:10AM-6:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779617700",
+      "timestamp": 1779617700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 6:15AM-6:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779618000",
+      "timestamp": 1779618000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:20AM-6:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779618300",
+      "timestamp": 1779618300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 6:25AM-6:30AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779618600",
+      "timestamp": 1779618600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:30AM-6:35AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779618900",
+      "timestamp": 1779618900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:35AM-6:40AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779619200",
+      "timestamp": 1779619200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:40AM-6:45AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779619500",
+      "timestamp": 1779619500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:45AM-6:50AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779619800",
+      "timestamp": 1779619800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 6:50AM-6:55AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779620100",
+      "timestamp": 1779620100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 6:55AM-7:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779620400",
+      "timestamp": 1779620400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:00AM-7:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779620700",
+      "timestamp": 1779620700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:05AM-7:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779621000",
+      "timestamp": 1779621000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:10AM-7:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779621300",
+      "timestamp": 1779621300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 7:15AM-7:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779621600",
+      "timestamp": 1779621600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:20AM-7:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779621900",
+      "timestamp": 1779621900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 7:25AM-7:30AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779622200",
+      "timestamp": 1779622200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:30AM-7:35AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779622500",
+      "timestamp": 1779622500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 7:35AM-7:40AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779622800",
+      "timestamp": 1779622800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:40AM-7:45AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779623100",
+      "timestamp": 1779623100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 7:45AM-7:50AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779623400",
+      "timestamp": 1779623400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:50AM-7:55AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779623700",
+      "timestamp": 1779623700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 7:55AM-8:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779624000",
+      "timestamp": 1779624000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:00AM-8:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779624300",
+      "timestamp": 1779624300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:05AM-8:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779624600",
+      "timestamp": 1779624600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 8:10AM-8:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779624900",
+      "timestamp": 1779624900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:15AM-8:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779625200",
+      "timestamp": 1779625200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:20AM-8:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779625500",
+      "timestamp": 1779625500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:25AM-8:30AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779625800",
+      "timestamp": 1779625800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:30AM-8:35AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779626100",
+      "timestamp": 1779626100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 8:35AM-8:40AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779626400",
+      "timestamp": 1779626400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 8:40AM-8:45AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779626700",
+      "timestamp": 1779626700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:45AM-8:50AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779627000",
+      "timestamp": 1779627000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:50AM-8:55AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779627300",
+      "timestamp": 1779627300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 8:55AM-9:00AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779627600",
+      "timestamp": 1779627600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 9:00AM-9:05AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779627900",
+      "timestamp": 1779627900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 9:05AM-9:10AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779628200",
+      "timestamp": 1779628200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 9:10AM-9:15AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779628500",
+      "timestamp": 1779628500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 9:15AM-9:20AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779628800",
+      "timestamp": 1779628800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 9:20AM-9:25AM ET"
+    },
+    {
+      "slug": "eth-updown-5m-1779629100",
+      "timestamp": 1779629100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 9:25AM-9:30AM ET"
+    }
+  ],
+  "btc_15m": [
+    {
+      "slug": "btc-updown-15m-1779494400",
+      "timestamp": 1779494400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 8:00PM-8:15PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779495300",
+      "timestamp": 1779495300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 8:15PM-8:30PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779496200",
+      "timestamp": 1779496200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 8:30PM-8:45PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779497100",
+      "timestamp": 1779497100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 8:45PM-9:00PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779498000",
+      "timestamp": 1779498000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:00PM-9:15PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779498900",
+      "timestamp": 1779498900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:15PM-9:30PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779499800",
+      "timestamp": 1779499800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 9:30PM-9:45PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779500700",
+      "timestamp": 1779500700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 9:45PM-10:00PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779501600",
+      "timestamp": 1779501600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 10:00PM-10:15PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779502500",
+      "timestamp": 1779502500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:15PM-10:30PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779503400",
+      "timestamp": 1779503400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:30PM-10:45PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779504300",
+      "timestamp": 1779504300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 10:45PM-11:00PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779505200",
+      "timestamp": 1779505200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 11:00PM-11:15PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779506100",
+      "timestamp": 1779506100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 11:15PM-11:30PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779507000",
+      "timestamp": 1779507000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 22, 11:30PM-11:45PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779507900",
+      "timestamp": 1779507900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 22, 11:45PM-12:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779508800",
+      "timestamp": 1779508800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:00AM-12:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779509700",
+      "timestamp": 1779509700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:15AM-12:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779510600",
+      "timestamp": 1779510600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 12:30AM-12:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779511500",
+      "timestamp": 1779511500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 12:45AM-1:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779512400",
+      "timestamp": 1779512400,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:00AM-1:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779513300",
+      "timestamp": 1779513300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:15AM-1:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779514200",
+      "timestamp": 1779514200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 1:30AM-1:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779515100",
+      "timestamp": 1779515100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 1:45AM-2:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779516000",
+      "timestamp": 1779516000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:00AM-2:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779516900",
+      "timestamp": 1779516900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:15AM-2:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779517800",
+      "timestamp": 1779517800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:30AM-2:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779518700",
+      "timestamp": 1779518700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 2:45AM-3:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779519600",
+      "timestamp": 1779519600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:00AM-3:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779520500",
+      "timestamp": 1779520500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:15AM-3:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779521400",
+      "timestamp": 1779521400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 3:30AM-3:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779522300",
+      "timestamp": 1779522300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 3:45AM-4:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779523200",
+      "timestamp": 1779523200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:00AM-4:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779524100",
+      "timestamp": 1779524100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:15AM-4:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779525000",
+      "timestamp": 1779525000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 4:30AM-4:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779525900",
+      "timestamp": 1779525900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 4:45AM-5:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779526800",
+      "timestamp": 1779526800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:00AM-5:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779527700",
+      "timestamp": 1779527700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:15AM-5:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779528600",
+      "timestamp": 1779528600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 5:30AM-5:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779529500",
+      "timestamp": 1779529500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 5:45AM-6:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779530400",
+      "timestamp": 1779530400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:00AM-6:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779531300",
+      "timestamp": 1779531300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:15AM-6:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779532200",
+      "timestamp": 1779532200,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 6:30AM-6:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779533100",
+      "timestamp": 1779533100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 6:45AM-7:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779534000",
+      "timestamp": 1779534000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:00AM-7:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779534900",
+      "timestamp": 1779534900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:15AM-7:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779535800",
+      "timestamp": 1779535800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 7:30AM-7:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779536700",
+      "timestamp": 1779536700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 7:45AM-8:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779537600",
+      "timestamp": 1779537600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 23, 8:00AM-8:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779538500",
+      "timestamp": 1779538500,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 23, 8:15AM-8:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779616800",
+      "timestamp": 1779616800,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:00AM-6:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779617700",
+      "timestamp": 1779617700,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 6:15AM-6:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779618600",
+      "timestamp": 1779618600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:30AM-6:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779619500",
+      "timestamp": 1779619500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 6:45AM-7:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779620400",
+      "timestamp": 1779620400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:00AM-7:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779621300",
+      "timestamp": 1779621300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 7:15AM-7:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779622200",
+      "timestamp": 1779622200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 7:30AM-7:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779623100",
+      "timestamp": 1779623100,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 7:45AM-8:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779624000",
+      "timestamp": 1779624000,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:00AM-8:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779624900",
+      "timestamp": 1779624900,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:15AM-8:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779625800",
+      "timestamp": 1779625800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 8:30AM-8:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779626700",
+      "timestamp": 1779626700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 8:45AM-9:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779627600",
+      "timestamp": 1779627600,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:00AM-9:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779628500",
+      "timestamp": 1779628500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:15AM-9:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779629400",
+      "timestamp": 1779629400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 9:30AM-9:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779630300",
+      "timestamp": 1779630300,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 9:45AM-10:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779631200",
+      "timestamp": 1779631200,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:00AM-10:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779632100",
+      "timestamp": 1779632100,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 10:15AM-10:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779633000",
+      "timestamp": 1779633000,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 10:30AM-10:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779633900",
+      "timestamp": 1779633900,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 10:45AM-11:00AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779634800",
+      "timestamp": 1779634800,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 11:00AM-11:15AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779635700",
+      "timestamp": 1779635700,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:15AM-11:30AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779636600",
+      "timestamp": 1779636600,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 11:30AM-11:45AM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779637500",
+      "timestamp": 1779637500,
+      "resolution": "DOWN",
+      "title": "Bitcoin Up or Down - May 24, 11:45AM-12:00PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779638400",
+      "timestamp": 1779638400,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:00PM-12:15PM ET"
+    },
+    {
+      "slug": "btc-updown-15m-1779639300",
+      "timestamp": 1779639300,
+      "resolution": "UP",
+      "title": "Bitcoin Up or Down - May 24, 12:15PM-12:30PM ET"
+    }
+  ],
+  "eth_15m": [
+    {
+      "slug": "eth-updown-15m-1779494400",
+      "timestamp": 1779494400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:00PM-8:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779495300",
+      "timestamp": 1779495300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:15PM-8:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779496200",
+      "timestamp": 1779496200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 8:30PM-8:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779497100",
+      "timestamp": 1779497100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 8:45PM-9:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779498000",
+      "timestamp": 1779498000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 9:00PM-9:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779498900",
+      "timestamp": 1779498900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:15PM-9:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779499800",
+      "timestamp": 1779499800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 9:30PM-9:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779500700",
+      "timestamp": 1779500700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 9:45PM-10:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779501600",
+      "timestamp": 1779501600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:00PM-10:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779502500",
+      "timestamp": 1779502500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 10:15PM-10:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779503400",
+      "timestamp": 1779503400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 10:30PM-10:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779504300",
+      "timestamp": 1779504300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 10:45PM-11:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779505200",
+      "timestamp": 1779505200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:00PM-11:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779506100",
+      "timestamp": 1779506100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:15PM-11:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779507000",
+      "timestamp": 1779507000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 22, 11:30PM-11:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779507900",
+      "timestamp": 1779507900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 22, 11:45PM-12:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779508800",
+      "timestamp": 1779508800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 12:00AM-12:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779509700",
+      "timestamp": 1779509700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 12:15AM-12:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779510600",
+      "timestamp": 1779510600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 12:30AM-12:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779511500",
+      "timestamp": 1779511500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 12:45AM-1:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779512400",
+      "timestamp": 1779512400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 1:00AM-1:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779513300",
+      "timestamp": 1779513300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 1:15AM-1:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779514200",
+      "timestamp": 1779514200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 1:30AM-1:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779515100",
+      "timestamp": 1779515100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 1:45AM-2:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779516000",
+      "timestamp": 1779516000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 2:00AM-2:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779516900",
+      "timestamp": 1779516900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 2:15AM-2:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779517800",
+      "timestamp": 1779517800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 2:30AM-2:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779518700",
+      "timestamp": 1779518700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 2:45AM-3:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779519600",
+      "timestamp": 1779519600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 3:00AM-3:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779520500",
+      "timestamp": 1779520500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 3:15AM-3:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779521400",
+      "timestamp": 1779521400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 3:30AM-3:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779522300",
+      "timestamp": 1779522300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 3:45AM-4:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779523200",
+      "timestamp": 1779523200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 4:00AM-4:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779524100",
+      "timestamp": 1779524100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 4:15AM-4:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779525000",
+      "timestamp": 1779525000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 4:30AM-4:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779525900",
+      "timestamp": 1779525900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 4:45AM-5:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779526800",
+      "timestamp": 1779526800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 5:00AM-5:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779527700",
+      "timestamp": 1779527700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 5:15AM-5:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779528600",
+      "timestamp": 1779528600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 5:30AM-5:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779529500",
+      "timestamp": 1779529500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 5:45AM-6:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779530400",
+      "timestamp": 1779530400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:00AM-6:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779531300",
+      "timestamp": 1779531300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:15AM-6:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779532200",
+      "timestamp": 1779532200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:30AM-6:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779533100",
+      "timestamp": 1779533100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:45AM-7:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779534000",
+      "timestamp": 1779534000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:00AM-7:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779534900",
+      "timestamp": 1779534900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:15AM-7:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779535800",
+      "timestamp": 1779535800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:30AM-7:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779536700",
+      "timestamp": 1779536700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:45AM-8:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779537600",
+      "timestamp": 1779537600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:00AM-8:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779538500",
+      "timestamp": 1779538500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:15AM-8:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779539400",
+      "timestamp": 1779539400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:30AM-8:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779540300",
+      "timestamp": 1779540300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:45AM-9:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779541200",
+      "timestamp": 1779541200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 9:00AM-9:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779542100",
+      "timestamp": 1779542100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 9:15AM-9:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779543000",
+      "timestamp": 1779543000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 9:30AM-9:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779543900",
+      "timestamp": 1779543900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 9:45AM-10:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779544800",
+      "timestamp": 1779544800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 10:00AM-10:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779545700",
+      "timestamp": 1779545700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 10:15AM-10:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779546600",
+      "timestamp": 1779546600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 10:30AM-10:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779547500",
+      "timestamp": 1779547500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 10:45AM-11:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779548400",
+      "timestamp": 1779548400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 11:00AM-11:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779549300",
+      "timestamp": 1779549300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 11:15AM-11:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779550200",
+      "timestamp": 1779550200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 11:30AM-11:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779551100",
+      "timestamp": 1779551100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 11:45AM-12:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779552000",
+      "timestamp": 1779552000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 12:00PM-12:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779552900",
+      "timestamp": 1779552900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 12:15PM-12:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779553800",
+      "timestamp": 1779553800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 12:30PM-12:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779554700",
+      "timestamp": 1779554700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 12:45PM-1:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779555600",
+      "timestamp": 1779555600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 1:00PM-1:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779556500",
+      "timestamp": 1779556500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 1:15PM-1:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779557400",
+      "timestamp": 1779557400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 1:30PM-1:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779558300",
+      "timestamp": 1779558300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 1:45PM-2:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779559200",
+      "timestamp": 1779559200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 2:00PM-2:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779560100",
+      "timestamp": 1779560100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 2:15PM-2:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779561000",
+      "timestamp": 1779561000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 2:30PM-2:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779561900",
+      "timestamp": 1779561900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 2:45PM-3:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779562800",
+      "timestamp": 1779562800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 3:00PM-3:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779563700",
+      "timestamp": 1779563700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 3:15PM-3:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779564600",
+      "timestamp": 1779564600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 3:30PM-3:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779565500",
+      "timestamp": 1779565500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 3:45PM-4:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779566400",
+      "timestamp": 1779566400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 4:00PM-4:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779567300",
+      "timestamp": 1779567300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 4:15PM-4:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779568200",
+      "timestamp": 1779568200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 4:30PM-4:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779569100",
+      "timestamp": 1779569100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 4:45PM-5:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779570000",
+      "timestamp": 1779570000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 5:00PM-5:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779570900",
+      "timestamp": 1779570900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 5:15PM-5:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779571800",
+      "timestamp": 1779571800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 5:30PM-5:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779572700",
+      "timestamp": 1779572700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 5:45PM-6:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779573600",
+      "timestamp": 1779573600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:00PM-6:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779574500",
+      "timestamp": 1779574500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 6:15PM-6:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779575400",
+      "timestamp": 1779575400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:30PM-6:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779576300",
+      "timestamp": 1779576300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 6:45PM-7:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779577200",
+      "timestamp": 1779577200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:00PM-7:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779578100",
+      "timestamp": 1779578100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:15PM-7:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779579000",
+      "timestamp": 1779579000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 7:30PM-7:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779579900",
+      "timestamp": 1779579900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 7:45PM-8:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779580800",
+      "timestamp": 1779580800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:00PM-8:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779581700",
+      "timestamp": 1779581700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 8:15PM-8:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779582600",
+      "timestamp": 1779582600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:30PM-8:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779583500",
+      "timestamp": 1779583500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 8:45PM-9:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779584400",
+      "timestamp": 1779584400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 9:00PM-9:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779585300",
+      "timestamp": 1779585300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 9:15PM-9:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779586200",
+      "timestamp": 1779586200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 9:30PM-9:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779587100",
+      "timestamp": 1779587100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 9:45PM-10:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779588000",
+      "timestamp": 1779588000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 10:00PM-10:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779588900",
+      "timestamp": 1779588900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 10:15PM-10:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779589800",
+      "timestamp": 1779589800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 10:30PM-10:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779590700",
+      "timestamp": 1779590700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 10:45PM-11:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779591600",
+      "timestamp": 1779591600,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 11:00PM-11:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779592500",
+      "timestamp": 1779592500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 11:15PM-11:30PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779593400",
+      "timestamp": 1779593400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 23, 11:30PM-11:45PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779594300",
+      "timestamp": 1779594300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 23, 11:45PM-12:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779595200",
+      "timestamp": 1779595200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 12:00AM-12:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779596100",
+      "timestamp": 1779596100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 12:15AM-12:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779597000",
+      "timestamp": 1779597000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 12:30AM-12:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779597900",
+      "timestamp": 1779597900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 12:45AM-1:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779598800",
+      "timestamp": 1779598800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:00AM-1:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779599700",
+      "timestamp": 1779599700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:15AM-1:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779600600",
+      "timestamp": 1779600600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 1:30AM-1:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779601500",
+      "timestamp": 1779601500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 1:45AM-2:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779602400",
+      "timestamp": 1779602400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:00AM-2:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779603300",
+      "timestamp": 1779603300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 2:15AM-2:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779604200",
+      "timestamp": 1779604200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:30AM-2:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779605100",
+      "timestamp": 1779605100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 2:45AM-3:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779606000",
+      "timestamp": 1779606000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:00AM-3:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779606900",
+      "timestamp": 1779606900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:15AM-3:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779607800",
+      "timestamp": 1779607800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:30AM-3:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779608700",
+      "timestamp": 1779608700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 3:45AM-4:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779609600",
+      "timestamp": 1779609600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:00AM-4:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779610500",
+      "timestamp": 1779610500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 4:15AM-4:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779611400",
+      "timestamp": 1779611400,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 4:30AM-4:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779612300",
+      "timestamp": 1779612300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 4:45AM-5:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779613200",
+      "timestamp": 1779613200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:00AM-5:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779614100",
+      "timestamp": 1779614100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:15AM-5:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779615000",
+      "timestamp": 1779615000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:30AM-5:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779615900",
+      "timestamp": 1779615900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 5:45AM-6:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779616800",
+      "timestamp": 1779616800,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:00AM-6:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779617700",
+      "timestamp": 1779617700,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 6:15AM-6:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779618600",
+      "timestamp": 1779618600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 6:30AM-6:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779619500",
+      "timestamp": 1779619500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 6:45AM-7:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779620400",
+      "timestamp": 1779620400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:00AM-7:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779621300",
+      "timestamp": 1779621300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 7:15AM-7:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779622200",
+      "timestamp": 1779622200,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:30AM-7:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779623100",
+      "timestamp": 1779623100,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 7:45AM-8:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779624000",
+      "timestamp": 1779624000,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:00AM-8:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779624900",
+      "timestamp": 1779624900,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:15AM-8:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779625800",
+      "timestamp": 1779625800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 8:30AM-8:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779626700",
+      "timestamp": 1779626700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 8:45AM-9:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779627600",
+      "timestamp": 1779627600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 9:00AM-9:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779628500",
+      "timestamp": 1779628500,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 9:15AM-9:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779629400",
+      "timestamp": 1779629400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 9:30AM-9:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779630300",
+      "timestamp": 1779630300,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 9:45AM-10:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779631200",
+      "timestamp": 1779631200,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 10:00AM-10:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779632100",
+      "timestamp": 1779632100,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 10:15AM-10:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779633000",
+      "timestamp": 1779633000,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 10:30AM-10:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779633900",
+      "timestamp": 1779633900,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 10:45AM-11:00AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779634800",
+      "timestamp": 1779634800,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 11:00AM-11:15AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779635700",
+      "timestamp": 1779635700,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 11:15AM-11:30AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779636600",
+      "timestamp": 1779636600,
+      "resolution": "DOWN",
+      "title": "Ethereum Up or Down - May 24, 11:30AM-11:45AM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779637500",
+      "timestamp": 1779637500,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 11:45AM-12:00PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779638400",
+      "timestamp": 1779638400,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 12:00PM-12:15PM ET"
+    },
+    {
+      "slug": "eth-updown-15m-1779639300",
+      "timestamp": 1779639300,
+      "resolution": "UP",
+      "title": "Ethereum Up or Down - May 24, 12:15PM-12:30PM ET"
+    }
+  ]
+}

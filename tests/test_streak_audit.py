@@ -56,6 +56,29 @@ def mock_ws():
     ws.ask_cache = {}
     ws.price_cache = {}
     ws.book_cache = {}
+    
+    def mock_get_best_ask(token_id):
+        book = ws.book_cache.get(token_id)
+        if book and book.get("asks"):
+            return min(book["asks"].keys())
+        if ws.ask_cache.get(token_id) is not None:
+            return ws.ask_cache[token_id]
+        if ws.price_cache.get(token_id) is not None:
+            return ws.price_cache[token_id]
+        return None
+
+    def mock_get_best_bid(token_id):
+        book = ws.book_cache.get(token_id)
+        if book and book.get("bids"):
+            return max(book["bids"].keys())
+        if ws.bid_cache.get(token_id) is not None:
+            return ws.bid_cache[token_id]
+        if ws.price_cache.get(token_id) is not None:
+            return ws.price_cache[token_id]
+        return None
+
+    ws.get_best_ask = mock_get_best_ask
+    ws.get_best_bid = mock_get_best_bid
     return ws
 
 
@@ -207,9 +230,7 @@ class TestStreakAuditFixes:
     async def test_dynamic_regime_split_and_sizing(self, db, mock_config, mock_gamma, mock_ws, mock_clob):
         """
         Verifies dynamic timeframe regime split and dynamic sizing.
-        - 5m: Trend Following (UP-UP -> YES, DOWN-DOWN -> NO)
-        - 15m: Mean Reversion / Fade (UP-UP -> NO, DOWN-DOWN -> YES)
-        - Sizing: Streak-2 has 0.5x multiplier, Streak-4 has 2.0x multiplier and higher ceiling.
+        - Both 5m and 15m follow pure Trend-Following (UP-UP -> YES, DOWN-DOWN-DOWN -> NO)
         """
         scanner = MarketScanner(mock_config, mock_gamma, mock_ws, mock_clob, db)
         
@@ -242,7 +263,7 @@ class TestStreakAuditFixes:
         assert signals[0]["target_side"] == "YES"  # Trend following UP-UP -> YES
         assert signals[0]["streak_depth"] == 2
         
-        # Test 15m window: Mean Reversion
+        # Test 15m window: Trend Following
         # DOWN-DOWN-DOWN streak (Streak-3)
         res_15m_down = {
             "out1": "DOWN", "out2": "DOWN", "out3": "DOWN", "out4": "?", "out5": "?", "out6": "?",
@@ -267,7 +288,7 @@ class TestStreakAuditFixes:
         
         signals_15m = await scanner.get_entry_signals()
         assert len(signals_15m) == 1
-        assert signals_15m[0]["target_side"] == "YES"  # Mean reversion DOWN-DOWN-DOWN -> YES (fade DOWN-DOWN-DOWN)
+        assert signals_15m[0]["target_side"] == "NO"  # Pure Trend-Following DOWN-DOWN-DOWN -> NO
         assert signals_15m[0]["streak_depth"] == 3
 
     @pytest.mark.asyncio
@@ -317,29 +338,47 @@ class TestStreakAuditFixes:
         assert len(signals_6) == 1
         assert signals_6[0]["streak_depth"] == 6
 
+        # Test 30-Streak
+        res_5m_up_30 = {
+            "source": "GAMMA"
+        }
+        for idx in range(1, 31):
+            res_5m_up_30[f"out{idx}"] = "UP"
+            res_5m_up_30[f"src{idx}"] = "GAMMA"
+            res_5m_up_30[f"delta{idx}"] = 1.0
+            
+        scanner._get_historical_outcomes = AsyncMock(return_value=res_5m_up_30)
+        signals_30 = await scanner.get_entry_signals()
+        assert len(signals_30) == 1
+        assert signals_30[0]["streak_depth"] == 30
+
     @pytest.mark.asyncio
-    async def test_scanner_reversal_bypasses_price_floor_ceiling(self, db, mock_config, mock_gamma, mock_ws, mock_clob):
+    async def test_scanner_deep_streak_respects_price_floor_ceiling(self, db, mock_config, mock_gamma, mock_ws, mock_clob):
         """
-        Verify that reversal signals (e.g. streak_depth >= 3 on 5m) bypass
-        the scanner's price floor (0.45) and ceiling (0.65) filter.
+        Verify that deep streak signals (streak_depth >= 3 on 5m) are passed by scanner
+        but strictly rejected by the decision engine's price ceiling filter.
         """
         mock_config.min_entry_price = 0.45
         mock_config.max_entry_price = 0.65
+        mock_config.timeframe_15m_enabled = True
+        mock_config.lossmomentum_skip_enabled = False
+        mock_config.global_cooldown = 0.0
+        
         scanner = MarketScanner(mock_config, mock_gamma, mock_ws, mock_clob, db)
         
-        # Streak-3 (Reversal) UP-UP-UP -> target_side = "NO" (fade)
-        res_reversal = {
+        # Streak-3 UP-UP-UP -> target_side = "YES" (Trend-Following)
+        res_deep = {
             "out1": "UP", "out2": "UP", "out3": "UP", "out4": "?", "out5": "?", "out6": "?",
             "src1": "GAMMA", "src2": "GAMMA", "src3": "GAMMA", "src4": "UNKNOWN", "src5": "UNKNOWN", "src6": "UNKNOWN",
             "delta1": 10.0, "delta2": 5.0, "delta3": 3.0, "delta4": 0.0, "delta5": 0.0, "delta6": 0.0,
             "source": "GAMMA"
         }
-        scanner._get_historical_outcomes = AsyncMock(return_value=res_reversal)
+        scanner._get_historical_outcomes = AsyncMock(return_value=res_deep)
         
         now = int(time.time())
         closes_at_5m = now + 120
         market_5m = {
-            "market_id": "test_5m_reversal_bypass",
+            "market_id": "test_5m_ceiling_enforced",
             "question": "Will Bitcoin end UP or DOWN at 5:00 PM?",
             "slug": f"btc-updown-5m-{closes_at_5m - 300}",
             "yes_token_id": "yes_5m",
@@ -347,16 +386,40 @@ class TestStreakAuditFixes:
             "closes_at": closes_at_5m,
             "window_minutes": 5
         }
-        scanner.tracked_markets = {"test_5m_reversal_bypass": market_5m}
+        scanner.tracked_markets = {"test_5m_ceiling_enforced": market_5m}
         
-        # NO price is 0.36 (below the 0.45 floor!)
-        mock_ws.ask_cache = {"yes_5m": 0.64, "no_5m": 0.36}
+        # YES price is 0.68 (above the 0.65 ceiling!)
+        mock_ws.ask_cache = {"yes_5m": 0.68, "no_5m": 0.32}
+        mock_ws.bid_cache = {"yes_5m": 0.67, "no_5m": 0.31}
+        mock_ws.price_cache = {"yes_5m": 0.68, "no_5m": 0.32}
+        mock_ws.is_connected = True
         
-        # When streak_depth >= 3 (reversal), it should bypass the floor and confirm the signal
+        # Scanner should not filter it out anymore
         signals = await scanner.get_entry_signals()
         assert len(signals) == 1
-        assert signals[0]["target_side"] == "NO"
-        assert signals[0]["target_price"] == 0.36
-        assert signals[0]["streak_depth"] == 3
+        
+        # Initialize decision engine to evaluate the signal
+        from src.strategy.decision import DecisionEngine
+        validator = MagicMock()
+        position_mgr = MagicMock()
+        position_mgr.ws = mock_ws
+        
+        decision = DecisionEngine(mock_config, validator, position_mgr, mock_clob, db, scanner=scanner)
+        decision.soft_audit_db_path = tempfile.NamedTemporaryFile(suffix=".db", delete=False).name
+        decision.rejection_logger = MagicMock()
+        decision.rejection_logger.log_rejection = AsyncMock()
+        
+        success, reason = await decision.process_signal(signals[0], side="YES")
+        
+        # Decision engine should reject due to price ceiling
+        assert success is False
+        assert "exceeds ceiling" in reason
+        
+        # Cleanup
+        if os.path.exists(decision.soft_audit_db_path):
+            try:
+                os.unlink(decision.soft_audit_db_path)
+            except:
+                pass
 
 

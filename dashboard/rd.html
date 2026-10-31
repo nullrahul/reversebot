@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReverseBot R&D — 15m Crypto</title>
+<title>ReverseBot R&D — Z-Score Fader</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
@@ -188,7 +188,38 @@
     grid-template-columns: 1fr 360px;
     gap: 20px;
   }
+  .content-grid.collapsed-sidebar {
+    grid-template-columns: 1fr;
+  }
+  .content-grid.collapsed-sidebar .sidebar {
+    display: none;
+  }
   @media(max-width:1100px) { .content-grid { grid-template-columns: 1fr; } }
+
+  /* ── Expandable Details Row ── */
+  .expand-btn {
+    background: none; border: none; color: var(--text-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 2px 6px; transition: transform 0.2s; display: inline-block;
+  }
+  .expand-btn.active {
+    transform: rotate(90deg); color: #a5a0ff;
+  }
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.012);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .details-item {
+    display: flex; justify-content: space-between; font-size: 0.8rem;
+    padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,0.03);
+  }
+  .details-item:last-child { border-bottom: none; }
+  .details-label { color: var(--text-muted); font-weight: 500; }
+  .details-val { color: var(--text-dim); font-family: 'Fira Code', monospace; }
 
   /* ── Panels ── */
   .panel {
@@ -502,6 +533,88 @@
   .check-item.warn-c { border-color: rgba(255,209,102,0.2); }
   .check-item.warn-c .ci-val { color: var(--yellow); }
   .si-empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.84rem; }
+
+  /* ── Navigation Tabs ── */
+  .nav-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    font-family: var(--font);
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: rgba(255,255,255,0.03);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .tab-btn:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-dim);
+  }
+  .tab-btn.active {
+    background: rgba(108,99,255,0.15) !important;
+    border-color: rgba(108,99,255,0.3) !important;
+    color: #a5a0ff !important;
+  }
+  
+  /* ── Candle Resolutions styles ── */
+  .res-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  .res-table th {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .res-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.82rem;
+  }
+  .res-row:hover td {
+    background: rgba(255,255,255,0.01);
+  }
+  
+  /* Pagination styling */
+  .pag-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .pag-btn:hover:not(:disabled) {
+    background: rgba(255,255,255,0.12);
+    color: var(--text);
+    border-color: var(--text-muted);
+  }
+  .pag-btn.active {
+    background: rgba(255,255,255,0.15);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.4);
+    font-weight: 700;
+  }
+  .pag-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 </style>
 </head>
 <body>
@@ -536,10 +649,45 @@
 <!-- Header -->
 <header>
   <div class="header-left">
-    <div class="logo-text">Reverse<span>Bot</span> <span style="font-size:12px; color:#3b82f6;">[R&D 15m]</span></div>
+    <div class="logo-text">Reverse<span>Bot</span> <span style="font-size:12px; color:#3b82f6;">[R&D Z-Score]</span></div>
     <div id="mode-badge" class="mode-badge mode-paper">PAPER</div>
   </div>
   <div class="header-right">
+    <select id="profile-selector" class="config-input" style="width:180px; text-align:left; background:rgba(255,255,255,0.08); border-color:var(--border); margin-right: 15px;" onchange="onProfileChange()">
+      <option value="main">Main (Default)</option>
+      <option value="runtime">🔴 Runtime (Live Mode)</option>
+      <option value="executioner">Executioner Profile (Combined HTR)</option>
+      <option value="stop_loss">Stop Loss Profile</option>
+      <option value="era3_cheap_htr">Era 3 Cheap HTR Profile (<0.35)</option>
+      <option value="era3_no_cheap_htr">Era 3 NO Cheap HTR Profile (NO <0.35)</option>
+      <option value="era3_hybrid_bandpass">Era 3 Hybrid BandPass Profile</option>
+      <option value="reversal_stop_loss">Reversal Stop Loss Profile</option>
+      <option value="claude_audit">Claude Audit Profile</option>
+      <option value="claude_gated">Claude Gated Profile</option>
+      <option value="claude_good">Claude Good Profile</option>
+      <option value="reversal_yes_cvd_imb">Reversal YES CVD Imb Profile</option>
+      <option value="reversal_yes_cvd_imb_wide">Reversal YES CVD Imb Wide Profile</option>
+      <option value="loss_skip_yes_cvd">Loss Skip YES CVD Profile</option>
+      <option value="loss_skip_btc_5m_recovery">Loss Skip BTC 5m Recovery Profile</option>
+      <option value="reversal_stop_loss_eth_5m_exhaustion">Reversal SL ETH 5m Exhaustion Profile</option>
+      <option value="reversal_eth_5m_momentum">Reversal ETH 5m Momentum Profile</option>
+      <option value="single_market_hedge_cheap">Single Market Hedge Cheap Profile</option>
+      <option value="single_market_hedge_expensive">Single Market Hedge Expensive Profile</option>
+      <option value="cross_market_hedge">Cross Market Hedge Profile</option>
+      <option value="livemode">Livemode Profile (CMH <0.07 HTR)</option>
+      <option value="probability_sl">Probability SL Profile</option>
+      <option value="reversal_probability_sl">Reversal Prob SL Profile</option>
+      <option value="loss_skip">Loss Skip Profile</option>
+      <option value="cheap_reversal">Cheap Reversal Profile</option>
+      <option value="micro_flow_no">Microstructure Flow NO Profile</option>
+      <option value="cheap_reversal_v2">Cheap Reversal V2 Profile (Guarded)</option>
+      <option value="reversal_yes_cvd_imb_wide">Reversal YES CVD Wide Profile</option>
+      <option value="reversal_yes_cvd_imb_wide_v2">Reversal YES CVD Wide V2 Profile (Guarded)</option>
+      <option value="loss_skip_yes_cvd">Loss Skip YES CVD Profile</option>
+      <option value="loss_skip_yes_cvd_v2">Loss Skip YES CVD V2 Profile (Guarded)</option>
+      <option value="reversal">Fade Reversal Profile</option>
+      <option value="streak_momentum">Streak Momentum Profile</option>
+    </select>
     <div class="status-dot" id="status-dot"></div>
     <span class="status-text" id="status-text">Connecting...</span>
     <span class="last-update" id="last-update"></span>
@@ -563,6 +711,13 @@
     <button class="btn" style="background: #22c55e;" onclick="window.location.href='/'">🏠 Main Dashboard</button>
   </div>
 
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview</button>
+    <button class="tab-btn" onclick="switchTab('resolutions')">🕯️ Candle Resolutions</button>
+    <button class="tab-btn" onclick="switchTab('trades-log')">📈 Trades Audit Log</button>
+  </div>
+
   <!-- Stats -->
   <div class="stats-grid" id="stats-grid">
     <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Realised P&L</div><div class="stat-value neutral" id="s-pnl">$0.00</div><div class="stat-sub" id="s-pnl-sub">—</div></div>
@@ -571,18 +726,6 @@
     <div class="stat-card"><div class="stat-icon">🔍</div><div class="stat-label">Markets Scanned</div><div class="stat-value neutral" id="s-markets">0</div><div class="stat-sub" id="s-flagged">0 flagged</div></div>
     <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">Total Trades</div><div class="stat-value neutral" id="s-trades">0</div><div class="stat-sub" id="s-last-scan">Last scan: —</div></div>
     <div class="stat-card"><div class="stat-icon">⚙️</div><div class="stat-label">Engine Status</div><div class="stat-value neutral" id="s-engine">—</div><div class="stat-sub" id="s-kill">Kill switch: inactive</div></div>
-  </div>
-
-  <!-- Debug Stats Row -->
-  <div class="stats-grid-2" id="debug-stats">
-    <div class="stat-card-sm"><div class="stat-label">Signals fired</div><div class="stat-value neutral" id="d-signals">0</div><div class="stat-sub">entries attempted</div></div>
-    <div class="stat-card-sm"><div class="stat-label">Markets skipped</div><div class="stat-value neutral" id="d-skipped">0</div><div class="stat-sub">this session</div></div>
-    <div class="stat-card-sm"><div class="stat-label">Avg entry YES%</div><div class="stat-value neutral" id="d-avg-yes">—</div><div class="stat-sub">across all entries</div></div>
-    <div class="stat-card-sm"><div class="stat-label">Avg hold time</div><div class="stat-value neutral" id="d-hold">—</div><div class="stat-sub">closed positions</div></div>
-    <div class="stat-card-sm"><div class="stat-label">Avg EV at entry</div><div class="stat-value neutral" id="d-ev">—</div><div class="stat-sub">expected value</div></div>
-    <div class="stat-card-sm"><div class="stat-label">Cooldown blocks</div><div class="stat-value neutral" id="d-cooldown">0</div><div class="stat-sub">skipped by cooldown</div></div>
-    <div class="stat-card-sm"><div class="stat-label">Vol gate fails</div><div class="stat-value neutral" id="d-volfail">0</div><div class="stat-sub">low volume skips</div></div>
-    <div class="stat-card-sm"><div class="stat-label">Spread gate fails</div><div class="stat-value neutral" id="d-spreadfail">0</div><div class="stat-sub">wide spread skips</div></div>
   </div>
 
   <!-- Loop Timing Bar -->
@@ -601,65 +744,118 @@
   </div>
 
   <!-- Main Content -->
-  <div class="content-grid">
+  <div id="tab-overview" class="tab-content">
+    <div class="content-grid collapsed-sidebar">
     <div class="left-col">
       <!-- P&L Chart -->
       <div class="panel">
-        <div class="panel-header">
+        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
           <div class="panel-title">📈 Cumulative P&L</div>
+          <div id="mode-switcher" style="display:flex; gap:4px; background:rgba(255,255,255,0.04); padding:3px; border-radius:8px; border:1px solid var(--border);">
+            <button id="btn-mode-trend" class="mode-toggle-btn active" onclick="setStrategyMode('trend')" style="padding:4px 12px; font-size:0.75rem; font-weight:600; border-radius:6px; border:none; cursor:pointer; background:var(--accent); color:#fff; transition:all 0.2s;">📈 TREND</button>
+            <button id="btn-mode-reversal" class="mode-toggle-btn" onclick="setStrategyMode('reversal')" style="padding:4px 12px; font-size:0.75rem; font-weight:600; border-radius:6px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:all 0.2s;">🔄 REVERSAL</button>
+            <button id="btn-mode-merged" class="mode-toggle-btn" onclick="setStrategyMode('merged')" style="padding:4px 12px; font-size:0.75rem; font-weight:600; border-radius:6px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:all 0.2s;">🔀 MERGED COMPARISON</button>
+          </div>
         </div>
         <div class="panel-body"><div class="chart-wrap"><canvas id="pnl-chart"></canvas></div></div>
       </div>
 
-      <!-- Signal Inspector -->
-      <div class="signal-inspector" id="signal-inspector">
-        <div class="si-header">
-          <div class="si-title">⚡ Signal Inspector <span style="font-size:0.7rem; opacity:0.6; font-weight:400;">(last entry attempt)</span></div>
-          <span class="si-market" id="si-market-name">Waiting for signal...</span>
-        </div>
-        <div class="si-body">
-          <div class="si-empty" id="si-empty">No signals fired yet. The inspector will populate when the bot evaluates an entry.</div>
-          <div class="check-grid" id="si-checks" style="display:none"></div>
-        </div>
-      </div>
-
-      <!-- Debug Console -->
-      <div class="debug-console">
-        <div class="debug-header">
-          <span class="debug-title">🖥 Debug Console</span>
-          <div class="debug-filters">
-            <button class="filter-btn filter-scan active"  data-level="SCAN"   onclick="toggleFilter(this)">SCAN</button>
-            <button class="filter-btn filter-signal active" data-level="SIGNAL" onclick="toggleFilter(this)">SIGNAL</button>
-            <button class="filter-btn filter-entry active" data-level="ENTRY"  onclick="toggleFilter(this)">ENTRY</button>
-            <button class="filter-btn filter-skip active"  data-level="SKIP"   onclick="toggleFilter(this)">SKIP</button>
-            <button class="filter-btn filter-warn active"  data-level="WARN"   onclick="toggleFilter(this)">WARN</button>
-            <button class="filter-btn filter-error active" data-level="ERROR"  onclick="toggleFilter(this)">ERROR</button>
-            <button class="filter-btn filter-close active" data-level="CLOSE"  onclick="toggleFilter(this)">CLOSE</button>
-          </div>
-          <div class="debug-actions">
-            <button onclick="toggleAutoScroll()">⇣ Auto-scroll: <span id="autoscroll-label">ON</span></button>
-            <button onclick="clearConsole()">✕ Clear</button>
-            <button onclick="exportLogs()">↓ Export</button>
-          </div>
-        </div>
-        <div class="console-body" id="console-body"></div>
-      </div>
-
-      <!-- Scan Feed -->
+      <!-- Live Strategy & Limits Monitor -->
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">🔭 Last Scan Feed <span class="panel-badge" id="scan-badge">0 markets</span></div>
-          <span style="font-size:0.75rem; color:var(--text-muted);" id="scan-ts">—</span>
+          <div class="panel-title">🛡️ Live Strategy & Limits Monitor</div>
         </div>
-        <div class="table-scroll">
-          <table class="scan-table">
-            <thead>
-              <tr><th>Market</th><th>YES%</th><th>EV</th><th>Vol 24h</th><th>Spread</th><th>Time left</th><th>Status</th></tr>
-            </thead>
-            <tbody id="scan-table-body">
-              <tr><td colspan="7" class="empty-state">Waiting for scan data...</td></tr>
-            </tbody>
-          </table>
+        <div class="panel-body">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+            <!-- Exposure Limit -->
+            <div style="background: rgba(255,255,255,0.015); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Active Capital Exposure</div>
+              <div style="font-size: 1.4rem; font-weight: 700; margin-bottom: 8px;" id="monitor-exposure">$0.00 / $0.00</div>
+              <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                <div id="monitor-exposure-bar" style="width: 0%; height: 100%; background: #6c63ff; transition: width 0.3s;"></div>
+              </div>
+            </div>
+            
+            <!-- Daily Loss Limit -->
+            <div style="background: rgba(255,255,255,0.015); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">24h Net Loss / Budget</div>
+              <div style="font-size: 1.4rem; font-weight: 700; color: var(--red); margin-bottom: 8px;" id="monitor-loss">$0.00 / $0.00</div>
+              <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                <div id="monitor-loss-bar" style="width: 0%; height: 100%; background: var(--red); transition: width 0.3s;"></div>
+              </div>
+            </div>
+
+            <!-- Current Reversal Streaks -->
+            <div style="background: rgba(255,255,255,0.015); border: 1px solid var(--border); border-radius: 12px; padding: 16px; grid-column: span 2;">
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;">Active Candle Reversal Streaks</div>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted);">BTC 5m</div>
+                  <div style="font-size: 0.95rem; font-weight: 700; margin-top: 4px;" id="streak-btc-5m">—</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted);">BTC 15m</div>
+                  <div style="font-size: 0.95rem; font-weight: 700; margin-top: 4px;" id="streak-btc-15m">—</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted);">ETH 5m</div>
+                  <div style="font-size: 0.95rem; font-weight: 700; margin-top: 4px;" id="streak-eth-5m">—</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted);">ETH 15m</div>
+                  <div style="font-size: 0.95rem; font-weight: 700; margin-top: 4px;" id="streak-eth-15m">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Persistence Scores (Direction-Aware V2) -->
+            <div style="background: rgba(255,255,255,0.015); border: 1px solid var(--border); border-radius: 12px; padding: 16px; grid-column: span 2;">
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span>5m Directional Persistence (Binance)</span>
+                <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text-muted);">SHADOW V2</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center;">
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.6rem; color: var(--text-muted);">BTC <span style="color:var(--green);">UP↑</span></div>
+                  <div style="font-size: 1rem; font-weight: 800; margin-top: 4px; color: var(--accent);" id="persistence-btc-up">—</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.6rem; color: var(--text-muted);">BTC <span style="color:var(--red);">DN↓</span></div>
+                  <div style="font-size: 1rem; font-weight: 800; margin-top: 4px; color: var(--accent);" id="persistence-btc-down">—</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.6rem; color: var(--text-muted);">ETH <span style="color:var(--green);">UP↑</span></div>
+                  <div style="font-size: 1rem; font-weight: 800; margin-top: 4px; color: var(--accent);" id="persistence-eth-up">—</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.6rem; color: var(--text-muted);">ETH <span style="color:var(--red);">DN↓</span></div>
+                  <div style="font-size: 1rem; font-weight: 800; margin-top: 4px; color: var(--accent);" id="persistence-eth-down">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fade Reversal Status -->
+            <div style="background: rgba(255,255,255,0.015); border: 1px solid var(--border); border-radius: 12px; padding: 16px; grid-column: span 2;">
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span>Fade Reversal Toggling Status</span>
+                <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; font-weight: 600; background: rgba(255,255,255,0.05); color: var(--text-muted);">LIVE TRACKER</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center;">
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted);">Strategy Mode</div>
+                  <div style="font-size: 1.1rem; font-weight: 800; margin-top: 4px; color: var(--green);" id="reversal-mode">—</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted);">Rolling Win Rate</div>
+                  <div style="font-size: 1.1rem; font-weight: 800; margin-top: 4px; color: var(--accent);" id="reversal-wr">—</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 8px;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted);">Loss Streak</div>
+                  <div style="font-size: 1.1rem; font-weight: 800; margin-top: 4px; color: var(--text-muted);" id="reversal-loss-streak">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -672,10 +868,10 @@
         <div class="table-scroll">
           <table>
             <thead>
-              <tr><th>Market</th><th>Timer</th><th>Entry</th><th>Live</th><th>P&L</th><th>Shares</th><th>Vol (24h)</th><th>Actions</th></tr>
+              <tr><th>Market</th><th>Side</th><th>Timer</th><th>Entry</th><th>Live</th><th>P&L</th><th>Shares</th><th>Vol (24h)</th><th>Actions</th></tr>
             </thead>
             <tbody id="pos-table-body">
-              <tr><td colspan="8" class="empty-state">No open positions</td></tr>
+              <tr><td colspan="9" class="empty-state">No open positions</td></tr>
             </tbody>
           </table>
         </div>
@@ -690,10 +886,21 @@
         <div class="table-scroll">
           <table>
             <thead>
-              <tr><th>Market</th><th>Entry</th><th>Exit</th><th>P&L</th><th>Reason</th><th>Result</th><th></th></tr>
+              <tr>
+                <th style="width: 30px;"></th>
+                <th>Market</th>
+                <th>Side</th>
+                <th>Shares</th>
+                <th>Entry Price</th>
+                <th>PnL</th>
+                <th>Streak</th>
+                <th>DD (Min/Max)</th>
+                <th>Result</th>
+                <th></th>
+              </tr>
             </thead>
             <tbody id="hist-table-body">
-              <tr><td colspan="8" class="empty-state">No closed trades yet</td></tr>
+              <tr><td colspan="10" class="empty-state">No closed trades yet</td></tr>
             </tbody>
           </table>
         </div>
@@ -712,6 +919,489 @@
       </div>
     </div>
   </div>
+  </div>
+
+  <!-- Resolutions Tab Content -->
+  <div id="tab-resolutions" class="tab-content" style="display:none">
+    <!-- Resolutions Panel -->
+    <div class="panel" style="background:#090d1a; border: 1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:15px; margin-bottom:20px;">
+        <div style="font-size:1.1rem; font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px;">
+          🕯️ Real-Time Candle Resolutions Tracker
+        </div>
+        <div style="font-family:'Fira Code', monospace; font-weight:700; color:var(--yellow); background:rgba(255,209,102,0.1); padding:6px 14px; border-radius:10px; font-size:1rem;" id="res-current-et">
+          --:--:-- ET
+        </div>
+      </div>
+      
+      <!-- Grid of Assets and timeframes -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" class="res-grid">
+        <!-- BTC 5m -->
+        <div class="res-card" style="background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:12px; padding:15px;">
+          <div style="font-weight:700; color:#f39c12; margin-bottom:12px; display:flex; justify-content:space-between; font-size:0.9rem;">
+            <span>BTC - 5 Minute Contracts</span>
+            <span style="opacity:0.6; font-size:0.75rem;">Window: 5m</span>
+          </div>
+          <div id="res-btc-5m-container">
+            <div style="text-align:center; padding:15px; color:var(--text-muted);">Waiting for live feeds...</div>
+          </div>
+        </div>
+
+        <!-- BTC 15m -->
+        <div class="res-card" style="background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:12px; padding:15px;">
+          <div style="font-weight:700; color:#f39c12; margin-bottom:12px; display:flex; justify-content:space-between; font-size:0.9rem;">
+            <span>BTC - 15 Minute Contracts</span>
+            <span style="opacity:0.6; font-size:0.75rem;">Window: 15m</span>
+          </div>
+          <div id="res-btc-15m-container">
+            <div style="text-align:center; padding:15px; color:var(--text-muted);">Waiting for live feeds...</div>
+          </div>
+        </div>
+
+        <!-- ETH 5m -->
+        <div class="res-card" style="background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:12px; padding:15px;">
+          <div style="font-weight:700; color:#a5a0ff; margin-bottom:12px; display:flex; justify-content:space-between; font-size:0.9rem;">
+            <span>ETH - 5 Minute Contracts</span>
+            <span style="opacity:0.6; font-size:0.75rem;">Window: 5m</span>
+          </div>
+          <div id="res-eth-5m-container">
+            <div style="text-align:center; padding:15px; color:var(--text-muted);">Waiting for live feeds...</div>
+          </div>
+        </div>
+
+        <!-- ETH 15m -->
+        <div class="res-card" style="background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:12px; padding:15px;">
+          <div style="font-weight:700; color:#a5a0ff; margin-bottom:12px; display:flex; justify-content:space-between; font-size:0.9rem;">
+            <span>ETH - 15 Minute Contracts</span>
+            <span style="opacity:0.6; font-size:0.75rem;">Window: 15m</span>
+          </div>
+          <div id="res-eth-15m-container">
+            <div style="text-align:center; padding:15px; color:var(--text-muted);">Waiting for live feeds...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trades Log Tab Content -->
+  <div id="tab-trades-log" class="tab-content" style="display:none">
+    <!-- Filters Panel -->
+    <div class="panel" style="background:#090d1a; border: 1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:20px;">
+      <div style="font-size:1.1rem; font-weight:700; color:var(--text); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:15px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span>🔍 Filter Trades Database</span>
+        </div>
+        <!-- Mode Switcher Toggle: Standard Filters vs Custom SQL Query -->
+        <div style="display:flex; gap:4px; background:rgba(255,255,255,0.04); padding:3px; border-radius:8px; border:1px solid var(--border);">
+          <button id="btn-trades-mode-standard" class="mode-toggle-btn active" onclick="setTradesFilterMode('standard')" style="padding:4px 12px; font-size:0.75rem; font-weight:600; border-radius:6px; border:none; cursor:pointer; background:var(--accent); color:#fff; transition:all 0.2s;">🎛️ Standard Filters</button>
+          <button id="btn-trades-mode-sql" class="mode-toggle-btn" onclick="setTradesFilterMode('sql')" style="padding:4px 12px; font-size:0.75rem; font-weight:600; border-radius:6px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:all 0.2s;">💻 Custom SQL Query</button>
+        </div>
+      </div>
+      
+      <!-- Standard Filters Container -->
+      <div id="standard-filters-container">
+        <!-- Filter Inputs Flexbox -->
+        <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Environment</label>
+            <select id="filter-env" class="config-input" style="width:160px; text-align:left;">
+              <option value="default">Default (Bot Mode)</option>
+              <option value="paper">Paper (R&D)</option>
+              <option value="live">Live (Real-Money)</option>
+            </select>
+          </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Profile</label>
+          <select id="filter-profile" class="config-input" style="width:160px; text-align:left;" onchange="onFilterProfileChange()">
+            <option value="main">Main (Default)</option>
+            <option value="runtime">🔴 Runtime (Live Mode)</option>
+            <option value="executioner">Executioner (Combined HTR)</option>
+            <option value="stop_loss">Stop Loss</option>
+            <option value="era3_cheap_htr">Era 3 Cheap HTR (<0.35)</option>
+            <option value="era3_no_cheap_htr">Era 3 NO Cheap HTR (NO <0.35)</option>
+            <option value="era3_hybrid_bandpass">Era 3 Hybrid BandPass</option>
+            <option value="reversal_stop_loss">Reversal Stop Loss</option>
+            <option value="claude_audit">Claude Audit</option>
+            <option value="claude_gated">Claude Gated</option>
+            <option value="claude_good">Claude Good</option>
+            <option value="reversal_yes_cvd_imb">Reversal YES CVD Imb</option>
+            <option value="reversal_yes_cvd_imb_wide">Reversal YES CVD Imb Wide</option>
+            <option value="loss_skip_yes_cvd">Loss Skip YES CVD</option>
+            <option value="loss_skip_btc_5m_recovery">Loss Skip BTC 5m Recovery</option>
+            <option value="reversal_stop_loss_eth_5m_exhaustion">Reversal SL ETH 5m Exhaustion</option>
+            <option value="reversal_eth_5m_momentum">Reversal ETH 5m Momentum</option>
+            <option value="single_market_hedge_cheap">Single Market Hedge Cheap</option>
+            <option value="single_market_hedge_expensive">Single Market Hedge Expensive</option>
+            <option value="cross_market_hedge">Cross Market Hedge</option>
+            <option value="livemode">Livemode (CMH <0.07 HTR)</option>
+            <option value="probability_sl">Probability SL</option>
+            <option value="reversal_probability_sl">Reversal Prob SL</option>
+            <option value="loss_skip">Loss Skip</option>
+            <option value="cheap_reversal">Cheap Reversal</option>
+            <option value="cheap_reversal_v2">Cheap Reversal V2 (Guarded)</option>
+            <option value="reversal_yes_cvd_imb_wide">Reversal YES CVD Wide</option>
+            <option value="reversal_yes_cvd_imb_wide_v2">Reversal YES CVD Wide V2 (Guarded)</option>
+            <option value="loss_skip_yes_cvd">Loss Skip YES CVD</option>
+            <option value="loss_skip_yes_cvd_v2">Loss Skip YES CVD V2 (Guarded)</option>
+            <option value="reversal">Fade Reversal</option>
+            <option value="streak_momentum">Streak Momentum</option>
+            <option value="all_profiles">All Virtual Profiles</option>
+          </select>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Executioner Base Request</label>
+          <select id="filter-base-request" class="config-input" style="width:190px; text-align:left;">
+            <option value="all">All Requests (Combined)</option>
+            <option value="req_1">Req #1: Stop Loss (< $0.30)</option>
+            <option value="req_2">Req #2: Cross Market (< $0.07)</option>
+            <option value="req_3">Req #3: Rev Prob SL (15m)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Date Range</label>
+          <select id="filter-day" class="config-input" style="width:160px; text-align:left;" onchange="toggleCustomDate()">
+            <option value="all">All Days</option>
+            <option value="today">Today (ET)</option>
+            <option value="yesterday">Yesterday (ET)</option>
+            <option value="custom">Custom Date...</option>
+          </select>
+        </div>
+        
+        <div id="filter-custom-date-container" style="display:none; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Select Date</label>
+          <input type="date" id="filter-custom-date" class="config-input" style="width:150px; text-align:left;">
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Hour ET (IST Reference)</label>
+          <select id="filter-hour" class="config-input" style="width:240px; text-align:left;">
+            <option value="all">All Hours</option>
+            <option value="0">00:00 ET (09:30 IST)</option>
+            <option value="1">01:00 ET (10:30 IST)</option>
+            <option value="2">02:00 ET (11:30 IST)</option>
+            <option value="3">03:00 ET (12:30 IST)</option>
+            <option value="4">04:00 ET (13:30 IST)</option>
+            <option value="5">05:00 ET (14:30 IST)</option>
+            <option value="6">06:00 ET (15:30 IST)</option>
+            <option value="7">07:00 ET (16:30 IST)</option>
+            <option value="8">08:00 ET (17:30 IST)</option>
+            <option value="9">09:00 ET (18:30 IST)</option>
+            <option value="10">10:00 ET (19:30 IST)</option>
+            <option value="11">11:00 ET (20:30 IST)</option>
+            <option value="12">12:00 ET (21:30 IST)</option>
+            <option value="13">13:00 ET (22:30 IST)</option>
+            <option value="14">14:00 ET (23:30 IST)</option>
+            <option value="15">15:00 ET (00:30 IST next day)</option>
+            <option value="16">16:00 ET (01:30 IST next day)</option>
+            <option value="17">17:00 ET (02:30 IST next day)</option>
+            <option value="18">18:00 ET (03:30 IST next day)</option>
+            <option value="19">19:00 ET (04:30 IST next day)</option>
+            <option value="20">20:00 ET (05:30 AM IST next day)</option>
+            <option value="21">21:00 ET (06:30 AM IST next day)</option>
+            <option value="22">22:00 ET (07:30 AM IST next day)</option>
+            <option value="23">23:00 ET (08:30 AM IST next day)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Asset</label>
+          <select id="filter-symbol" class="config-input" style="width:110px; text-align:left;">
+            <option value="all">All Coins</option>
+            <option value="BTC">BTC</option>
+            <option value="ETH">ETH</option>
+          </select>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Side</label>
+          <select id="filter-side" class="config-input" style="width:110px; text-align:left;">
+            <option value="all">All Sides</option>
+            <option value="YES">YES (Fade Down)</option>
+            <option value="NO">NO (Fade Up)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Timeframe</label>
+          <select id="filter-window" class="config-input" style="width:110px; text-align:left;">
+            <option value="all">All</option>
+            <option value="5">5 Min</option>
+            <option value="15">15 Min</option>
+          </select>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Streak Trigger</label>
+          <select id="filter-streak" class="config-input" style="width:110px; text-align:left;">
+            <option value="all">All Streaks</option>
+            <option value="2">Streak 2</option>
+            <option value="3">Streak 3</option>
+            <option value="4">Streak 4</option>
+            <option value="5">Streak 5</option>
+            <option value="6">Streak 6+</option>
+          </select>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Max Drawdown</label>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <select id="filter-max-drawdown-op" class="config-input" style="width:60px; text-align:center;">
+              <option value="gt">&ge;</option>
+              <option value="lt">&lt;</option>
+              <option value="eq">=</option>
+            </select>
+            <input type="number" id="filter-max-drawdown-val" class="config-input" style="width:80px;" placeholder="Max DD %" min="0" max="100" step="0.1">
+            <span style="font-size:0.8rem; color:var(--text-muted);">%</span>
+          </div>
+        </div>
+
+        <!-- Entry Price Band & Range Filter -->
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Entry Price / Band</label>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <select id="filter-entry-price-band" class="config-input" style="width:160px; text-align:left;" onchange="onEntryPriceBandChange()">
+              <option value="all" selected>All Entry Prices</option>
+              <option value="0.11-0.499">0.11 - 0.499 [Mid Band]</option>
+              <option value="0.10-0.50">0.10 - 0.50 [Band]</option>
+              <option value="0.01-0.05">$0.01 - $0.05</option>
+              <option value="0.05-0.10">$0.05 - $0.10</option>
+              <option value="0.10-0.15">$0.10 - $0.15</option>
+              <option value="0.15-0.20">$0.15 - $0.20</option>
+              <option value="0.20-0.25">$0.20 - $0.25</option>
+              <option value="0.25-0.35">$0.25 - $0.35</option>
+              <option value="0.30-0.60">$0.30 - $0.60 [B3 Gate]</option>
+              <option value="0.35-0.60">$0.35 - $0.60</option>
+              <option value="0.60-0.70">$0.60 - $0.70</option>
+              <option value="0.70-0.80">$0.70 - $0.80</option>
+              <option value="0.80-1.00">$0.80 - $1.00</option>
+              <option value="custom">Custom Range...</option>
+            </select>
+            <select id="filter-entry-price-op" class="config-input" style="width:65px; text-align:center;" onchange="onEntryPriceOpChange()">
+              <option value="between">Range</option>
+              <option value="eq">=</option>
+              <option value="gt">&ge;</option>
+              <option value="lt">&lt;</option>
+            </select>
+            <input type="number" id="filter-entry-price-val" class="config-input" style="width:75px;" placeholder="Min/Val" min="0" max="1" step="0.001">
+            <span id="filter-entry-price-max-wrapper" style="display:inline-flex; align-items:center; gap:4px;">
+              <span style="font-size:0.75rem; color:var(--text-muted);">-</span>
+              <input type="number" id="filter-entry-price-max" class="config-input" style="width:75px;" placeholder="Max" min="0" max="1" step="0.001">
+            </span>
+          </div>
+        </div>
+
+        <!-- Time Remaining (Timer) Filter -->
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Time Remaining (Secs Left)</label>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <select id="filter-time-remaining-preset" class="config-input" style="width:160px; text-align:left;" onchange="onTimeRemainingPresetChange()">
+              <option value="all" selected>All Time Windows</option>
+              <option value="0-15">Last 15s (0 - 15s)</option>
+              <option value="0-30">Last 30s (0 - 30s)</option>
+              <option value="0-45">Last 45s (0 - 45s)</option>
+              <option value="0-60">Last 60s (&lt; 60s)</option>
+              <option value="60-120">60s - 120s</option>
+              <option value="60-180">60s - 180s</option>
+              <option value="60-240">60s - 240s [Range]</option>
+              <option value="120-180">120s - 180s</option>
+              <option value="180-300">180s - 300s (3-5m)</option>
+              <option value="300-600">300s - 600s (5-10m)</option>
+              <option value="600-900">600s - 900s (10-15m)</option>
+              <option value="gt-60">&gt;= 60s Remaining</option>
+              <option value="custom">Custom Range...</option>
+            </select>
+            <select id="filter-time-remaining-op" class="config-input" style="width:65px; text-align:center;" onchange="onTimeRemainingOpChange()">
+              <option value="between">Range</option>
+              <option value="lt">&lt;</option>
+              <option value="gt">&ge;</option>
+              <option value="eq">=</option>
+            </select>
+            <input type="number" id="filter-time-remaining-val" class="config-input" style="width:75px;" placeholder="Min/Val" min="0" max="1800" step="1">
+            <span id="filter-time-remaining-max-wrapper" style="display:inline-flex; align-items:center; gap:4px;">
+              <span style="font-size:0.75rem; color:var(--text-muted);">-</span>
+              <input type="number" id="filter-time-remaining-max" class="config-input" style="width:75px;" placeholder="Max" min="0" max="1800" step="1">
+            </span>
+          </div>
+        </div>
+
+        <!-- Exit Price Filter -->
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Exit Price</label>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <select id="filter-exit-price-op" class="config-input" style="width:60px; text-align:center;">
+              <option value="eq">=</option>
+              <option value="gt">&ge;</option>
+              <option value="lt">&lt;</option>
+            </select>
+            <input type="number" id="filter-exit-price-val" class="config-input" style="width:90px;" placeholder="Value" min="0" max="1" step="0.01">
+          </div>
+        </div>
+
+        <!-- Resolution Mode Filter -->
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Resolution Mode</label>
+          <select id="filter-htr-mode" class="config-input" style="width:210px; text-align:left;" onchange="loadFilteredTrades()">
+            <option value="0">Actual Bot Execution (With SL)</option>
+            <option value="1">Hold to Resolution (HTR Sim)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="btn btn-start" style="padding:10px 24px; height:38px; display:flex; align-items:center;" onclick="loadFilteredTrades()">
+            ⚡ Apply Filters
+          </button>
+          <button class="btn" id="btn-export-csv" style="padding:10px 20px; height:38px; display:flex; align-items:center; gap:6px; background:var(--card-bg, #1e232d); border:1px solid var(--accent-blue, #3b82f6); color:var(--accent-blue, #60a5fa); cursor:pointer; font-weight:600; border-radius:6px;" onclick="exportFilteredTradesCSV()">
+            📥 Export CSV (Full Telemetry)
+          </button>
+        </div>
+      </div>
+      </div>
+      <!-- End Standard Filters Container -->
+
+      <!-- Custom SQL Query Studio Container -->
+      <div id="sql-query-container" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">Query Templates:</label>
+            <select id="sql-template-select" class="config-input" style="width:300px; text-align:left;" onchange="loadSqlTemplate()">
+              <option value="">-- Quick SQL Query Templates --</option>
+              <option value="recent_resolved">Recent 100 Live Trades (positions)</option>
+              <option value="paper_resolved">Recent 100 Paper Trades (paper_positions)</option>
+              <option value="paper_wins">Winning Paper Trades (PnL > 0)</option>
+              <option value="stop_loss_trades">Stop Loss Triggered Trades</option>
+              <option value="btc_5m">BTC 5-Minute Window Trades</option>
+              <option value="streak_gte_4">High Streaks (Streak &ge; 4)</option>
+              <option value="virtual_profiles">Virtual Strategy Profiles (profile_positions)</option>
+              <option value="executioner_trades">Executioner Positions</option>
+            </select>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.75rem; color:var(--text-muted); background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; border:1px solid var(--border);">
+              🔒 Read-Only Engine (<code style="color:var(--green);">SELECT</code> / <code style="color:var(--green);">WITH</code>)
+            </span>
+          </div>
+        </div>
+
+        <div style="position:relative; margin-bottom:14px;">
+          <textarea id="sql-query-input" class="config-input" rows="5" style="width:100%; font-family:Consolas, Monaco, 'Courier New', monospace; font-size:0.86rem; line-height:1.45; padding:12px; border-radius:8px; resize:vertical; background:#050811; border:1px solid var(--border); color:#f1f5f9;" placeholder="SELECT * FROM positions WHERE order_status = 'FILLED' ORDER BY closed_at DESC LIMIT 100;">SELECT * FROM positions WHERE order_status = 'FILLED' ORDER BY closed_at DESC LIMIT 100;</textarea>
+        </div>
+
+        <div id="sql-query-error" style="display:none; padding:10px 14px; border-radius:8px; margin-bottom:14px; font-size:0.82rem; font-family:monospace; background:rgba(239,68,68,0.12); border:1px solid #ef4444; color:#fca5a5;"></div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button id="btn-run-sql" class="btn btn-apply" onclick="runCustomSQLQuery()" style="display:flex; align-items:center; gap:6px; font-weight:700; padding:9px 20px; font-size:0.85rem; cursor:pointer;">
+              <span>▶</span> <span>Run Query & Plot</span>
+            </button>
+            <button class="btn" id="btn-export-sql-csv" style="padding:9px 16px; font-size:0.82rem; display:flex; align-items:center; gap:6px; background:var(--card-bg, #1e232d); border:1px solid var(--accent-blue, #3b82f6); color:var(--accent-blue, #60a5fa); cursor:pointer; font-weight:600; border-radius:6px;" onclick="exportFilteredTradesCSV()">
+              📥 Export CSV
+            </button>
+            <button class="btn btn-cancel" onclick="resetSqlQuery()" style="padding:9px 14px; font-size:0.82rem; cursor:pointer;">
+              Clear
+            </button>
+          </div>
+          <div id="sql-execution-meta" style="font-size:0.78rem; color:var(--text-muted); font-family:monospace;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtered Statistics Summary Cards -->
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom:20px;">
+      <div class="stat-card" style="padding:15px 20px;">
+        <div class="stat-label">Filtered Trades</div>
+        <div class="stat-value neutral" id="filter-summary-count">0</div>
+        <div class="stat-sub">Matching search criteria</div>
+      </div>
+      <div class="stat-card" style="padding:15px 20px;">
+        <div class="stat-label">Filtered Win Rate</div>
+        <div class="stat-value neutral" id="filter-summary-wr">0%</div>
+        <div class="stat-sub" id="filter-summary-wr-sub">Wins vs Losses breakdown</div>
+      </div>
+      <div class="stat-card" style="padding:15px 20px;">
+        <div class="stat-label">Filtered Realised P&L</div>
+        <div class="stat-value neutral" id="filter-summary-pnl">$0.00</div>
+        <div class="stat-sub" id="filter-summary-pnl-sub">Sum of realized earnings</div>
+      </div>
+      <div class="stat-card" style="padding:15px 20px;">
+        <div class="stat-label">SL Whipsaws vs Rescues</div>
+        <div class="stat-value neutral" id="filter-summary-whipsaw" style="font-size:1.1rem;">0 W / 0 R</div>
+        <div class="stat-sub">Ruined Wins vs Rescued Losses</div>
+      </div>
+    </div>
+
+    <!-- Filtered Trades Timeline & Cumulative PnL Chart Panel -->
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="panel-title" style="display:flex; align-items:center; gap:8px;">
+          📈 Filtered Trades Timeline & Performance Chart
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; font-size:0.78rem;">
+          <span style="color:var(--text-muted);">View Mode:</span>
+          <select id="filter-chart-mode" class="config-input" style="width:180px; height:28px; padding:2px 8px; font-size:0.75rem;" onchange="updateFilteredTradesChart()">
+            <option value="pnl">Cumulative P&L ($)</option>
+            <option value="outcomes">Trade Outcomes (Win/Loss)</option>
+          </select>
+          <span id="filter-chart-count-badge" class="badge" style="background:rgba(255,255,255,0.08); color:var(--text-muted); font-size:0.75rem; padding:4px 8px;">0 trades plotted</span>
+        </div>
+      </div>
+      <div style="padding:15px; height:320px; position:relative;">
+        <canvas id="filter-trades-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Filtered Trades Table Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📋 Database Query Results</div>
+      </div>
+      <div class="table-scroll">
+        <table style="width:100%;">
+          <thead>
+            <tr>
+              <th style="width: 30px;"></th>
+              <th>Market</th>
+              <th>Side</th>
+              <th>Entry Price (Risked)</th>
+              <th>Streak</th>
+              <th>DD (Min/Max)</th>
+              <th>Actual PnL (SL)</th>
+              <th>Actual Result</th>
+              <th>Hold Outcome (HTR P&L)</th>
+              <th>Debug Info</th>
+              <th style="width: 50px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="filter-table-body">
+            <tr><td colspan="10" class="empty-state">Apply filters to query the database</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination Container -->
+      <div class="pagination-container" id="filter-pagination-container" style="display:none; justify-content:space-between; align-items:center; padding:15px 20px; border-top:1px solid var(--border); font-size:0.85rem; color:var(--text-muted);">
+        <div>
+          Showing <span id="filter-pagination-start" style="font-weight:600; color:var(--text);">0</span> to <span id="filter-pagination-end" style="font-weight:600; color:var(--text);">0</span> of <span id="filter-pagination-total" style="font-weight:600; color:var(--text);">0</span> entries
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span>Show</span>
+            <select id="filter-pagination-limit" class="config-input" style="width:75px; height:28px; padding:2px 6px; font-size:0.8rem; background:rgba(255,255,255,0.08); border-color:var(--border);" onchange="changeFilterLimit()">
+              <option value="100">100</option>
+              <option value="250">250</option>
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+              <option value="all">All</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:4px;" id="filter-pagination-buttons">
+            <!-- Dynamic pagination buttons -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <script>
@@ -719,7 +1409,11 @@
 let API_KEY = localStorage.getItem('rb_key') || '';
 let ws = null;
 let pnlChart = null;
+let filterTradesChart = null;
+let lastFilteredTradesData = [];
+let currentProfile = localStorage.getItem('rb_profile') || 'main';
 const BASE = window.location.origin;
+let filterCurrentPage = 1;
 
 // ── Login ────────────────────────────────────────────
 function login() {
@@ -742,9 +1436,23 @@ document.getElementById('login-input').addEventListener('keydown', e => {
 
 // ── API ───────────────────────────────────────────────
 async function apiFetch(path, opts = {}) {
-  const url = new URL(BASE + path, window.location.origin);
-  if (!url.searchParams.has('type')) {
-    url.searchParams.append('type', 'rd');
+  const isRdPath = window.location.pathname.startsWith('/rd');
+  let finalPath = path;
+  if (!isRdPath && path.startsWith('/rd/')) {
+    finalPath = path.substring(3); // strips '/rd' from the beginning
+  }
+  const url = new URL(finalPath, window.location.origin);
+  if (isRdPath) {
+    if (!url.searchParams.has('type')) {
+      url.searchParams.append('type', 'rd');
+    }
+  } else {
+    url.searchParams.delete('type');
+  }
+  if (currentProfile && currentProfile !== 'main') {
+    if (finalPath.includes('/stats') || finalPath.includes('/positions') || finalPath.includes('/history') || finalPath.includes('/pnl-series')) {
+      url.searchParams.append('profile', currentProfile);
+    }
   }
   const res = await fetch(url.toString(), {
     headers: { 'X-Dashboard-Key': API_KEY, 'Content-Type': 'application/json' },
@@ -756,7 +1464,10 @@ async function apiFetch(path, opts = {}) {
 
 // ── Init ─────────────────────────────────────────────
 function init() {
+  const selector = document.getElementById('profile-selector');
+  if (selector) selector.value = currentProfile;
   initChart();
+  initFilterTradesChart();
   loadConfig();
   loadHistory();
   loadPnlSeries();
@@ -768,7 +1479,13 @@ function init() {
 // ── WebSocket ─────────────────────────────────────────
 function connectWS() {
   const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  ws = new WebSocket(`${proto}://${window.location.host}/rd/ws?key=${API_KEY}`);
+  const isRdPath = window.location.pathname.startsWith('/rd');
+  const wsPath = isRdPath ? '/rd/ws' : '/ws';
+  let wsUrl = `${proto}://${window.location.host}${wsPath}?key=${API_KEY}`;
+  if (currentProfile && currentProfile !== 'main') {
+    wsUrl += `&profile=${currentProfile}`;
+  }
+  ws = new WebSocket(wsUrl);
   ws.onopen = () => {
     document.getElementById('status-dot').className = 'status-dot';
     document.getElementById('status-text').textContent = 'Connected';
@@ -778,6 +1495,16 @@ function connectWS() {
     if (data.type === 'update') {
       updateStats(data.stats);
       updatePositions(data.positions);
+      updateCandles(data.candles, data.current_et);
+      if (data.streaks) {
+        updateStreaks(data.streaks);
+      }
+      if (data.persistence_scores) {
+        updatePersistence(data.persistence_scores);
+      }
+      if (data.reversal_status) {
+        updateReversalStatus(data.reversal_status);
+      }
       document.getElementById('last-update').textContent = 'Updated ' + new Date(data.ts * 1000).toLocaleTimeString();
     }
   };
@@ -786,6 +1513,1128 @@ function connectWS() {
     document.getElementById('status-text').textContent = 'Disconnected';
     setTimeout(connectWS, 5000);
   };
+}
+
+// ── Profile Selector Change Handler ──────────────────
+function onProfileChange() {
+  const selector = document.getElementById('profile-selector');
+  currentProfile = selector.value;
+  localStorage.setItem('rb_profile', currentProfile);
+  
+  if (ws) {
+    ws.onclose = null;
+    ws.close();
+  }
+  connectWS();
+  
+  loadHistory();
+  loadPnlSeries();
+}
+
+// ── Tab Switching ──
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => {
+    el.style.display = 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(el => {
+    el.classList.remove('active');
+  });
+  
+  const activeTab = document.getElementById('tab-' + tabId);
+  if (activeTab) activeTab.style.display = tabId === 'overview' ? '' : 'block';
+  
+  // Set button active
+  if (window.event && window.event.currentTarget) {
+    window.event.currentTarget.classList.add('active');
+  } else {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      if (b.getAttribute('onclick').includes(tabId)) {
+        b.classList.add('active');
+      }
+    });
+  }
+
+  if (tabId === 'trades-log') {
+    const filterProfileSelect = document.getElementById('filter-profile');
+    if (filterProfileSelect) {
+      filterProfileSelect.value = currentProfile;
+    }
+    loadFilteredTrades();
+  }
+}
+
+function toggleCustomDate() {
+  const day = document.getElementById('filter-day').value;
+  const container = document.getElementById('filter-custom-date-container');
+  container.style.display = day === 'custom' ? 'flex' : 'none';
+}
+
+
+
+function onFilterProfileChange() {
+  // Profile selection changed
+}
+
+function toggleAuditDetails(posId) {
+  const row = document.getElementById('audit-details-' + posId);
+  const btn = document.getElementById('audit-expand-btn-' + posId);
+  if (row) {
+    if (row.style.display === 'none') {
+      row.style.display = '';
+      if (btn) btn.classList.add('active');
+    } else {
+      row.style.display = 'none';
+      if (btn) btn.classList.remove('active');
+    }
+  }
+}
+
+function onEntryPriceBandChange() {
+  const band = document.getElementById('filter-entry-price-band').value;
+  const opSelect = document.getElementById('filter-entry-price-op');
+  const valInput = document.getElementById('filter-entry-price-val');
+  const maxWrapper = document.getElementById('filter-entry-price-max-wrapper');
+  const maxInput = document.getElementById('filter-entry-price-max');
+
+  if (band && band !== 'all' && band !== 'custom') {
+    const parts = band.split('-');
+    if (parts.length === 2) {
+      opSelect.value = 'between';
+      valInput.value = parts[0];
+      if (maxInput) maxInput.value = parts[1];
+      if (maxWrapper) maxWrapper.style.display = 'inline-flex';
+    }
+  } else if (band === 'all') {
+    valInput.value = '';
+    if (maxInput) maxInput.value = '';
+  } else if (band === 'custom') {
+    opSelect.value = 'between';
+    if (maxWrapper) maxWrapper.style.display = 'inline-flex';
+  }
+}
+
+function onEntryPriceOpChange() {
+  const op = document.getElementById('filter-entry-price-op').value;
+  const maxWrapper = document.getElementById('filter-entry-price-max-wrapper');
+  if (op === 'between') {
+    if (maxWrapper) maxWrapper.style.display = 'inline-flex';
+  } else {
+    if (maxWrapper) maxWrapper.style.display = 'none';
+  }
+}
+
+function onTimeRemainingPresetChange() {
+  const preset = document.getElementById('filter-time-remaining-preset').value;
+  const opSelect = document.getElementById('filter-time-remaining-op');
+  const valInput = document.getElementById('filter-time-remaining-val');
+  const maxWrapper = document.getElementById('filter-time-remaining-max-wrapper');
+  const maxInput = document.getElementById('filter-time-remaining-max');
+
+  if (preset && preset !== 'all' && preset !== 'custom') {
+    if (preset === 'gt-60') {
+      opSelect.value = 'gt';
+      valInput.value = '60';
+      if (maxInput) maxInput.value = '';
+      if (maxWrapper) maxWrapper.style.display = 'none';
+    } else {
+      const parts = preset.split('-');
+      if (parts.length === 2) {
+        if (parts[0] === '0') {
+          opSelect.value = 'lt';
+          valInput.value = parts[1];
+          if (maxInput) maxInput.value = '';
+          if (maxWrapper) maxWrapper.style.display = 'none';
+        } else {
+          opSelect.value = 'between';
+          valInput.value = parts[0];
+          if (maxInput) maxInput.value = parts[1];
+          if (maxWrapper) maxWrapper.style.display = 'inline-flex';
+        }
+      }
+    }
+  } else if (preset === 'all') {
+    valInput.value = '';
+    if (maxInput) maxInput.value = '';
+  } else if (preset === 'custom') {
+    opSelect.value = 'between';
+    if (maxWrapper) maxWrapper.style.display = 'inline-flex';
+  }
+}
+
+function onTimeRemainingOpChange() {
+  const op = document.getElementById('filter-time-remaining-op').value;
+  const maxWrapper = document.getElementById('filter-time-remaining-max-wrapper');
+  if (op === 'between') {
+    if (maxWrapper) maxWrapper.style.display = 'inline-flex';
+  } else {
+    if (maxWrapper) maxWrapper.style.display = 'none';
+  }
+}
+
+async function loadFilteredTrades(page = 1) {
+  filterCurrentPage = page;
+  const env = document.getElementById('filter-env').value;
+  const day = document.getElementById('filter-day').value;
+  const customDate = document.getElementById('filter-custom-date').value;
+  const hour = document.getElementById('filter-hour').value;
+  const symbol = document.getElementById('filter-symbol').value;
+  const side = document.getElementById('filter-side').value;
+  const windowMins = document.getElementById('filter-window').value;
+  const streakDepth = document.getElementById('filter-streak').value;
+  
+  const profileVal = document.getElementById('filter-profile').value;
+  
+  // Max drawdown parameters
+  const maxDrawdownOp = document.getElementById('filter-max-drawdown-op').value;
+  const maxDrawdownVal = document.getElementById('filter-max-drawdown-val').value;
+
+  // Entry/Exit price parameters
+  const entryPriceBandEl = document.getElementById('filter-entry-price-band');
+  const entryPriceBand = entryPriceBandEl ? entryPriceBandEl.value : 'all';
+  const entryPriceOp = document.getElementById('filter-entry-price-op').value;
+  const entryPriceVal = document.getElementById('filter-entry-price-val').value;
+  const entryPriceMaxEl = document.getElementById('filter-entry-price-max');
+  const entryPriceMax = entryPriceMaxEl ? entryPriceMaxEl.value : '';
+
+  // Time Remaining parameters
+  const timeRemainingPresetEl = document.getElementById('filter-time-remaining-preset');
+  const timeRemainingPreset = timeRemainingPresetEl ? timeRemainingPresetEl.value : 'all';
+  const timeRemainingOpEl = document.getElementById('filter-time-remaining-op');
+  const timeRemainingOp = timeRemainingOpEl ? timeRemainingOpEl.value : 'between';
+  const timeRemainingValEl = document.getElementById('filter-time-remaining-val');
+  const timeRemainingVal = timeRemainingValEl ? timeRemainingValEl.value : '';
+  const timeRemainingMaxEl = document.getElementById('filter-time-remaining-max');
+  const timeRemainingMax = timeRemainingMaxEl ? timeRemainingMaxEl.value : '';
+
+  const exitPriceOp = document.getElementById('filter-exit-price-op').value;
+  const exitPriceVal = document.getElementById('filter-exit-price-val').value;
+
+  let queryParams = [];
+
+  if (entryPriceBand && entryPriceBand !== 'all' && entryPriceBand !== 'custom') {
+    const parts = entryPriceBand.split('-');
+    if (parts.length === 2) {
+      queryParams.push(`entry_price_op=between`);
+      queryParams.push(`entry_price_min=${parts[0]}`);
+      queryParams.push(`entry_price_max=${parts[1]}`);
+      queryParams.push(`entry_price_val=${parts[0]}`);
+    }
+  } else if (entryPriceOp === 'between' || (entryPriceVal !== '' && entryPriceMax !== '')) {
+    queryParams.push(`entry_price_op=between`);
+    if (entryPriceVal !== '') queryParams.push(`entry_price_min=${entryPriceVal}`);
+    if (entryPriceMax !== '') queryParams.push(`entry_price_max=${entryPriceMax}`);
+    if (entryPriceVal !== '') queryParams.push(`entry_price_val=${entryPriceVal}`);
+  } else if (entryPriceVal !== '') {
+    queryParams.push(`entry_price_op=${entryPriceOp}`);
+    queryParams.push(`entry_price_val=${entryPriceVal}`);
+  }
+
+  if (timeRemainingPreset && timeRemainingPreset !== 'all' && timeRemainingPreset !== 'custom') {
+    if (timeRemainingPreset === 'gt-60') {
+      queryParams.push(`time_remaining_op=gt`);
+      queryParams.push(`time_remaining_val=60`);
+    } else {
+      const parts = timeRemainingPreset.split('-');
+      if (parts.length === 2) {
+        if (parts[0] === '0') {
+          queryParams.push(`time_remaining_op=lt`);
+          queryParams.push(`time_remaining_val=${parts[1]}`);
+        } else {
+          queryParams.push(`time_remaining_op=between`);
+          queryParams.push(`time_remaining_min=${parts[0]}`);
+          queryParams.push(`time_remaining_max=${parts[1]}`);
+          queryParams.push(`time_remaining_val=${parts[0]}`);
+        }
+      }
+    }
+  } else if (timeRemainingOp === 'between' || (timeRemainingVal !== '' && timeRemainingMax !== '')) {
+    queryParams.push(`time_remaining_op=between`);
+    if (timeRemainingVal !== '') queryParams.push(`time_remaining_min=${timeRemainingVal}`);
+    if (timeRemainingMax !== '') queryParams.push(`time_remaining_max=${timeRemainingMax}`);
+    if (timeRemainingVal !== '') queryParams.push(`time_remaining_val=${timeRemainingVal}`);
+  } else if (timeRemainingVal !== '') {
+    queryParams.push(`time_remaining_op=${timeRemainingOp}`);
+    queryParams.push(`time_remaining_val=${timeRemainingVal}`);
+  }
+
+  if (exitPriceVal !== '') {
+    queryParams.push(`exit_price_op=${exitPriceOp}`);
+    queryParams.push(`exit_price_val=${exitPriceVal}`);
+  }
+  
+  if (profileVal) {
+    queryParams.push(`profile=${profileVal}`);
+  }
+
+  const baseReqEl = document.getElementById('filter-base-request');
+  const baseReqVal = baseReqEl ? baseReqEl.value : 'all';
+  if (baseReqVal && baseReqVal !== 'all') {
+    queryParams.push(`base_profile=${baseReqVal}`);
+  }
+  
+  if (env && env !== 'default') {
+    queryParams.push(`env=${env}`);
+  }
+  
+  if (day === 'custom' && customDate) {
+    queryParams.push(`day=${customDate}`);
+  } else if (day && day !== 'all') {
+    queryParams.push(`day=${day}`);
+  }
+  
+  if (hour && hour !== 'all') {
+    queryParams.push(`hour_et=${hour}`);
+  }
+  
+  if (symbol && symbol !== 'all') {
+    queryParams.push(`symbol=${symbol}`);
+  }
+  
+  if (side && side !== 'all') {
+    queryParams.push(`side=${side}`);
+  }
+
+  if (windowMins && windowMins !== 'all') {
+    queryParams.push(`window_minutes=${windowMins}`);
+  }
+
+  if (streakDepth && streakDepth !== 'all') {
+    queryParams.push(`streak_depth=${streakDepth}`);
+  }
+  
+  if (maxDrawdownVal !== '') {
+    queryParams.push(`max_drawdown_op=${maxDrawdownOp}`);
+    queryParams.push(`max_drawdown_val=${maxDrawdownVal}`);
+  }
+
+  const htrModeEl = document.getElementById('filter-htr-mode');
+  const htrMode = htrModeEl ? htrModeEl.value : '0';
+  if (htrMode && htrMode !== '0') {
+    queryParams.push(`htr_mode=${htrMode}`);
+  }
+
+  const limitEl = document.getElementById('filter-pagination-limit');
+  const limit = limitEl ? limitEl.value : 100;
+  queryParams.push(`page=${filterCurrentPage}`);
+  if (limit !== 'all') {
+    queryParams.push(`limit=${limit}`);
+  } else {
+    queryParams.push(`limit=100000`);
+  }
+  
+  const queryString = queryParams.length ? '?' + queryParams.join('&') : '';
+  const tbody = document.getElementById('filter-table-body');
+  tbody.innerHTML = '<tr><td colspan="11" class="empty-state">Loading filtered trades...</td></tr>';
+  
+  try {
+    const res = await apiFetch(`/rd/api/history-filtered${queryString}`);
+    const trades = res.trades || [];
+    const totalCount = res.total || 0;
+    const totalPages = res.pages || 1;
+    const isHtrActive = htrMode === '1';
+
+    const wrVal = isHtrActive ? (res.htr_win_rate !== undefined ? res.htr_win_rate : 0) : (res.act_win_rate !== undefined ? res.act_win_rate : (totalCount > 0 ? (res.total_wins / totalCount * 100) : 0));
+    const pnlVal = isHtrActive ? (res.htr_total_pnl !== undefined ? res.htr_total_pnl : 0) : (res.act_total_pnl !== undefined ? res.act_total_pnl : res.total_pnl);
+    
+    if (!trades.length) {
+      tbody.innerHTML = '<tr><td colspan="11" class="empty-state">No trades matched your filters</td></tr>';
+      document.getElementById('filter-summary-count').textContent = '0';
+      document.getElementById('filter-summary-wr').textContent = '0.0%';
+      document.getElementById('filter-summary-pnl').textContent = '$0.0000';
+      document.getElementById('filter-summary-pnl').className = 'stat-value neutral';
+      if (document.getElementById('filter-summary-whipsaw')) {
+        document.getElementById('filter-summary-whipsaw').textContent = '0 W / 0 R';
+      }
+      document.getElementById('filter-pagination-container').style.display = 'none';
+      updateFilteredTradesChart([]);
+      return;
+    }
+
+    document.getElementById('filter-summary-count').textContent = totalCount.toLocaleString();
+    document.getElementById('filter-summary-wr').textContent = (typeof wrVal === 'number' ? wrVal.toFixed(1) : wrVal) + '%';
+    if (document.getElementById('filter-summary-wr-sub')) {
+      document.getElementById('filter-summary-wr-sub').textContent = isHtrActive ? `HTR Win Rate (Actual SL: ${res.act_win_rate || 0}%)` : `Actual SL Win Rate (HTR: ${res.htr_win_rate || 0}%)`;
+    }
+
+    document.getElementById('filter-summary-pnl').textContent = (pnlVal >= 0 ? '+' : '') + '$' + parseFloat(pnlVal || 0).toFixed(4);
+    document.getElementById('filter-summary-pnl').className = 'stat-value ' + (pnlVal >= 0 ? 'positive' : 'negative');
+    if (document.getElementById('filter-summary-pnl-sub')) {
+      document.getElementById('filter-summary-pnl-sub').textContent = isHtrActive ? `HTR Sim PnL (Actual SL: $${res.act_total_pnl || 0})` : `Actual SL PnL (HTR Sim: $${res.htr_total_pnl || 0})`;
+    }
+
+    if (document.getElementById('filter-summary-whipsaw')) {
+      document.getElementById('filter-summary-whipsaw').textContent = `${res.whipsaw_count || 0} W / ${res.rescued_count || 0} R`;
+    }
+    
+    tbody.innerHTML = renderTradesTableRows(trades);
+    
+    // Update stats cards from backend aggregates
+    document.getElementById('filter-summary-count').textContent = totalCount.toLocaleString();
+    
+    const totalWins = res.total_wins || 0;
+    const winRate = totalCount > 0 ? (totalWins / totalCount * 100).toFixed(1) + '%' : '0.0%';
+    document.getElementById('filter-summary-wr').textContent = winRate + ' (' + totalWins + 'W / ' + (totalCount - totalWins) + 'L)';
+    
+    const totalPnl = parseFloat(res.total_pnl || 0);
+    const pnlEl = document.getElementById('filter-summary-pnl');
+    pnlEl.textContent = (totalPnl >= 0 ? '+' : '') + '$' + totalPnl.toFixed(4);
+    pnlEl.className = 'stat-value ' + (totalPnl >= 0 ? 'positive' : 'negative');
+    
+    // Update pagination controls
+    const pagContainer = document.getElementById('filter-pagination-container');
+    if (pagContainer) {
+      pagContainer.style.display = 'flex';
+      const limitVal = limit === 'all' ? totalCount : parseInt(limit);
+      const startEntry = totalCount > 0 ? (filterCurrentPage - 1) * limitVal + 1 : 0;
+      const endEntry = Math.min(filterCurrentPage * limitVal, totalCount);
+      
+      document.getElementById('filter-pagination-start').textContent = startEntry.toLocaleString();
+      document.getElementById('filter-pagination-end').textContent = endEntry.toLocaleString();
+      document.getElementById('filter-pagination-total').textContent = totalCount.toLocaleString();
+      
+      const buttonsContainer = document.getElementById('filter-pagination-buttons');
+      buttonsContainer.innerHTML = '';
+      
+      if (totalPages > 1) {
+        // Prev Button
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'pag-btn';
+        prevBtn.textContent = '◀';
+        prevBtn.disabled = filterCurrentPage === 1;
+        prevBtn.onclick = () => loadFilteredTrades(filterCurrentPage - 1);
+        buttonsContainer.appendChild(prevBtn);
+        
+        // Page numbers windowing
+        const maxPagesToShow = 5;
+        let startPage = Math.max(1, filterCurrentPage - Math.floor(maxPagesToShow / 2));
+        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+        if (endPage - startPage + 1 < maxPagesToShow) {
+          startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+        
+        if (startPage > 1) {
+          const firstBtn = document.createElement('button');
+          firstBtn.className = 'pag-btn';
+          firstBtn.textContent = '1';
+          firstBtn.onclick = () => loadFilteredTrades(1);
+          buttonsContainer.appendChild(firstBtn);
+          
+          if (startPage > 2) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.margin = '0 4px';
+            dots.style.color = 'var(--text-muted)';
+            buttonsContainer.appendChild(dots);
+          }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'pag-btn' + (i === filterCurrentPage ? ' active' : '');
+          btn.textContent = i;
+          btn.onclick = () => loadFilteredTrades(i);
+          buttonsContainer.appendChild(btn);
+        }
+        
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.margin = '0 4px';
+            dots.style.color = 'var(--text-muted)';
+            buttonsContainer.appendChild(dots);
+          }
+          const lastBtn = document.createElement('button');
+          lastBtn.className = 'pag-btn';
+          lastBtn.textContent = totalPages;
+          lastBtn.onclick = () => loadFilteredTrades(totalPages);
+          buttonsContainer.appendChild(lastBtn);
+        }
+        
+        // Next Button
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'pag-btn';
+        nextBtn.textContent = '▶';
+        nextBtn.disabled = filterCurrentPage === totalPages;
+        nextBtn.onclick = () => loadFilteredTrades(filterCurrentPage + 1);
+        buttonsContainer.appendChild(nextBtn);
+      }
+    }
+    
+    updateFilteredTradesChart(res.chart_series || trades);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="10" class="empty-state" style="color:var(--red);">Error loading trades: ${e.message}</td></tr>`;
+  }
+}
+
+function changeFilterLimit() {
+  loadFilteredTrades(1);
+}
+
+function renderTradesTableRows(trades) {
+  if (!trades || !trades.length) return '';
+  return trades.map(t => {
+    const pnl = parseFloat(t.realised_pnl || 0);
+    const isWin = pnl > 0;
+    
+    const pnlCls = pnl >= 0 ? 'positive' : 'negative';
+    let name = (t.question || t.market_id || '—');
+    name = name.replace(/\bET\b/g, '').trim();
+    const sideHtml = t.side === 'YES' ? '<span class="badge-win">YES</span>' : (t.side === 'NO' ? '<span class="badge-loss">NO</span>' : `<span class="badge">${t.side || '—'}</span>`);
+    
+    const formattedOpened = t.opened_at ? new Date(t.opened_at * 1000).toLocaleString() : '—';
+    const formattedClosed = t.closed_at ? new Date(t.closed_at * 1000).toLocaleString() : '—';
+    const winProb = t.win_prob_estimate !== null && t.win_prob_estimate !== undefined ? (t.win_prob_estimate * 100).toFixed(1) + '%' : '—';
+    const kelly = t.kelly_fraction_used !== null && t.kelly_fraction_used !== undefined ? parseFloat(t.kelly_fraction_used).toFixed(4) : '—';
+    const spread = t.bid_ask_spread_at_entry !== null && t.bid_ask_spread_at_entry !== undefined ? parseFloat(t.bid_ask_spread_at_entry).toFixed(4) : '—';
+    const cvd = t.cvd_60s_at_entry !== null && t.cvd_60s_at_entry !== undefined ? '$' + parseFloat(t.cvd_60s_at_entry).toLocaleString() : '—';
+    const imbalance = t.book_imbalance_at_entry !== null && t.book_imbalance_at_entry !== undefined ? parseFloat(t.book_imbalance_at_entry).toFixed(4) : '—';
+    const bankroll = t.bankroll_at_entry !== null && t.bankroll_at_entry !== undefined ? '$' + parseFloat(t.bankroll_at_entry).toFixed(2) : '—';
+    const age = t.market_age_at_entry_pct !== null && t.market_age_at_entry_pct !== undefined ? parseFloat(t.market_age_at_entry_pct).toFixed(1) + '%' : '—';
+    const secToClose = t.seconds_to_close_at_entry !== null && t.seconds_to_close_at_entry !== undefined ? parseFloat(t.seconds_to_close_at_entry).toFixed(0) + 's' : '—';
+    let ddMinStr = '—';
+    let ddMaxStr = '—';
+    const ep = parseFloat(t.entry_price || 0);
+    if (ep > 0) {
+      if (t.min_price_seen !== null && t.min_price_seen !== undefined) {
+        const ddMin = ((ep - parseFloat(t.min_price_seen)) / ep * 100).toFixed(1);
+        ddMinStr = (ddMin > 0 ? '+' : '') + ddMin + '%';
+      }
+      if (t.max_price_seen !== null && t.max_price_seen !== undefined) {
+        const ddMax = ((ep - parseFloat(t.max_price_seen)) / ep * 100).toFixed(1);
+        ddMaxStr = (ddMax > 0 ? '+' : '') + ddMax + '%';
+      }
+    }
+    const ddHtml = `<div style="font-size:0.75rem; white-space:nowrap;">Min: <span style="font-weight:600; color:var(--red);">${ddMinStr}</span></div>
+                    <div style="font-size:0.75rem; white-space:nowrap; margin-top:2px;">Max: <span style="font-weight:600; color:var(--green);">${ddMaxStr}</span></div>`;
+
+    // HTR Resolution Outcome Column Rendering
+    const htrPnl = parseFloat(t.htr_pnl !== undefined ? t.htr_pnl : pnl);
+    const htrIsWin = t.htr_is_win !== undefined ? t.htr_is_win : isWin;
+    const htrStatus = t.htr_status || 'HELD_TO_RES';
+    const htrCls = htrPnl >= 0 ? 'positive' : 'negative';
+
+    let htrBadge = htrIsWin ? '<span class="badge-win">WIN</span>' : '<span class="badge-loss">LOSS</span>';
+    if (htrStatus === 'WHIPSAW') {
+      htrBadge = '<span style="background:rgba(255,171,0,0.2); color:#ffab00; border:1px solid #ffab00; font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:700;">WIN (WHIPSAW)</span>';
+    } else if (htrStatus === 'RESCUED') {
+      htrBadge = '<span style="background:rgba(108,99,255,0.2); color:#6c63ff; border:1px solid #6c63ff; font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:700;">LOSS (RESCUED)</span>';
+    }
+
+    const htrCellHtml = `<div><span class="${htrCls}" style="font-weight:700;">${htrPnl >= 0 ? '+' : ''}$${htrPnl.toFixed(4)}</span><div style="margin-top:2px;">${htrBadge}</div></div>`;
+
+    const posId = t.position_id || '—';
+
+    return `<tr>
+      <td>
+        <button id="audit-expand-btn-${posId}" class="expand-btn" onclick="toggleAuditDetails('${posId}')">▶</button>
+      </td>
+      <td><div class="market-name" title="${name}">${name}</div></td>
+      <td>${sideHtml}</td>
+      <td>
+        <div style="font-size:0.78rem; font-weight:600;">$${parseFloat(t.entry_price || 0).toFixed(4)}</div>
+        <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">Risked: $${parseFloat(t.size_usdc || 0).toFixed(2)}</div>
+      </td>
+      <td>${t.streak_depth !== null && t.streak_depth !== undefined ? t.streak_depth : '—'}</td>
+      <td>${ddHtml}</td>
+      <td><span class="${pnlCls}" style="font-weight:700;">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(4)}</span></td>
+      <td><span class="${isWin ? 'badge-win' : 'badge-loss'}">${isWin ? 'WIN' : 'LOSS'}</span></td>
+      <td>${htrCellHtml}</td>
+      <td>
+        <div style="font-size:0.72rem; color:var(--text-muted); font-family:monospace;">
+          ID: <span style="color:var(--text-dim);">${posId}</span><br>
+          Reason: <span style="color:var(--text-dim);">${t.close_reason || '—'}</span>
+        </div>
+      </td>
+      <td>
+        <button class="btn-apply" style="padding:2px 6px;font-size:0.7rem;opacity:0.6" onclick="delHist('${posId}')">✕</button>
+      </td>
+    </tr>
+    <tr id="audit-details-${posId}" style="display: none; background: rgba(255,255,255,0.005);">
+      <td colspan="11" style="padding: 12px 20px;">
+        <div class="details-grid">
+          <div class="details-item"><span class="details-label">Position ID</span><span class="details-val">${posId}</span></div>
+          <div class="details-item"><span class="details-label">Opened Time (ET)</span><span class="details-val">${t.opened_at_et || formattedOpened || '—'}</span></div>
+          <div class="details-item"><span class="details-label">Opened Time (IST)</span><span class="details-val">${t.opened_at_ist || '—'}</span></div>
+          <div class="details-item"><span class="details-label">Closed Time (ET)</span><span class="details-val">${t.closed_at_et || formattedClosed || '—'}</span></div>
+          <div class="details-item"><span class="details-label">Closed Time (IST)</span><span class="details-val">${t.closed_at_ist || '—'}</span></div>
+          <div class="details-item"><span class="details-label">Size Risked</span><span class="details-val">$${parseFloat(t.size_usdc || 0).toFixed(2)} USDC</span></div>
+          <div class="details-item"><span class="details-label">Win Prob Estimate</span><span class="details-val">${winProb}</span></div>
+          <div class="details-item"><span class="details-label">Kelly Fraction Used</span><span class="details-val">${kelly}</span></div>
+          <div class="details-item"><span class="details-label">Spread at Entry</span><span class="details-val">${spread}</span></div>
+          <div class="details-item"><span class="details-label">CVD at Entry</span><span class="details-val">${cvd}</span></div>
+          <div class="details-item"><span class="details-label">Order Book Imbalance</span><span class="details-val">${imbalance}</span></div>
+          <div class="details-item"><span class="details-label">Bankroll at Entry</span><span class="details-val">${bankroll}</span></div>
+          <div class="details-item"><span class="details-label">Market Age at Entry</span><span class="details-val">${age}</span></div>
+          <div class="details-item"><span class="details-label">Seconds to Close</span><span class="details-val">${secToClose}</span></div>
+          <div class="details-item"><span class="details-label">Correlated Position Open</span><span class="details-val">${t.correlated_position_open ? 'Yes' : 'No'}</span></div>
+          <div class="details-item"><span class="details-label">Close Reason</span><span class="details-val">${t.close_reason || '—'}</span></div>
+          <div class="details-item"><span class="details-label">Bot Version</span><span class="details-val">${t.version_opened || '—'}</span></div>
+          <div class="details-item"><span class="details-label">Strategy Mode</span><span class="details-val" style="font-weight: 700; color: ${t.strategy_mode === 'REVERSAL' ? 'var(--yellow)' : 'var(--green)'};">${t.strategy_mode || 'TREND'}</span></div>
+          <div class="details-item"><span class="details-label">Profile Name</span><span class="details-val" style="font-weight: 700; text-transform: uppercase;">${t.profile_name || 'main'}</span></div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setTradesFilterMode(mode) {
+  const stdBtn = document.getElementById('btn-trades-mode-standard');
+  const sqlBtn = document.getElementById('btn-trades-mode-sql');
+  const stdContainer = document.getElementById('standard-filters-container');
+  const sqlContainer = document.getElementById('sql-query-container');
+
+  if (mode === 'sql') {
+    stdBtn.classList.remove('active');
+    stdBtn.style.background = 'transparent';
+    stdBtn.style.color = 'var(--text-muted)';
+    sqlBtn.classList.add('active');
+    sqlBtn.style.background = 'var(--accent)';
+    sqlBtn.style.color = '#fff';
+    if (stdContainer) stdContainer.style.display = 'none';
+    if (sqlContainer) sqlContainer.style.display = 'block';
+  } else {
+    sqlBtn.classList.remove('active');
+    sqlBtn.style.background = 'transparent';
+    sqlBtn.style.color = 'var(--text-muted)';
+    stdBtn.classList.add('active');
+    stdBtn.style.background = 'var(--accent)';
+    stdBtn.style.color = '#fff';
+    if (stdContainer) stdContainer.style.display = 'block';
+    if (sqlContainer) sqlContainer.style.display = 'none';
+  }
+}
+
+function loadSqlTemplate() {
+  const select = document.getElementById('sql-template-select');
+  const input = document.getElementById('sql-query-input');
+  if (!select || !input) return;
+
+  const val = select.value;
+  const templates = {
+    'recent_resolved': "SELECT * FROM positions WHERE order_status = 'FILLED' ORDER BY closed_at DESC LIMIT 100;",
+    'paper_resolved': "SELECT * FROM paper_positions WHERE order_status = 'FILLED' ORDER BY closed_at DESC LIMIT 100;",
+    'paper_wins': "SELECT * FROM paper_positions WHERE order_status = 'FILLED' AND realised_pnl > 0 ORDER BY closed_at DESC LIMIT 100;",
+    'stop_loss_trades': "SELECT * FROM paper_positions WHERE close_reason = 'STOP_LOSS' ORDER BY closed_at DESC LIMIT 100;",
+    'btc_5m': "SELECT * FROM paper_positions WHERE symbol = 'BTC' AND window_minutes = 5 ORDER BY closed_at DESC LIMIT 100;",
+    'streak_gte_4': "SELECT * FROM paper_positions WHERE streak_depth >= 4 ORDER BY closed_at DESC LIMIT 100;",
+    'virtual_profiles': "SELECT * FROM profile_positions WHERE order_status = 'FILLED' ORDER BY closed_at DESC LIMIT 100;",
+    'executioner_trades': "SELECT * FROM executioner_positions WHERE order_status = 'FILLED' ORDER BY closed_at DESC LIMIT 100;"
+  };
+
+  if (templates[val]) {
+    input.value = templates[val];
+  }
+}
+
+function resetSqlQuery() {
+  const input = document.getElementById('sql-query-input');
+  const errBox = document.getElementById('sql-query-error');
+  const metaBox = document.getElementById('sql-execution-meta');
+  if (input) input.value = "SELECT * FROM positions WHERE order_status = 'FILLED' ORDER BY closed_at DESC LIMIT 100;";
+  if (errBox) { errBox.style.display = 'none'; errBox.textContent = ''; }
+  if (metaBox) metaBox.textContent = '';
+}
+
+async function runCustomSQLQuery() {
+  const queryInput = document.getElementById('sql-query-input');
+  const errBox = document.getElementById('sql-query-error');
+  const metaBox = document.getElementById('sql-execution-meta');
+  const runBtn = document.getElementById('btn-run-sql');
+  const tbody = document.getElementById('filter-table-body');
+
+  if (errBox) { errBox.style.display = 'none'; errBox.textContent = ''; }
+  if (metaBox) metaBox.textContent = '';
+
+  const sql = queryInput ? queryInput.value.trim() : '';
+  if (!sql) {
+    if (errBox) {
+      errBox.style.display = 'block';
+      errBox.textContent = 'Please enter a valid SQL query.';
+    }
+    return;
+  }
+
+  if (runBtn) {
+    runBtn.disabled = true;
+    runBtn.innerHTML = '<span>⏳</span> <span>Executing...</span>';
+  }
+  tbody.innerHTML = '<tr><td colspan="11" class="empty-state">Executing custom SQL query against database...</td></tr>';
+
+  try {
+    const isRdPath = window.location.pathname.startsWith('/rd');
+    const endpoint = isRdPath ? '/rd/api/custom-query' : '/api/custom-query';
+    const envEl = document.getElementById('filter-env');
+    const envVal = envEl ? envEl.value : 'default';
+
+    const res = await apiFetch(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({
+        query: sql,
+        env: envVal === 'default' ? null : envVal,
+        limit: 5000
+      })
+    });
+
+    if (!res.success) {
+      if (errBox) {
+        errBox.style.display = 'block';
+        errBox.textContent = res.error || 'Query execution failed.';
+      }
+      tbody.innerHTML = `<tr><td colspan="11" class="empty-state" style="color:var(--red);">${res.error || 'Query execution failed.'}</td></tr>`;
+      return;
+    }
+
+    const trades = res.trades || [];
+    const totalCount = res.total || 0;
+    const wrVal = res.act_win_rate !== undefined ? res.act_win_rate : 0;
+    const pnlVal = res.total_pnl !== undefined ? res.total_pnl : 0;
+    lastFilteredTradesData = trades;
+
+    if (metaBox) {
+      metaBox.innerHTML = `<span style="color:var(--green); font-weight:600;">✓ ${totalCount.toLocaleString()} rows</span> in ${res.elapsed_ms || 0}ms`;
+    }
+
+    if (!trades.length) {
+      tbody.innerHTML = '<tr><td colspan="11" class="empty-state">No records matched your SQL query</td></tr>';
+      document.getElementById('filter-summary-count').textContent = '0';
+      document.getElementById('filter-summary-wr').textContent = '0.0%';
+      document.getElementById('filter-summary-pnl').textContent = '$0.0000';
+      document.getElementById('filter-summary-pnl').className = 'stat-value neutral';
+      if (document.getElementById('filter-summary-whipsaw')) {
+        document.getElementById('filter-summary-whipsaw').textContent = '0 W / 0 R';
+      }
+      document.getElementById('filter-pagination-container').style.display = 'none';
+      updateFilteredTradesChart([]);
+      return;
+    }
+
+    document.getElementById('filter-summary-count').textContent = totalCount.toLocaleString();
+    document.getElementById('filter-summary-wr').textContent = (typeof wrVal === 'number' ? wrVal.toFixed(1) : wrVal) + '%';
+    if (document.getElementById('filter-summary-wr-sub')) {
+      document.getElementById('filter-summary-wr-sub').textContent = `Win Rate (${res.act_total_wins || 0}W / ${(totalCount - (res.act_total_wins || 0))}L)`;
+    }
+
+    document.getElementById('filter-summary-pnl').textContent = (pnlVal >= 0 ? '+' : '') + '$' + parseFloat(pnlVal || 0).toFixed(4);
+    document.getElementById('filter-summary-pnl').className = 'stat-value ' + (pnlVal >= 0 ? 'positive' : 'negative');
+    if (document.getElementById('filter-summary-pnl-sub')) {
+      document.getElementById('filter-summary-pnl-sub').textContent = `Sum of Realised PnL`;
+    }
+
+    if (document.getElementById('filter-summary-whipsaw')) {
+      document.getElementById('filter-summary-whipsaw').textContent = `${res.whipsaw_count || 0} W / ${res.rescued_count || 0} R`;
+    }
+
+    // Render table
+    tbody.innerHTML = renderTradesTableRows(trades);
+
+    // Update timeline and cumulative PnL chart
+    updateFilteredTradesChart(res.chart_series || trades);
+
+    // Hide pagination container for custom SQL
+    const pagContainer = document.getElementById('filter-pagination-container');
+    if (pagContainer) pagContainer.style.display = 'none';
+
+  } catch (err) {
+    if (errBox) {
+      errBox.style.display = 'block';
+      errBox.textContent = `Error: ${err.message}`;
+    }
+    tbody.innerHTML = `<tr><td colspan="11" class="empty-state" style="color:var(--red);">Error executing query: ${err.message}</td></tr>`;
+  } finally {
+    if (runBtn) {
+      runBtn.disabled = false;
+      runBtn.innerHTML = '<span>▶</span> <span>Run Query & Plot</span>';
+    }
+  }
+}
+
+async function exportFilteredTradesCSV() {
+  const exportBtn = document.getElementById('btn-export-csv');
+  const origText = exportBtn ? exportBtn.innerHTML : '📥 Export CSV (Full Telemetry)';
+  if (exportBtn) {
+    exportBtn.innerHTML = '⏳ Exporting CSV...';
+    exportBtn.disabled = true;
+  }
+
+  try {
+    const sqlContainer = document.getElementById('sql-query-container');
+    const isSqlMode = sqlContainer && sqlContainer.style.display !== 'none';
+    let trades = [];
+
+    if (isSqlMode) {
+      if (lastFilteredTradesData && lastFilteredTradesData.length > 0) {
+        trades = lastFilteredTradesData;
+      } else {
+        alert("No SQL query results found to export. Please run a query first.");
+        return;
+      }
+    } else {
+      const env = document.getElementById('filter-env').value;
+      const day = document.getElementById('filter-day').value;
+      const customDate = document.getElementById('filter-custom-date').value;
+      const hour = document.getElementById('filter-hour').value;
+      const symbol = document.getElementById('filter-symbol').value;
+      const side = document.getElementById('filter-side').value;
+      const windowMins = document.getElementById('filter-window').value;
+      const streakDepth = document.getElementById('filter-streak').value;
+      const profileVal = document.getElementById('filter-profile').value;
+      
+      const maxDrawdownOp = document.getElementById('filter-max-drawdown-op').value;
+      const maxDrawdownVal = document.getElementById('filter-max-drawdown-val').value;
+
+      const entryPriceBandEl = document.getElementById('filter-entry-price-band');
+      const entryPriceBand = entryPriceBandEl ? entryPriceBandEl.value : 'all';
+      const entryPriceOp = document.getElementById('filter-entry-price-op').value;
+      const entryPriceVal = document.getElementById('filter-entry-price-val').value;
+      const entryPriceMaxEl = document.getElementById('filter-entry-price-max');
+      const entryPriceMax = entryPriceMaxEl ? entryPriceMaxEl.value : '';
+
+      const timeRemainingPresetEl = document.getElementById('filter-time-remaining-preset');
+      const timeRemainingPreset = timeRemainingPresetEl ? timeRemainingPresetEl.value : 'all';
+      const timeRemainingOpEl = document.getElementById('filter-time-remaining-op');
+      const timeRemainingOp = timeRemainingOpEl ? timeRemainingOpEl.value : 'between';
+      const timeRemainingValEl = document.getElementById('filter-time-remaining-val');
+      const timeRemainingVal = timeRemainingValEl ? timeRemainingValEl.value : '';
+      const timeRemainingMaxEl = document.getElementById('filter-time-remaining-max');
+      const timeRemainingMax = timeRemainingMaxEl ? timeRemainingMaxEl.value : '';
+
+      const exitPriceOp = document.getElementById('filter-exit-price-op').value;
+      const exitPriceVal = document.getElementById('filter-exit-price-val').value;
+
+      let queryParams = [];
+
+      if (entryPriceBand && entryPriceBand !== 'all' && entryPriceBand !== 'custom') {
+        const parts = entryPriceBand.split('-');
+        if (parts.length === 2) {
+          queryParams.push(`entry_price_op=between`);
+          queryParams.push(`entry_price_min=${parts[0]}`);
+          queryParams.push(`entry_price_max=${parts[1]}`);
+          queryParams.push(`entry_price_val=${parts[0]}`);
+        }
+      } else if (entryPriceOp === 'between' || (entryPriceVal !== '' && entryPriceMax !== '')) {
+        queryParams.push(`entry_price_op=between`);
+        if (entryPriceVal !== '') queryParams.push(`entry_price_min=${entryPriceVal}`);
+        if (entryPriceMax !== '') queryParams.push(`entry_price_max=${entryPriceMax}`);
+        if (entryPriceVal !== '') queryParams.push(`entry_price_val=${entryPriceVal}`);
+      } else if (entryPriceVal !== '') {
+        queryParams.push(`entry_price_op=${entryPriceOp}`);
+        queryParams.push(`entry_price_val=${entryPriceVal}`);
+      }
+
+      if (timeRemainingPreset && timeRemainingPreset !== 'all' && timeRemainingPreset !== 'custom') {
+        if (timeRemainingPreset === 'gt-60') {
+          queryParams.push(`time_remaining_op=gt`);
+          queryParams.push(`time_remaining_val=60`);
+        } else {
+          const parts = timeRemainingPreset.split('-');
+          if (parts.length === 2) {
+            if (parts[0] === '0') {
+              queryParams.push(`time_remaining_op=lt`);
+              queryParams.push(`time_remaining_val=${parts[1]}`);
+            } else {
+              queryParams.push(`time_remaining_op=between`);
+              queryParams.push(`time_remaining_min=${parts[0]}`);
+              queryParams.push(`time_remaining_max=${parts[1]}`);
+              queryParams.push(`time_remaining_val=${parts[0]}`);
+            }
+          }
+        }
+      } else if (timeRemainingOp === 'between' || (timeRemainingVal !== '' && timeRemainingMax !== '')) {
+        queryParams.push(`time_remaining_op=between`);
+        if (timeRemainingVal !== '') queryParams.push(`time_remaining_min=${timeRemainingVal}`);
+        if (timeRemainingMax !== '') queryParams.push(`time_remaining_max=${timeRemainingMax}`);
+        if (timeRemainingVal !== '') queryParams.push(`time_remaining_val=${timeRemainingVal}`);
+      } else if (timeRemainingVal !== '') {
+        queryParams.push(`time_remaining_op=${timeRemainingOp}`);
+        queryParams.push(`time_remaining_val=${timeRemainingVal}`);
+      }
+
+      if (exitPriceVal !== '') {
+        queryParams.push(`exit_price_op=${exitPriceOp}`);
+        queryParams.push(`exit_price_val=${exitPriceVal}`);
+      }
+      
+      if (profileVal) queryParams.push(`profile=${profileVal}`);
+
+      const baseReqEl = document.getElementById('filter-base-request');
+      const baseReqVal = baseReqEl ? baseReqEl.value : 'all';
+      if (baseReqVal && baseReqVal !== 'all') queryParams.push(`base_profile=${baseReqVal}`);
+
+      if (env && env !== 'default') queryParams.push(`env=${env}`);
+      if (day === 'custom' && customDate) queryParams.push(`day=${customDate}`);
+      else if (day && day !== 'all') queryParams.push(`day=${day}`);
+      if (hour && hour !== 'all') queryParams.push(`hour_et=${hour}`);
+      if (symbol && symbol !== 'all') queryParams.push(`symbol=${symbol}`);
+      if (side && side !== 'all') queryParams.push(`side=${side}`);
+      if (windowMins && windowMins !== 'all') queryParams.push(`window_minutes=${windowMins}`);
+      if (streakDepth && streakDepth !== 'all') queryParams.push(`streak_depth=${streakDepth}`);
+
+      if (maxDrawdownVal !== '') {
+        queryParams.push(`max_drawdown_op=${maxDrawdownOp}`);
+        queryParams.push(`max_drawdown_val=${maxDrawdownVal}`);
+      }
+
+      const htrModeEl = document.getElementById('filter-htr-mode');
+      const htrMode = htrModeEl ? htrModeEl.value : '0';
+      if (htrMode && htrMode !== '0') queryParams.push(`htr_mode=${htrMode}`);
+
+      // Request full filtered dataset without pagination clipping
+      queryParams.push(`page=1`);
+      queryParams.push(`limit=100000`);
+
+      const queryString = queryParams.length ? '?' + queryParams.join('&') : '';
+      const apiPath = typeof is_rd !== 'undefined' && is_rd ? '/rd/api/history-filtered' : '/api/history-filtered';
+      const res = await apiFetch(`${apiPath}${queryString}`);
+      trades = res.trades || [];
+
+      if (trades.length === 0) {
+        alert("No trades found matching the selected filters to export.");
+        return;
+      }
+    }
+
+    const headers = [
+      "Position ID",
+      "Profile Name",
+      "Base Profile",
+      "Request ID",
+      "Market ID",
+      "Contract Question",
+      "Symbol",
+      "Timeframe (Mins)",
+      "Side",
+      "Strategy Mode",
+      "Entry Price ($)",
+      "Actual SL Exit Price ($)",
+      "Actual SL Realised PnL ($)",
+      "Actual SL Close Reason",
+      "HTR Sim Exit Price ($)",
+      "HTR Sim Realised PnL ($)",
+      "HTR SL Status (Whipsaw/Rescue)",
+      "Size (USDC)",
+      "Shares Bought",
+      "Order Status",
+      "CVD 60s at Entry",
+      "Book Imbalance at Entry",
+      "Bid-Ask Spread at Entry",
+      "Ask Depth USD 1c",
+      "Bid Depth USD 1c",
+      "Total Depth USD 1c",
+      "Total Depth USD 5c",
+      "Underlying Spot Price ($)",
+      "Underlying Strike Price ($)",
+      "Underlying Distance (BPS)",
+      "Spot Velocity 10s ($/s)",
+      "Realized Volatility 5m",
+      "Realized Volatility 1h",
+      "Black-Scholes Implied Prob",
+      "Option Pricing Edge (BPS)",
+      "Win Prob Estimate",
+      "Kelly Fraction Used",
+      "Persistence Score (%)",
+      "Streak Depth",
+      "Seconds to Close at Entry",
+      "Market Age at Entry (%)",
+      "Oracle Resolution Delay (s)",
+      "Opened Time (ET)",
+      "Opened Time (IST)",
+      "Closed Time (ET)",
+      "Closed Time (IST)",
+      "Hour UTC",
+      "Hour ET",
+      "Day of Week",
+      "Session",
+      "Bankroll at Entry ($)",
+      "Correlated Position Open"
+    ];
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val);
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    };
+
+    const csvRows = [];
+    csvRows.push(headers.map(escapeCsv).join(','));
+
+    for (const t of trades) {
+      const openedAt = t.opened_at ? new Date(t.opened_at * 1000) : null;
+      const closedAt = t.closed_at ? new Date(t.closed_at * 1000) : null;
+
+      const openedEt = openedAt ? openedAt.toLocaleString("en-US", { timeZone: "America/New_York" }) : "";
+      const openedIst = openedAt ? openedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : "";
+      const closedEt = closedAt ? closedAt.toLocaleString("en-US", { timeZone: "America/New_York" }) : "";
+      const closedIst = closedAt ? closedAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) : "";
+
+      const actExitPrice = t.exit_price !== undefined && t.exit_price !== null ? t.exit_price : "";
+      const actPnl = t.realised_pnl !== undefined && t.realised_pnl !== null ? t.realised_pnl : "";
+      const actReason = t.close_reason || "";
+
+      let htrPnl = t.htr_pnl !== undefined && t.htr_pnl !== null ? t.htr_pnl : (t.htr_realised_pnl !== undefined && t.htr_realised_pnl !== null ? t.htr_realised_pnl : actPnl);
+      let htrExitPrice = t.htr_is_win !== undefined && t.htr_is_win !== null ? (t.htr_is_win ? 1.0 : 0.0) : actExitPrice;
+      let htrStatus = t.htr_status || (actReason === "STOP_LOSS" ? "STOP_LOSS" : "HELD_TO_RES");
+
+      const row = [
+        t.position_id || "",
+        t.profile_name || profileVal || "",
+        t.base_profile_name || t.base_profile || "",
+        t.request_id !== undefined && t.request_id !== null ? t.request_id : "",
+        t.market_id || "",
+        t.question || "",
+        t.symbol || "",
+        t.window_minutes || "",
+        t.side || "",
+        t.strategy_mode || "TREND",
+        t.entry_price !== undefined ? t.entry_price : "",
+        actExitPrice,
+        actPnl,
+        actReason,
+        htrExitPrice,
+        htrPnl,
+        htrStatus,
+        t.size_usdc !== undefined ? t.size_usdc : "",
+        t.shares_bought !== undefined ? t.shares_bought : "",
+        t.order_status || "",
+        t.cvd_60s_at_entry !== undefined ? t.cvd_60s_at_entry : 0.0,
+        t.book_imbalance_at_entry !== undefined ? t.book_imbalance_at_entry : 0.0,
+        t.bid_ask_spread_at_entry !== undefined ? t.bid_ask_spread_at_entry : 0.0,
+        t.ask_depth_usd_1c !== undefined ? t.ask_depth_usd_1c : 0.0,
+        t.bid_depth_usd_1c !== undefined ? t.bid_depth_usd_1c : 0.0,
+        t.depth_usd_1c !== undefined ? t.depth_usd_1c : 0.0,
+        t.depth_usd_5c !== undefined ? t.depth_usd_5c : 0.0,
+        t.underlying_spot_price !== undefined ? t.underlying_spot_price : 0.0,
+        t.underlying_strike_price !== undefined ? t.underlying_strike_price : 0.0,
+        t.underlying_distance_bps !== undefined ? t.underlying_distance_bps : 0.0,
+        t.underlying_spot_velocity_10s !== undefined ? t.underlying_spot_velocity_10s : 0.0,
+        t.underlying_realized_vol_5m !== undefined ? t.underlying_realized_vol_5m : 0.0,
+        t.underlying_realized_vol_1h !== undefined ? t.underlying_realized_vol_1h : 0.0,
+        t.bs_implied_probability !== undefined ? t.bs_implied_probability : 0.5,
+        t.option_pricing_edge_bps !== undefined ? t.option_pricing_edge_bps : 0.0,
+        t.win_prob_estimate !== undefined ? t.win_prob_estimate : 0.5,
+        t.kelly_fraction_used !== undefined ? t.kelly_fraction_used : 0.0,
+        t.persistence_score !== undefined ? t.persistence_score : 0.0,
+        t.streak_depth !== undefined ? t.streak_depth : "",
+        t.seconds_to_close_at_entry !== undefined ? t.seconds_to_close_at_entry : 0.0,
+        t.market_age_at_entry_pct !== undefined ? t.market_age_at_entry_pct : 0.0,
+        t.resolution_delay !== undefined ? t.resolution_delay : 0,
+        openedEt,
+        openedIst,
+        closedEt,
+        closedIst,
+        t.hour_utc !== undefined ? t.hour_utc : "",
+        t.hour_et !== undefined ? t.hour_et : "",
+        t.day_of_week || "",
+        t.session || "",
+        t.bankroll_at_entry !== undefined ? t.bankroll_at_entry : 0.0,
+        t.correlated_position_open !== undefined ? t.correlated_position_open : 0
+      ];
+
+      csvRows.push(row.map(escapeCsv).join(','));
+    }
+
+    const csvContent = "\uFEFF" + csvRows.join('\n'); // UTF-8 BOM for Excel compatibility
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const filename = `reversebot-trades-audit-${profileVal || 'all'}-${dateStr}.csv`;
+
+    if (navigator.msSaveBlob) {
+      navigator.msSaveBlob(blob, filename);
+    } else {
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  } catch (err) {
+    console.error("CSV Export Failed:", err);
+    alert("Failed to export CSV: " + err.message);
+  } finally {
+    if (exportBtn) {
+      exportBtn.innerHTML = origText;
+      exportBtn.disabled = false;
+    }
+  }
+}
+
+// ── Candle Resolutions Renderer ──
+function updateCandles(candles, currentEt) {
+  if (currentEt) {
+    document.getElementById('res-current-et').textContent = currentEt;
+  }
+  if (!candles) return;
+  
+  const keys = ['BTC_5m', 'BTC_15m', 'ETH_5m', 'ETH_15m'];
+  keys.forEach(key => {
+    const container = document.getElementById(`res-${key.toLowerCase().replace('_', '-')}-container`);
+    if (!container) return;
+    
+    const data = candles[key];
+    if (!data) {
+      container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-muted);">No data available</div>';
+      return;
+    }
+    
+    const t1 = data.t1;
+    const t2 = data.t2;
+    
+    const formatCandleRow = (tName, tData) => {
+      const outcome = tData.outcome || '?';
+      let badgeCls = 'badge-SKIP';
+      if (outcome === 'UP') badgeCls = 'badge-win';
+      else if (outcome === 'DOWN') badgeCls = 'badge-loss';
+      
+      const source = tData.source || 'UNKNOWN';
+      let srcCls = 'background:rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.25);';
+      if (source === 'BINANCE_FALLBACK') {
+        srcCls = 'background:rgba(243,156,18,0.15); color:#f39c12; border:1px solid rgba(243,156,18,0.25);';
+      } else if (source === 'UNKNOWN' || source === 'ERROR') {
+        srcCls = 'background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border);';
+      }
+      
+      const delta = parseFloat(tData.delta_bps || 0);
+      const deltaCls = delta >= 0 ? 'positive' : 'negative';
+      const deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' bps';
+      
+      return `
+        <tr class="res-row">
+          <td style="font-weight:600; color:var(--text-dim); width:45px;">${tName}</td>
+          <td>
+            <div class="market-name" style="font-size:0.76rem; color:#38bdf8; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${tData.slug || ''}">
+              ${tData.slug || '—'}
+            </div>
+            <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">${tData.time_et || '—'}</div>
+          </td>
+          <td><span class="${badgeCls}" style="padding:2px 8px; border-radius:4px; font-weight:800; font-size:0.7rem;">${outcome}</span></td>
+          <td><span style="padding:2px 6px; border-radius:4px; font-size:0.64rem; font-weight:700; ${srcCls}">${source.replace('_FALLBACK', '')}</span></td>
+          <td class="${deltaCls}" style="font-family:'Fira Code', monospace; font-size:0.74rem; font-weight:600; text-align:right;">${deltaStr}</td>
+        </tr>
+      `;
+    };
+    
+    container.innerHTML = `
+      <table class="res-table">
+        <thead>
+          <tr>
+            <th>Candle</th>
+            <th>Market ID / Slug</th>
+            <th>Outcome</th>
+            <th>Source</th>
+            <th style="text-align:right;">Delta</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${formatCandleRow('T-1', t1)}
+          ${formatCandleRow('T-2', t2)}
+        </tbody>
+      </table>
+    `;
+  });
 }
 
 // ── Stats ─────────────────────────────────────────────
@@ -822,6 +2671,103 @@ function updateStats(s) {
   const badge = document.getElementById('mode-badge');
   badge.textContent = s.is_paper ? 'PAPER' : 'LIVE';
   badge.className = 'mode-badge ' + (s.is_paper ? 'mode-paper' : 'mode-live');
+
+  // Update Exposure Monitor
+  const openExposure = s.open_exposure || 0;
+  const maxExposure = s.max_exposure || 50.0;
+  document.getElementById('monitor-exposure').textContent = `$${openExposure.toFixed(2)} / $${maxExposure.toFixed(2)}`;
+  const exposurePct = maxExposure > 0 ? Math.min(100, (openExposure / maxExposure) * 100) : 0;
+  document.getElementById('monitor-exposure-bar').style.width = exposurePct + '%';
+
+  // Update Daily Loss Monitor
+  const dailyLoss = s.daily_loss || 0;
+  const maxDailyLoss = s.max_daily_loss || 75.0;
+  document.getElementById('monitor-loss').textContent = `$${dailyLoss.toFixed(2)} / $${maxDailyLoss.toFixed(2)}`;
+  const lossPct = maxDailyLoss > 0 ? Math.min(100, (dailyLoss / maxDailyLoss) * 100) : 0;
+  document.getElementById('monitor-loss-bar').style.width = lossPct + '%';
+}
+
+function updateStreaks(streaks) {
+  for (const [key, val] of Object.entries(streaks)) {
+    const elId = 'streak-' + key.toLowerCase().replace('_', '-');
+    const el = document.getElementById(elId);
+    if (el) {
+      const depth = val.depth || 0;
+      const dir = val.direction || '?';
+      if (depth === 0) {
+        el.textContent = '—';
+        el.style.color = 'var(--text-muted)';
+      } else {
+        const color = dir === 'UP' ? 'var(--green)' : 'var(--red)';
+        el.textContent = `${depth} ${dir}`;
+        el.style.color = color;
+      }
+    }
+  }
+}
+
+function updatePersistence(scores) {
+  for (const [key, val] of Object.entries(scores)) {
+    const asset = key.toLowerCase();
+    // V2: val is now {up: .., down: .., overall: ..}
+    if (val && typeof val === 'object') {
+      const upEl = document.getElementById('persistence-' + asset + '-up');
+      const downEl = document.getElementById('persistence-' + asset + '-down');
+      if (upEl) {
+        const upScore = parseFloat(val.up || 0);
+        upEl.textContent = (upScore * 100).toFixed(1) + '%';
+        upEl.style.color = upScore > 0.55 ? 'var(--green)' : upScore < 0.45 ? 'var(--red)' : 'var(--accent)';
+      }
+      if (downEl) {
+        const downScore = parseFloat(val.down || 0);
+        downEl.textContent = (downScore * 100).toFixed(1) + '%';
+        downEl.style.color = downScore > 0.55 ? 'var(--green)' : downScore < 0.45 ? 'var(--red)' : 'var(--accent)';
+      }
+    } else {
+      // Backward compat: old format was just a float
+      const elId = 'persistence-' + asset + '-5m';
+      const el = document.getElementById(elId);
+      if (el) {
+        const score = parseFloat(val || 0);
+        el.textContent = (score * 100).toFixed(1) + '%';
+        el.style.color = score > 0.55 ? 'var(--green)' : 'var(--accent)';
+      }
+    }
+  }
+}
+
+function updateReversalStatus(status) {
+  if (!status) return;
+  const elMode = document.getElementById('reversal-mode');
+  const elWr = document.getElementById('reversal-wr');
+  const elLstreak = document.getElementById('reversal-loss-streak');
+  
+  if (elMode) {
+    elMode.textContent = status.mode;
+    if (status.mode === 'REVERSAL') {
+      elMode.style.color = 'var(--yellow)';
+    } else {
+      elMode.style.color = 'var(--green)';
+    }
+  }
+  if (elWr) {
+    elWr.textContent = status.win_rate.toFixed(1) + '%';
+    if (status.win_rate < 50.0) {
+      elWr.style.color = 'var(--red)';
+    } else {
+      elWr.style.color = 'var(--green)';
+    }
+  }
+  if (elLstreak) {
+    elLstreak.textContent = `${status.consecutive_losses}/5`;
+    if (status.consecutive_losses >= 4) {
+      elLstreak.style.color = 'var(--red)';
+    } else if (status.consecutive_losses >= 3) {
+      elLstreak.style.color = 'var(--yellow)';
+    } else {
+      elLstreak.style.color = 'var(--text-muted)';
+    }
+  }
 }
 
 // ── Positions ─────────────────────────────────────────
@@ -834,8 +2780,10 @@ function updatePositions(positions) {
   }
   tbody.innerHTML = positions.map(p => {
     const entry = parseFloat(p.entry_price || 0);
+    const side = p.side || 'NO';
     const liveNo = parseFloat(p.live_no || 0);
     const liveYes = parseFloat(p.live_yes || 0);
+    const liveBought = parseFloat(p.live_bought_price || (side === 'YES' ? liveYes : liveNo));
     const vol = parseFloat(p.total_volume || 0);
     const sharesTotal = parseFloat(p.shares_bought || 0);
     const sharesCurrent = parseFloat(p.shares_current || sharesTotal);
@@ -860,17 +2808,19 @@ function updatePositions(positions) {
     const shareDisplay = `${sharesCurrent.toFixed(1)} <small style="opacity:0.6;">/ ${sharesTotal.toFixed(1)}</small>`;
     const bankedHtml = banked > 0 ? `<div style="font-size:10px; color:#2ecc71; margin-top:2px;">Banked: $${banked.toFixed(2)}</div>` : '';
     
+    const sideHtml = side === 'YES' ? '<span class="badge-win">YES</span>' : '<span class="badge-loss">NO</span>';
+
     return `<tr>
       <td><div class="market-name" title="${p.question || ''}">${name}${p.question && p.question.length > 50 ? '...' : ''}</div></td>
+      <td>${sideHtml}</td>
       <td><span style="color:var(--text-dim); font-variant-numeric: tabular-nums;">${timeLeft}</span></td>
       <td>$${entry.toFixed(4)}</td>
-      <td style="font-variant-numeric: tabular-nums; font-weight:600; color:var(--accent)">$${liveNo.toFixed(4)}</td>
+      <td style="font-variant-numeric: tabular-nums; font-weight:600; color:var(--accent)">$${liveBought.toFixed(4)}</td>
       <td>${pnlHtml}</td>
       <td style="color:${shareColor}; font-weight:600;">${shareDisplay}${bankedHtml}</td>
       <td>$${volStr}</td>
       <td>
         <div style="display:flex;gap:6px;">
-          <button class="btn-apply" style="padding:4px 6px; border-color:var(--border)" onclick="promptTPSL('${pid}')">⚙️</button>
           <button class="btn-apply error" style="padding:4px 6px" onclick="closePos('${pid}')">Close</button>
         </div>
       </td>
@@ -894,20 +2844,17 @@ async function closePos(id) {
   }
 }
 
-async function promptTPSL(id) {
-  const tp = prompt("Enter TP Multiplier (e.g. 3.0 for 300%):", "3.0");
-  if (!tp) return;
-  const sl = prompt("Enter SL Multiplier (e.g. 0.5 for -50% loss limit):", "0.5");
-  if (!sl) return;
-  
-  try {
-    const res = await apiFetch(`/rd/api/positions/${id}/tpsl`, {
-      method: 'POST',
-      body: JSON.stringify({tp_multiplier: parseFloat(tp), sl_multiplier: parseFloat(sl)})
-    });
-    showToast(res.message, 'green');
-  } catch(e) {
-    showToast('Error: ' + e.message, 'red');
+
+
+function toggleDetails(posId) {
+  const row = document.getElementById('details-' + posId);
+  const btn = document.getElementById('expand-btn-' + posId);
+  if (row.style.display === 'none') {
+    row.style.display = '';
+    btn.classList.add('active');
+  } else {
+    row.style.display = 'none';
+    btn.classList.remove('active');
   }
 }
 
@@ -916,23 +2863,88 @@ async function loadHistory() {
   const history = await apiFetch('/rd/api/history?limit=30');
   const tbody = document.getElementById('hist-table-body');
   if (!history.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No closed trades yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="empty-state">No closed trades yet</td></tr>';
     return;
   }
   tbody.innerHTML = history.map(h => {
     const pnl = parseFloat(h.realised_pnl || 0);
     const isWin = pnl > 0;
     const pnlCls = isWin ? 'positive' : 'negative';
-    const name = (h.question || h.market_id || '—').substring(0, 45);
-    const closedAt = h.closed_at ? new Date(h.closed_at * 1000).toLocaleDateString() : '—';
-    return `<tr>
-      <td><div class="market-name" title="${h.question || ''}">${name}${h.question && h.question.length > 45 ? '...' : ''}</div></td>
+    
+    let name = h.question || h.market_id || '—';
+    name = name.replace(/\bET\b/g, '').trim();
+
+    const side = h.side || 'NO';
+    const sideHtml = side === 'YES' ? '<span class="badge-win">YES</span>' : '<span class="badge-loss">NO</span>';
+    const shares = parseFloat(h.shares_bought || 0).toFixed(2);
+    const streak = h.streak_depth !== null && h.streak_depth !== undefined ? h.streak_depth : '—';
+    let ddMinStr = '—';
+    let ddMaxStr = '—';
+    const ep = parseFloat(h.entry_price || 0);
+    if (ep > 0) {
+      if (h.min_price_seen !== null && h.min_price_seen !== undefined) {
+        const ddMin = ((ep - parseFloat(h.min_price_seen)) / ep * 100).toFixed(1);
+        ddMinStr = (ddMin > 0 ? '+' : '') + ddMin + '%';
+      }
+      if (h.max_price_seen !== null && h.max_price_seen !== undefined) {
+        const ddMax = ((ep - parseFloat(h.max_price_seen)) / ep * 100).toFixed(1);
+        ddMaxStr = (ddMax > 0 ? '+' : '') + ddMax + '%';
+      }
+    }
+    const ddHtml = `<div style="font-size:0.75rem; white-space:nowrap;">Min: <span style="font-weight:600; color:var(--red);">${ddMinStr}</span></div>
+                    <div style="font-size:0.75rem; white-space:nowrap; margin-top:2px;">Max: <span style="font-weight:600; color:var(--green);">${ddMaxStr}</span></div>`;
+    
+    const formattedOpened = h.opened_at ? new Date(h.opened_at * 1000).toLocaleString() : '—';
+    const formattedClosed = h.closed_at ? new Date(h.closed_at * 1000).toLocaleString() : '—';
+    
+    const winProb = h.win_prob_estimate !== null && h.win_prob_estimate !== undefined ? (h.win_prob_estimate * 100).toFixed(1) + '%' : '—';
+    const kelly = h.kelly_fraction_used !== null && h.kelly_fraction_used !== undefined ? parseFloat(h.kelly_fraction_used).toFixed(4) : '—';
+    const spread = h.bid_ask_spread_at_entry !== null && h.bid_ask_spread_at_entry !== undefined ? parseFloat(h.bid_ask_spread_at_entry).toFixed(4) : '—';
+    const cvd = h.cvd_60s_at_entry !== null && h.cvd_60s_at_entry !== undefined ? '$' + parseFloat(h.cvd_60s_at_entry).toLocaleString() : '—';
+    const imbalance = h.book_imbalance_at_entry !== null && h.book_imbalance_at_entry !== undefined ? parseFloat(h.book_imbalance_at_entry).toFixed(4) : '—';
+    const bankroll = h.bankroll_at_entry !== null && h.bankroll_at_entry !== undefined ? '$' + parseFloat(h.bankroll_at_entry).toFixed(2) : '—';
+    const age = h.market_age_at_entry_pct !== null && h.market_age_at_entry_pct !== undefined ? parseFloat(h.market_age_at_entry_pct).toFixed(1) + '%' : '—';
+    const secToClose = h.seconds_to_close_at_entry !== null && h.seconds_to_close_at_entry !== undefined ? parseFloat(h.seconds_to_close_at_entry).toFixed(0) + 's' : '—';
+
+    return `
+    <tr>
+      <td>
+        <button id="expand-btn-${h.position_id}" class="expand-btn" onclick="toggleDetails('${h.position_id}')">▶</button>
+      </td>
+      <td><div class="market-name" title="${h.question || ''}">${name}</div></td>
+      <td>${sideHtml}</td>
+      <td>${shares}</td>
       <td>$${parseFloat(h.entry_price || 0).toFixed(4)}</td>
-      <td>${h.exit_price !== null && h.exit_price !== undefined ? '$' + parseFloat(h.exit_price).toFixed(4) : '—'}</td>
       <td><span class="${pnlCls}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(4)}</span></td>
-      <td><span style="color:var(--text-muted);font-size:0.78rem">${h.close_reason || '—'}</span></td>
-      <td><span class="${isWin ? 'badge-win' : 'badge-loss'}">${isWin ? 'WIN' : 'LOSS'}</span></td>
+      <td>${streak}</td>
+      <td>${ddHtml}</td>
+      <td>
+        <span class="${isWin ? 'badge-win' : 'badge-loss'}">${isWin ? 'WIN' : 'LOSS'}</span>
+        <div style="font-size:0.65rem; color:var(--text-muted); margin-top:3px; text-transform:uppercase; font-weight:600; font-family:monospace; white-space:nowrap;">${h.close_reason || '—'}</div>
+      </td>
       <td><button class="btn-apply" style="padding:2px 6px;font-size:0.7rem;opacity:0.6" onclick="delHist('${h.position_id}')">✕</button></td>
+    </tr>
+    <tr id="details-${h.position_id}" style="display: none; background: rgba(255,255,255,0.005);">
+      <td colspan="10" style="padding: 12px 20px;">
+        <div class="details-grid">
+          <div class="details-item"><span class="details-label">Position ID</span><span class="details-val">${h.position_id}</span></div>
+          <div class="details-item"><span class="details-label">Opened Time</span><span class="details-val">${formattedOpened}</span></div>
+          <div class="details-item"><span class="details-label">Closed Time</span><span class="details-val">${formattedClosed}</span></div>
+          <div class="details-item"><span class="details-label">Size Risked</span><span class="details-val">$${parseFloat(h.size_usdc || 0).toFixed(2)} USDC</span></div>
+          <div class="details-item"><span class="details-label">Win Prob Estimate</span><span class="details-val">${winProb}</span></div>
+          <div class="details-item"><span class="details-label">Kelly Fraction Used</span><span class="details-val">${kelly}</span></div>
+          <div class="details-item"><span class="details-label">Spread at Entry</span><span class="details-val">${spread}</span></div>
+          <div class="details-item"><span class="details-label">CVD at Entry</span><span class="details-val">${cvd}</span></div>
+          <div class="details-item"><span class="details-label">Order Book Imbalance</span><span class="details-val">${imbalance}</span></div>
+          <div class="details-item"><span class="details-label">Bankroll at Entry</span><span class="details-val">${bankroll}</span></div>
+          <div class="details-item"><span class="details-label">Market Age at Entry</span><span class="details-val">${age}</span></div>
+          <div class="details-item"><span class="details-label">Seconds to Close</span><span class="details-val">${secToClose}</span></div>
+          <div class="details-item"><span class="details-label">Correlated Position Open</span><span class="details-val">${h.correlated_position_open ? 'Yes' : 'No'}</span></div>
+          <div class="details-item"><span class="details-label">Close Reason</span><span class="details-val">${h.close_reason || '—'}</span></div>
+          <div class="details-item"><span class="details-label">Bot Version</span><span class="details-val">${h.version_opened || '—'}</span></div>
+          <div class="details-item"><span class="details-label">Strategy Mode</span><span class="details-val" style="font-weight: 700; color: ${h.strategy_mode === 'REVERSAL' ? 'var(--yellow)' : 'var(--green)'};">${h.strategy_mode || 'TREND'}</span></div>
+        </div>
+      </td>
     </tr>`;
   }).join('');
 }
@@ -956,6 +2968,9 @@ async function delHist(id) {
     showToast(res.message, 'green');
     loadHistory();
     loadPnlSeries();
+    try {
+      loadFilteredTrades();
+    } catch(err) {}
   } catch(e) {
     showToast('Error: ' + e.message, 'red');
   }
@@ -994,51 +3009,324 @@ function initChart() {
   });
 }
 
+// ── Filtered Trades Timeline Chart ─────────────────────
+function initFilterTradesChart() {
+  const canvas = document.getElementById('filter-trades-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  if (filterTradesChart) {
+    filterTradesChart.destroy();
+  }
+
+  filterTradesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: 'Cumulative P&L ($)',
+          data: [],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.08)',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          pointBackgroundColor: [],
+          pointBorderColor: [],
+          fill: true,
+          tension: 0.2,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'nearest',
+        intersect: false
+      },
+      plugins: {
+        legend: { display: true, labels: { color: '#94a3b8', font: { size: 11 } } },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          borderColor: 'rgba(255,255,255,0.15)',
+          borderWidth: 1,
+          titleColor: '#f8fafc',
+          bodyColor: '#cbd5e1',
+          padding: 10,
+          displayColors: true,
+          callbacks: {
+            label: function(context) {
+              const item = context.raw;
+              if (!item || !item.trade) {
+                const val = typeof context.raw === 'number' ? context.raw : (context.raw?.y || 0);
+                return `${context.dataset.label}: $${val.toFixed(2)}`;
+              }
+              const trade = item.trade;
+              const pnl = parseFloat(trade.realised_pnl || 0);
+              const pnlStr = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(4);
+              const sideStr = trade.side || '—';
+              const mkt = (trade.question || trade.market_id || '—').replace(/\bET\b/g, '').trim();
+              const ep = parseFloat(trade.entry_price || 0).toFixed(4);
+              const xp = parseFloat(trade.exit_price || 0).toFixed(4);
+              return [
+                `Market: ${mkt}`,
+                `Side: ${sideStr} | Entry: $${ep} | Exit: $${xp}`,
+                `Trade P&L: ${pnlStr}`,
+                `Cum P&L: $${item.y.toFixed(4)}`
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#64748b', maxTicksLimit: 10, font: { size: 10 } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: {
+            color: '#64748b',
+            font: { size: 10 },
+            callback: v => (v >= 0 ? '+$' : '-$') + Math.abs(v).toFixed(2)
+          }
+        }
+      }
+    }
+  });
+}
+
+function updateFilteredTradesChart(tradesInput) {
+  if (tradesInput !== undefined) {
+    lastFilteredTradesData = tradesInput;
+  }
+  const rawTrades = lastFilteredTradesData || [];
+  
+  const badgeEl = document.getElementById('filter-chart-count-badge');
+  if (badgeEl) {
+    badgeEl.textContent = `${rawTrades.length.toLocaleString()} trade${rawTrades.length === 1 ? '' : 's'} plotted`;
+  }
+  
+  if (!filterTradesChart) {
+    initFilterTradesChart();
+  }
+  if (!filterTradesChart) return;
+  
+  if (!rawTrades.length) {
+    filterTradesChart.data.labels = [];
+    filterTradesChart.data.datasets[0].data = [];
+    filterTradesChart.update();
+    return;
+  }
+
+  // Sort trades chronologically ascending by timestamp
+  const trades = [...rawTrades].sort((a, b) => {
+    const tsA = a.closed_at || a.opened_at || a.created_at || 0;
+    const tsB = b.closed_at || b.opened_at || b.created_at || 0;
+    return tsA - tsB;
+  });
+
+  const modeEl = document.getElementById('filter-chart-mode');
+  const mode = modeEl ? modeEl.value : 'pnl';
+
+  const labels = [];
+  const points = [];
+  const pointBgColors = [];
+  const pointBorderColors = [];
+  let cumPnl = 0;
+
+  trades.forEach(t => {
+    const pnl = parseFloat(t.realised_pnl || 0);
+    cumPnl += pnl;
+    
+    const ts = t.closed_at || t.opened_at || t.created_at;
+    const dateStr = ts ? new Date(ts * 1000).toLocaleString([], { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+    labels.push(dateStr);
+    
+    const yVal = mode === 'outcomes' ? pnl : cumPnl;
+    points.push({ x: dateStr, y: yVal, trade: t });
+
+    if (pnl > 0) {
+      pointBgColors.push('#10b981');
+      pointBorderColors.push('#059669');
+    } else if (pnl < 0) {
+      pointBgColors.push('#ef4444');
+      pointBorderColors.push('#dc2626');
+    } else {
+      pointBgColors.push('#94a3b8');
+      pointBorderColors.push('#64748b');
+    }
+  });
+
+  const finalPnl = cumPnl;
+  const lineBorderColor = mode === 'outcomes' ? '#6366f1' : (finalPnl >= 0 ? '#10b981' : '#ef4444');
+  const lineBgColor = mode === 'outcomes' ? 'rgba(99, 102, 241, 0.08)' : (finalPnl >= 0 ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)');
+  
+  filterTradesChart.data.labels = labels;
+  filterTradesChart.data.datasets[0].label = mode === 'outcomes' ? 'Individual Trade P&L ($)' : 'Cumulative P&L ($)';
+  filterTradesChart.data.datasets[0].data = points;
+  filterTradesChart.data.datasets[0].borderColor = lineBorderColor;
+  filterTradesChart.data.datasets[0].backgroundColor = lineBgColor;
+  filterTradesChart.data.datasets[0].pointBackgroundColor = pointBgColors;
+  filterTradesChart.data.datasets[0].pointBorderColor = pointBorderColors;
+  
+  filterTradesChart.resize();
+  filterTradesChart.update();
+}
+
+let currentStrategyMode = 'trend';
+
+function setStrategyMode(mode) {
+  currentStrategyMode = mode;
+
+  // Update button visual styles
+  ['trend', 'reversal', 'merged'].forEach(m => {
+    const btn = document.getElementById(`btn-mode-${m}`);
+    if (btn) {
+      if (m === mode) {
+        btn.style.background = m === 'merged' ? 'linear-gradient(135deg, #ff4d6d, #00d68f)' : (m === 'reversal' ? '#00d68f' : 'var(--accent)');
+        btn.style.color = '#fff';
+      } else {
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-muted)';
+      }
+    }
+  });
+
+  loadPnlSeries();
+}
+
 async function loadPnlSeries() {
-  const series = await apiFetch('/rd/api/pnl-series');
-  if (!pnlChart || !series.length) return;
-  pnlChart.data.labels = series.map(s => new Date(s.ts * 1000).toLocaleDateString());
-  pnlChart.data.datasets[0].data = series.map(s => s.pnl);
+  if (!pnlChart) return;
+  const res = await apiFetch(`/rd/api/pnl-series?profile=${encodeURIComponent(currentProfile)}&mode=${currentStrategyMode}`);
+  
+  if (res && res.mode === 'merged') {
+    const trendSeries = res.trend_series || [];
+    const revSeries = res.reversal_series || [];
+
+    const allTsMap = new Map();
+    trendSeries.forEach(s => {
+      if (!allTsMap.has(s.ts)) allTsMap.set(s.ts, { ts: s.ts, trend: null, rev: null });
+      allTsMap.get(s.ts).trend = s.pnl;
+    });
+    revSeries.forEach(s => {
+      if (!allTsMap.has(s.ts)) allTsMap.set(s.ts, { ts: s.ts, trend: null, rev: null });
+      allTsMap.get(s.ts).rev = s.pnl;
+    });
+
+    const sortedTs = Array.from(allTsMap.values()).sort((a, b) => a.ts - b.ts);
+    let lastTrend = 0.0;
+    let lastRev = 0.0;
+    const trendData = [];
+    const revData = [];
+    const labels = [];
+
+    sortedTs.forEach(item => {
+      if (item.trend !== null) lastTrend = item.trend;
+      if (item.rev !== null) lastRev = item.rev;
+      labels.push(new Date(item.ts * 1000).toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit'}));
+      trendData.push(lastTrend);
+      revData.push(lastRev);
+    });
+
+    pnlChart.data.labels = labels;
+    pnlChart.data.datasets = [
+      {
+        label: `📈 TREND (${res.trend_profile})`,
+        data: trendData,
+        borderColor: '#ff4d6d',
+        backgroundColor: 'rgba(255,77,109,0.08)',
+        borderWidth: 2,
+        pointRadius: 2,
+        tension: 0.4,
+        fill: false
+      },
+      {
+        label: `🔄 REVERSAL (${res.reversal_profile})`,
+        data: revData,
+        borderColor: '#00d68f',
+        backgroundColor: 'rgba(0,214,143,0.08)',
+        borderWidth: 2,
+        pointRadius: 2,
+        tension: 0.4,
+        fill: false
+      }
+    ];
+    pnlChart.options.plugins.legend = {
+      display: true,
+      labels: { color: '#e2e8f0', font: { size: 11, family: 'Inter' } }
+    };
+    pnlChart.update();
+    return;
+  }
+
+  // Single series (trend or reversal)
+  const series = Array.isArray(res) ? res : [];
+  if (!series.length) {
+    pnlChart.data.labels = [];
+    pnlChart.data.datasets = [{
+      label: 'Cumulative P&L',
+      data: [],
+      borderColor: currentStrategyMode === 'reversal' ? '#00d68f' : '#6c63ff',
+      backgroundColor: currentStrategyMode === 'reversal' ? 'rgba(0,214,143,0.08)' : 'rgba(108,99,255,0.08)',
+      borderWidth: 2,
+      pointRadius: 3,
+      fill: true,
+      tension: 0.4
+    }];
+    pnlChart.options.plugins.legend = { display: false };
+    pnlChart.update('none');
+    return;
+  }
+
+  const color = currentStrategyMode === 'reversal' ? '#00d68f' : '#6c63ff';
+  const bgColor = currentStrategyMode === 'reversal' ? 'rgba(0,214,143,0.08)' : 'rgba(108,99,255,0.08)';
+
+  pnlChart.data.labels = series.map(s => new Date(s.ts * 1000).toLocaleString([], {month: 'numeric', day: 'numeric', hour: '2-digit', minute:'2-digit'}));
+  pnlChart.data.datasets = [{
+    label: currentStrategyMode === 'reversal' ? 'Reversal P&L' : 'Cumulative P&L',
+    data: series.map(s => s.pnl),
+    borderColor: color,
+    backgroundColor: bgColor,
+    borderWidth: 2,
+    pointRadius: 3,
+    pointBackgroundColor: color,
+    fill: true,
+    tension: 0.4,
+  }];
+  pnlChart.options.plugins.legend = { display: false };
   pnlChart.update('none');
 }
 
-// ── Config ────────────────────────────────────────────
 const CONFIG_META = {
-  yes_bias_threshold: { label: 'Yes Bias Threshold', min: 0.1, max: 0.99, step: 0.01 },
-  min_volume_24h_usdc: { label: 'Min 24h Volume ($)', min: 0, max: 10000, step: 100 },
   position_size_usdc: { label: 'Position Size ($)', min: 1, max: 50, step: 0.5 },
   max_open_positions: { label: 'Max Open Positions', min: 1, max: 20, step: 1 },
   max_daily_loss_usdc: { label: 'Max Daily Loss ($)', min: 1, max: 200, step: 1 },
   max_total_exposure_usdc: { label: 'Max Total Exposure ($)', min: 5, max: 500, step: 5 },
+  min_ev_threshold: { label: 'Min EV Threshold', min: 0.001, max: 0.5, step: 0.005 },
+  global_cooldown: { label: 'Global Cooldown (s)', min: 0, max: 600, step: 10 },
+  hold_to_resolution: { label: 'Hold to Resolution (1=On, 0=Off)', min: 0, max: 1, step: 1 },
   max_no_ask_multiplier: { label: 'Max No Ask Multiplier', min: 1.0, max: 2.0, step: 0.05 },
   high_vol_ask_multiplier: { label: 'High Vol Ask Mult', min: 1.0, max: 2.5, step: 0.05 },
   high_vol_assets: { label: 'High Vol Assets (csv)', type: 'text' },
-  trailing_tp_enabled: { label: 'Trailing TP (1=On, 0=Off)', min: 0, max: 1, step: 1 },
+  max_spread_pct_of_ask: { label: 'Max Spread % of Ask', min: 0.1, max: 1.0, step: 0.05 },
   short_window_min_seconds_to_close: { label: 'Min Secs to Close', min: 5, max: 300, step: 5 },
-
-  early_phase_min_seconds: { label: 'Early Phase (>X s)', min: 120, max: 1000, step: 10 },
-  early_yes_bias_max: { label: 'Early Yes Max Bias', min: 0.1, max: 0.99, step: 0.01 },
-  early_tp1: { label: 'Early TP1 Mult', min: 1.0, max: 5.0, step: 0.05 },
-  early_tp2: { label: 'Early TP2 Mult', min: 1.0, max: 5.0, step: 0.05 },
-  early_stop_loss: { label: 'Early Stop Loss', min: 0.1, max: 1.0, step: 0.05 },
-  early_cycles: { label: 'Early Min Cycles', min: 1, max: 10, step: 1 },
-  early_imbalance: { label: 'Early Imbalance Ratio', min: 1.0, max: 10.0, step: 0.1 },
-
-  mid_phase_min_seconds: { label: 'Mid Phase (>X s)', min: 60, max: 300, step: 10 },
-  mid_yes_bias_max: { label: 'Mid Yes Max Bias', min: 0.1, max: 0.99, step: 0.01 },
-  mid_tp1: { label: 'Mid TP1 Mult', min: 1.0, max: 5.0, step: 0.05 },
-  mid_tp2: { label: 'Mid TP2 Mult', min: 1.0, max: 5.0, step: 0.05 },
-  mid_stop_loss: { label: 'Mid Stop Loss', min: 0.1, max: 1.0, step: 0.05 },
-  mid_cycles: { label: 'Mid Min Cycles', min: 1, max: 10, step: 1 },
-  mid_imbalance: { label: 'Mid Imbalance Ratio', min: 1.0, max: 10.0, step: 0.1 },
-
-  late_yes_bias_max: { label: 'Late Yes Max Bias', min: 0.1, max: 0.99, step: 0.01 },
-  late_tp1: { label: 'Late TP1 Mult', min: 1.0, max: 5.0, step: 0.05 },
-  late_tp2: { label: 'Late TP2 Mult', min: 1.0, max: 5.0, step: 0.05 },
-  late_stop_loss: { label: 'Late Stop Loss', min: 0.1, max: 1.0, step: 0.05 },
-  late_cycles: { label: 'Late Min Cycles', min: 1, max: 10, step: 1 },
-  late_imbalance: { label: 'Late Imbalance Ratio', min: 1.0, max: 10.0, step: 0.1 },
+  min_seconds_to_close_pre_entry: { label: 'Min Pre-Entry Secs', min: 5, max: 600, step: 5 },
+  early_yes_bias_max: { label: 'Early Phase Yes Max', min: 0.5, max: 1.0, step: 0.01 },
+  mid_yes_bias_max: { label: 'Mid Phase Yes Max', min: 0.5, max: 1.0, step: 0.01 },
+  late_yes_bias_max: { label: 'Late Phase Yes Max', min: 0.5, max: 1.0, step: 0.01 },
+  min_entry_price: { label: 'Min Entry Price ($)', min: 0.10, max: 0.90, step: 0.01 },
+  max_entry_price: { label: 'Max Entry Price ($)', min: 0.10, max: 0.90, step: 0.01 },
+  min_persistence_score: { label: 'Min Persistence Score', min: 0.0, max: 1.0, step: 0.01 },
+  lossmomentum_skip_enabled: { label: 'Loss Skip Mode (1=On, 0=Off)', min: 0, max: 1, step: 1 },
+  reversal_toggling_enabled: { label: 'Reversal Toggling (1=On, 0=Off)', min: 0, max: 1, step: 1 },
+  reversal_lookback_n: { label: 'Reversal Lookback N', min: 1, max: 50, step: 1 },
+  reversal_switch_threshold: { label: 'Reversal Switch Threshold', min: 0.05, max: 0.95, step: 0.05 },
+  reversal_spread_penalty: { label: 'Reversal Spread Penalty ($)', min: 0.0, max: 0.1, step: 0.005 },
 };
+
 
 async function loadConfig() {
   const cfg = await apiFetch('/rd/api/config');
@@ -1087,8 +3375,8 @@ async function applyConfig(key, isText=false) {
 }
 
 function toggleConfig() {
-  const panel = document.getElementById('config-panel');
-  panel.style.display = panel.style.display === 'none' ? '' : '';
+  const grid = document.querySelector('#tab-overview .content-grid');
+  grid.classList.toggle('collapsed-sidebar');
 }
 
 // ── Engine Control ────────────────────────────────────
@@ -1273,7 +3561,8 @@ function updateScanFeed(markets) {
     const eligible = m.eligible;
     const barW = Math.min(100, yes * 100);
     const barColor = yes > 0.85 ? '#ff4d6d' : yes > 0.75 ? '#ffd166' : '#6c63ff';
-    const evCls = ev > 0 ? 'ev-pos' : 'ev-neg';
+    const z = m.z_score !== undefined ? parseFloat(m.z_score).toFixed(2) : '—';
+    const evCls = z >= 2.0 ? 'ev-pos' : 'ev-neg';
     const statusBadge = eligible
       ? `<span class="badge-win" style="font-size:0.7rem">ELIGIBLE</span>`
       : `<span class="skip-reason">${m.skip_reason || 'filtered'}</span>`;
@@ -1281,7 +3570,7 @@ function updateScanFeed(markets) {
     return `<tr class="${eligible ? 'eligible-row' : ''}">
       <td><div class="market-name" title="${m.question||''}" style="max-width:280px;">${name}${(m.question||'').length > 55 ? '...' : ''}</div></td>
       <td><div class="yes-bar-wrap"><div class="yes-bar" style="width:${barW * 0.6}px;background:${barColor}"></div><span style="font-size:0.78rem;font-weight:600;color:${barColor}">${(yes*100).toFixed(1)}%</span></div></td>
-      <td><span class="${evCls}">${ev > 0 ? '+' : ''}${(ev*100).toFixed(2)}%</span></td>
+      <td><span class="${evCls}">${z}</span></td>
       <td style="color:var(--text-dim)">$${m.volume_24h ? (parseFloat(m.volume_24h) > 1000 ? (parseFloat(m.volume_24h)/1000).toFixed(1)+'k' : parseFloat(m.volume_24h).toFixed(0)) : '—'}</td>
       <td style="color:var(--text-dim);font-family:'Fira Code',monospace;font-size:0.76rem">${m.spread_pct ? (parseFloat(m.spread_pct)*100).toFixed(2)+'%' : '—'}</td>
       <td style="color:var(--text-dim)">${m.time_left_str || '—'}</td>

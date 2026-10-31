@@ -24,11 +24,9 @@ from config.config import BotConfig
 # Fields that can be hot-reloaded from the dashboard
 _HOT_FIELDS: Dict[str, type] = {
     "position_size_usdc": float,
-    "max_open_positions": int,
     "max_daily_loss_usdc": float,
     "max_total_exposure_usdc": float,
     "min_ev_threshold": float,
-    "global_cooldown": int,
     "hold_to_resolution": bool,
     "max_no_ask_multiplier": float,
     "high_vol_ask_multiplier": float,
@@ -48,6 +46,15 @@ _HOT_FIELDS: Dict[str, type] = {
     "late_yes_bias_max": float,
     "min_entry_price": float,
     "max_entry_price": float,
+    "min_streak_quality_score": float,
+    "streak_quality_window": int,
+    "lossmomentum_skip_enabled": bool,
+    "min_persistence_score": float,
+    "reversal_toggling_enabled": bool,
+    "reversal_lookback_n": int,
+    "reversal_switch_threshold": float,
+    "reversal_spread_penalty": float,
+    "reversal_lookback_window_seconds": int,
 }
 
 
@@ -83,8 +90,17 @@ class RuntimeConfig:
             "mid_phase_min_seconds": 14400,
             "mid_yes_bias_max": 0.80,
             "late_yes_bias_max": 0.75,
-            "min_entry_price": 0.45,
-            "max_entry_price": 0.65,
+            "min_entry_price": 0.30,
+            "max_entry_price": 0.60,
+            "min_streak_quality_score": 0.45,
+            "streak_quality_window": 7,
+            "lossmomentum_skip_enabled": True,
+            "min_persistence_score": 0.55,
+            "reversal_toggling_enabled": False,
+            "reversal_lookback_n": 10,
+            "reversal_switch_threshold": 0.50,
+            "reversal_spread_penalty": 0.0,
+            "reversal_lookback_window_seconds": 86400,
         }
 
         # Initialize all hot-reloadable fields from base config (or defaults)

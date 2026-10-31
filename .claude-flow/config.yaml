@@ -1,5 +1,5 @@
 # RuFlo V3 Runtime Configuration
-# Generated: 2026-04-08T13:22:21.247Z
+# Generated: 2026-06-07T10:11:01.055Z
 
 version: "3.0.0"
 
@@ -39,5 +39,5 @@ hooks:
   autoExecute: true
 
 mcp:
-  autoStart: false
+  autoStart: true
   port: 3000

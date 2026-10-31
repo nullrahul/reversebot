@@ -40,6 +40,16 @@ class BinanceWSClient:
             "ETH": 0.0,
         }
 
+        # Track 1-second price ticks and velocity for Z-score calculation
+        self._price_history_1s: Dict[str, deque] = {
+            "BTC": deque(maxlen=300),  # stores (timestamp_sec, price)
+            "ETH": deque(maxlen=300),
+        }
+        self._velocity_history_1s: Dict[str, deque] = {
+            "BTC": deque(maxlen=300),  # stores velocity values (price_t - price_t-1)
+            "ETH": deque(maxlen=300),
+        }
+
     @property
     def is_connected(self) -> bool:
         return self._ws is not None and not self._ws.closed
@@ -129,8 +139,23 @@ class BinanceWSClient:
             # Save latest price
             self._last_price[symbol] = price
 
-            # Add to deque
+            # Track 1-second price ticks and price velocity
             now = time.time()
+            now_sec = int(now)
+            price_hist = self._price_history_1s[symbol]
+            if not price_hist or price_hist[-1][0] != now_sec:
+                if price_hist:
+                    prev_sec, prev_price = price_hist[-1]
+                    dt = now_sec - prev_sec
+                    if 0 < dt <= 5:  # prevent giant jumps on reconnection/inactivity
+                        vel = (price - prev_price) / dt
+                        self._velocity_history_1s[symbol].append(vel)
+                price_hist.append((now_sec, price))
+            else:
+                # Update price for the current second
+                price_hist[-1] = (now_sec, price)
+
+            # Add to deque
             self._trades[symbol].append((now, delta_usd))
 
             # Prune old trades (older than 5 minutes / 300s)
@@ -171,3 +196,34 @@ class BinanceWSClient:
         """
         symbol = symbol.upper()
         return self.get_cvd(symbol, 60), self.get_cvd(symbol, 300)
+
+    def get_spot_velocity_z_score(self, symbol: str) -> float:
+        """
+        Calculates the rolling Z-score of 1-second price velocity over the last 5 minutes.
+        """
+        import math
+        symbol = symbol.upper()
+        if symbol not in self._velocity_history_1s:
+            return 0.0
+            
+        velocities = list(self._velocity_history_1s[symbol])
+        if len(velocities) < 30:  # Need at least 30 samples to calculate a stable standard deviation
+            return 0.0
+            
+        mean = sum(velocities) / len(velocities)
+        variance = sum((x - mean) ** 2 for x in velocities) / len(velocities)
+        std_dev = math.sqrt(variance)
+        if std_dev < 1e-4:
+            return 0.0
+            
+        current_vel = velocities[-1]
+        z = (current_vel - mean) / std_dev
+        return z
+
+    def get_last_velocity(self, symbol: str) -> float:
+        """Returns the latest 1-second price velocity."""
+        symbol = symbol.upper()
+        velocities = self._velocity_history_1s.get(symbol)
+        if velocities:
+            return velocities[-1]
+        return 0.0

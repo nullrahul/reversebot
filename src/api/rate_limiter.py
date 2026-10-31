@@ -90,13 +90,13 @@ class RateLimiter:
 
     def __init__(
         self,
-        orders_per_min: int = 55,
-        api_calls_per_min: int = 240,
+        orders_per_min: int = 500,
+        api_calls_per_min: int = 500,
     ):
         """
         Args:
-            orders_per_min: Max orders per minute (default 55, hard limit 60)
-            api_calls_per_min: Max API calls per minute (default 90, hard limit 100)
+            orders_per_min: Max orders per minute (default 500, Polymarket burst limit is 500/sec)
+            api_calls_per_min: Max API calls per minute (default 500)
         """
         self.order_bucket = TokenBucket(
             name="orders",

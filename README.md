@@ -82,7 +82,7 @@ python src/main.py --env .env.rd
 ### 4. Remote VPS Deployment
 The VPS production files are deployed under `~/reversebot/`. Synchronize local changes to the remote Ubuntu VPS `68.210.96.175` via `rsync` (excluding data/databases, virtual environments, and secrets):
 ```bash
-rsync -avz --exclude="data/" --exclude="logs_rd/" --exclude="logs/" --exclude=".env*" --exclude="venv*/" --exclude="node_modules/" --exclude="*.db*" --exclude=".git/" ./ ubuntu@68.210.96.175:~/reversebot/
+rsync -avz --exclude="data/" --exclude="logs_rd/" --exclude="logs/" --exclude=".env*" --exclude="venv*/" --exclude="node_modules/" --exclude="*.db*" --exclude=".git/" ./ reversebot-vps:~/reversebot/
 ```
 
 ### 5. VPS PM2 Execution

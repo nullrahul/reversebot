@@ -1,1 +1,8 @@
-{"status":"critical","cvesFixed":3,"issues":23}
+{
+  "initialized": "2026-06-07T10:11:01.056Z",
+  "status": "PENDING",
+  "cvesFixed": 0,
+  "totalCves": 3,
+  "lastScan": null,
+  "_note": "Run: npx @claude-flow/cli@latest security scan"
+}

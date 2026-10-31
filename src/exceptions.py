@@ -52,7 +52,7 @@ class OrderRejectedError(BotException):
     """
     Exchange rejected the order.
 
-    Raised on: FOK not filled, insufficient balance, market closed.
+    Raised on: FAK not filled, insufficient balance, market closed.
     Handler should: log rejection, update position status, move on.
     Should NOT trigger kill switch.
     """

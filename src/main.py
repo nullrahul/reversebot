@@ -25,6 +25,7 @@ import signal
 import sys
 import os
 import time
+import sqlite3
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -32,7 +33,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from config.config import load_config, BotConfig
 from config.runtime import RuntimeConfig
 from src.logs.log_config import setup_logging, get_logger
-from src.db.queries import init_db, close_db, log_event, log_scan, get_performance_summary
+from src.db.queries import init_db, close_db, log_event, log_scan, get_performance_summary, fetch_one
 from src.auth.l1_auth import L1Auth
 from src.auth.l2_auth import L2Auth
 from src.api.rate_limiter import RateLimiter
@@ -44,7 +45,9 @@ from src.strategy.scanner import MarketScanner
 from src.strategy.validator import SignalValidator
 from src.strategy.decision import DecisionEngine
 from src.strategy.position_mgr import PositionManager
+from src.strategy.regime_tracker import RegimeTracker
 from src.db.rejections import RejectionLogger
+from src.db.skip_db import LossMomentumSkipDb
 from src.risk.kill_switch import KillSwitch
 from src.risk.health import HealthMonitor
 from src.risk.limits import RiskLimits
@@ -128,6 +131,10 @@ class TradingEngine:
         
         if hasattr(self.decision, "binance_ws") and self.decision.binance_ws:
             await self.decision.binance_ws.stop()
+        if hasattr(self.decision, "regime_tracker") and self.decision.regime_tracker:
+            await self.decision.regime_tracker.stop()
+        from src.api.chainlink_twap import chainlink_twap_client
+        await chainlink_twap_client.stop()
         return True
 
     async def run(self):
@@ -141,6 +148,10 @@ class TradingEngine:
         await self.position_mgr.start()
         if hasattr(self.decision, "binance_ws") and self.decision.binance_ws:
             await self.decision.binance_ws.start()
+        if hasattr(self.decision, "regime_tracker") and self.decision.regime_tracker:
+            await self.decision.regime_tracker.start()
+        from src.api.chainlink_twap import chainlink_twap_client
+        await chainlink_twap_client.start()
         if self.ghost_guard:
             await self.ghost_guard.start()
 
@@ -149,9 +160,8 @@ class TradingEngine:
 
         try:
             last_scan_time = 0.0
-            last_resolution_check_time = 0.0
-            last_position_monitor_time = 0.0
             last_regime_time = 0.0
+            last_regime_diagnostic_time = 0.0
             while not self.kill_switch.is_triggered:
                 try:
                     cycle_start = time.time()
@@ -161,15 +171,8 @@ class TradingEngine:
                     # all sub-engines (scanner, decision, PM, validator) see changes instantly
                     self.config.reload_from_disk()
 
-                    # ─── FAST LANE: MONITOR POSITIONS & SIGNALS ───
-                    # Monitor active positions every 2.0 seconds to eliminate DB queries
-                    if cycle_start - last_position_monitor_time >= 2.0:
-                        last_position_monitor_time = cycle_start
-                        await self.position_mgr.monitor_positions()
-                    
+                    # ─── FAST LANE: SCAN ENTRY SIGNALS ───
                     signals = await self.scanner.get_entry_signals()
-                    # A4: Position Manager Priority Logic - Sort YES signals before NO signals
-                    signals = sorted(signals, key=lambda s: 0 if s.get("target_side") == "YES" else 1)
                     orders_placed = 0
                     for signal_market in signals:
                         if self.kill_switch.is_triggered: break
@@ -231,12 +234,6 @@ class TradingEngine:
                             bot_version=self.config.bot_version,
                         )
 
-                    # ─── RESOLUTION CHECK LANE (THROTTLED) ───
-                    # Polled every 10 seconds to avoid API rate limits when positions are expiring
-                    resolution_interval = 10.0 # Seconds
-                    if cycle_start - last_resolution_check_time >= resolution_interval:
-                        last_resolution_check_time = cycle_start
-                        await self.position_mgr.check_resolutions()
 
                     # ─── MARKET REGIME SNAPSHOT LANE (60s) ───
                     regime_interval = 60.0 # Seconds
@@ -277,6 +274,47 @@ class TradingEngine:
                         except Exception as reg_err:
                             logger.error("market_regime_logging_failed", error=str(reg_err))
 
+                    # ─── REGIME DIAGNOSTIC LANE (Hourly, 3600s) ───
+                    regime_diagnostic_interval = 3600.0
+                    if cycle_start - last_regime_diagnostic_time >= regime_diagnostic_interval:
+                        last_regime_diagnostic_time = cycle_start
+                        try:
+                            # Query signals rolling average streak depth for 6h and 24h
+                            now_ms = int(time.time() * 1000)
+                            
+                            # 6 Hour lookback
+                            since_6h = now_ms - (6 * 3600 * 1000)
+                            iso_since_6h = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(since_6h / 1000))
+                            row_6h = await fetch_one(self.db, """
+                                SELECT AVG(streak_depth), COUNT(*) 
+                                FROM signals 
+                                WHERE datetime(signal_timestamp) >= datetime(?)
+                            """, (iso_since_6h,))
+                            avg_6h = row_6h[0] if row_6h and row_6h[0] is not None else 0.0
+                            count_6h = row_6h[1] if row_6h else 0
+                            
+                            # 24 Hour lookback
+                            since_24h = now_ms - (24 * 3600 * 1000)
+                            iso_since_24h = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(since_24h / 1000))
+                            row_24h = await fetch_one(self.db, """
+                                SELECT AVG(streak_depth), COUNT(*) 
+                                FROM signals 
+                                WHERE datetime(signal_timestamp) >= datetime(?)
+                            """, (iso_since_24h,))
+                            avg_24h = row_24h[0] if row_24h and row_24h[0] is not None else 0.0
+                            count_24h = row_24h[1] if row_24h else 0
+                            
+                            logger.info(
+                                "regime_streak_depth_diagnostic",
+                                lookback_6h_avg=round(avg_6h, 3),
+                                lookback_6h_signals=count_6h,
+                                lookback_24h_avg=round(avg_24h, 3),
+                                lookback_24h_signals=count_24h,
+                                message=f"Regime Diagnostic: 6h Avg Streak Depth = {avg_6h:.2f} ({count_6h} signals), 24h Avg = {avg_24h:.2f} ({count_24h} signals)"
+                            )
+                        except Exception as diag_err:
+                            logger.error("regime_streak_depth_diagnostic_failed", error=str(diag_err))
+
                     # Check auth kill trigger
                     if self.l2_auth.should_kill:
                         await self.kill_switch.trigger(
@@ -300,6 +338,16 @@ class TradingEngine:
                 except asyncio.CancelledError:
                     raise
                 except Exception as e:
+                    if isinstance(e, sqlite3.Error):
+                        logger.warning(
+                            "main_loop_db_lock_transient",
+                            error=str(e),
+                            error_type=type(e).__name__,
+                            message="Transient SQLite error in main loop. Retrying after pause..."
+                        )
+                        await asyncio.sleep(0.5)
+                        continue
+
                     consecutive_errors += 1
                     logger.error(
                         "main_loop_error",
@@ -392,7 +440,7 @@ async def main():
 
     # ─── Step 4: Init Auth ───
     l1_auth = L1Auth(config.private_key, config.chain_id)
-    l2_address = config.poly_address if config.poly_address else l1_auth.address
+    l2_address = l1_auth.address
     l2_auth = L2Auth(
         api_key=config.poly_api_key,
         api_secret=config.poly_api_secret,
@@ -420,6 +468,8 @@ async def main():
         clob_api_url=config.clob_api_url,
         rate_limiter=rate_limiter,
         paper_trade=config.paper_trade,
+        l1_auth=l1_auth,
+        funder=config.poly_address,
     )
 
     ws_client = WebSocketClient()
@@ -430,15 +480,23 @@ async def main():
     rejection_logger = RejectionLogger(db_path="data/rejections_rd.db")
     await rejection_logger.init()
 
+    # ─── New: Init Loss Momentum Skip Db ───
+    import os
+    skip_db_path = os.path.join(os.path.dirname(config.db_path), "lossmomentumskip.db")
+    skip_db = LossMomentumSkipDb(db_path=skip_db_path)
+    await skip_db.init()
+
     # ─── Step 6: Init Strategy ───
     # Wrap config in RuntimeConfig so all sub-engines share a single
     # mutable reference. Dashboard hot-reloads propagate instantly.
     runtime_config = RuntimeConfig(config)
     
+    regime_tracker = RegimeTracker(runtime_config)
+    
     scanner = MarketScanner(runtime_config, gamma_client, ws_client, clob_client, db)
     validator = SignalValidator(runtime_config, clob_client, db, rejection_logger=rejection_logger)
-    position_mgr = PositionManager(runtime_config, clob_client, db, ws_client=ws_client, gamma_client=gamma_client)
-    decision = DecisionEngine(runtime_config, validator, position_mgr, clob_client, db, rejection_logger=rejection_logger, scanner=scanner, binance_ws=binance_ws)
+    position_mgr = PositionManager(runtime_config, clob_client, db, ws_client=ws_client, gamma_client=gamma_client, skip_db=skip_db, scanner=scanner)
+    decision = DecisionEngine(runtime_config, validator, position_mgr, clob_client, db, rejection_logger=rejection_logger, scanner=scanner, binance_ws=binance_ws, skip_db=skip_db, regime_tracker=regime_tracker)
 
     # ─── Step 7: Init Risk ───
     kill_switch = KillSwitch(clob_client, ws_client, db, config.bot_version)
@@ -569,8 +627,12 @@ async def main():
         await health_monitor.stop()
         await scanner.stop_discovery()
         await position_mgr.stop()
+        if regime_tracker:
+            await regime_tracker.stop()
         if binance_ws:
             await binance_ws.stop()
+        from src.api.chainlink_twap import chainlink_twap_client
+        await chainlink_twap_client.stop()
         if ghost_guard:
             await ghost_guard.stop()
         
@@ -589,6 +651,10 @@ async def main():
         if rejection_logger:
             await rejection_logger.close()
             logger.info("rejection_db_closed")
+
+        if skip_db:
+            await skip_db.close()
+            logger.info("skip_db_closed")
 
         logger.info(
             "bot_stopped",

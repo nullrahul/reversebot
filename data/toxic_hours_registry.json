@@ -1,0 +1,75 @@
+{
+  "comment": "Multi-day registry of toxic hourly zones to trace and compare trading toxicity patterns. Enforcing static lockouts based on a single day's volatility is avoided to prevent unnecessary opportunity costs. This registry will be audited over 3-4 days to establish statistical certainty.",
+  "daily_records": {
+    "2026-05-26": {
+      "toxic_hours_et": {
+        "04": {
+          "name": "04:00 AM ET (08:00 UTC) - Toxic Dead Zone",
+          "win_rate": 26.3,
+          "total_trades": 38,
+          "hourly_pnl_usdc": null
+        },
+        "09": {
+          "name": "09:00 AM ET (13:00 UTC) - US Open Churn",
+          "win_rate": 11.9,
+          "total_trades": 42,
+          "hourly_pnl_usdc": null
+        },
+        "15": {
+          "name": "03:00 PM ET (19:00 UTC) - US Close Chaos",
+          "win_rate": 21.4,
+          "total_trades": 28,
+          "hourly_pnl_usdc": null
+        }
+      }
+    },
+    "2026-05-27": {
+      "toxic_hours_et": {
+        "00": {
+          "name": "12:00 AM ET (04:00 UTC) - Session Transition / Streak Reset Overload",
+          "win_rate": 25.0,
+          "total_trades": 8,
+          "hourly_pnl_usdc": -58.95
+        },
+        "05": {
+          "name": "05:00 AM ET (09:00 UTC) - European Session Open Churn",
+          "win_rate": 25.0,
+          "total_trades": 8,
+          "hourly_pnl_usdc": -87.75
+        },
+        "10": {
+          "name": "10:00 AM ET (14:00 UTC) - Mid-Morning Volatility Run",
+          "win_rate": 12.5,
+          "total_trades": 8,
+          "hourly_pnl_usdc": -105.8
+        }
+      }
+    },
+    "2026-05-28": {
+      "toxic_hours_et": {
+        "19": {
+          "name": "07:00 PM ET (23:00 UTC) - Evening Reset / Chop Zone",
+          "win_rate": 33.3,
+          "total_trades": 6,
+          "hourly_pnl_usdc": -20.46
+        }
+      }
+    },
+    "2026-05-29": {
+      "toxic_hours_et": {
+        "03": {
+          "name": "03:00 AM ET (07:00 UTC) - Asian Volatility Trap",
+          "win_rate": 0.0,
+          "total_trades": 2,
+          "hourly_pnl_usdc": -10.74
+        },
+        "21": {
+          "name": "09:00 PM ET (01:00 UTC next day) - Late Night Drift",
+          "win_rate": 40.0,
+          "total_trades": 5,
+          "hourly_pnl_usdc": -14.18
+        }
+      }
+    }
+  }
+}

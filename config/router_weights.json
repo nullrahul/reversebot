@@ -1,0 +1,97 @@
+{
+  "weights_version": "v4.5.4-three-layer-architecture",
+  "router_version": "v4.5.0-shadow",
+  "feature_schema_version": "v1.0",
+  "architecture_layers": {
+    "alpha_evidence_layer": [
+      "cheap_reversal",
+      "reversal_yes_cvd_imb",
+      "reversal_yes_cvd_imb_wide",
+      "reversal_stop_loss",
+      "reversal_eth_5m_momentum",
+      "micro_flow_no"
+    ],
+    "risk_control_layer": [
+      "loss_skip",
+      "loss_skip_yes_cvd",
+      "loss_skip_yes_cvd_v2",
+      "loss_skip_btc_5m_recovery"
+    ],
+    "execution_portfolio_layer": [
+      "cross_market_hedge",
+      "single_market_hedge_expensive"
+    ]
+  },
+  "profile_allowlist": [
+    "cheap_reversal",
+    "reversal_yes_cvd_imb",
+    "reversal_yes_cvd_imb_wide",
+    "reversal_stop_loss",
+    "reversal_eth_5m_momentum",
+    "micro_flow_no",
+    "cross_market_hedge",
+    "single_market_hedge_expensive"
+  ],
+  "purged_telemetry_profiles": [
+    "stop_loss",
+    "stop_loss_filtered",
+    "reversal",
+    "streak_momentum",
+    "claude_every_reversal",
+    "claude_audit",
+    "claude_audit_reversal",
+    "claude_gated",
+    "claude_gated_reversal",
+    "claude_good",
+    "claude_good_reversal",
+    "claude_edge_reversal",
+    "probability_sl",
+    "reversal_probability_sl"
+  ],
+  "engines": {
+    "Reversal": {
+      "weights": {
+        "w_price": 0.385,
+        "w_cvd": 0.330,
+        "w_imbalance": 0.285
+      },
+      "trigger_threshold": 0.75,
+      "evidence_sources": [
+        "cheap_reversal",
+        "reversal_yes_cvd_imb",
+        "reversal_yes_cvd_imb_wide",
+        "reversal_stop_loss",
+        "reversal_eth_5m_momentum"
+      ]
+    },
+    "Micro_Flow": {
+      "weights": {
+        "w_side_no": 0.500,
+        "w_discount_price": 0.300,
+        "w_time_close": 0.200
+      },
+      "trigger_threshold": 0.80,
+      "evidence_sources": [
+        "micro_flow_no"
+      ]
+    },
+    "Hedge_Channel": {
+      "weights": {
+        "w_hedge_spread": 0.500,
+        "w_corr": 0.500
+      },
+      "trigger_threshold": 0.70,
+      "evidence_sources": [
+        "cross_market_hedge",
+        "single_market_hedge_expensive"
+      ]
+    }
+  },
+  "policy": {
+    "score_margin_min": 0.08,
+    "gray_zone": {
+      "noise_floor": 0.65,
+      "watch_zone_ceiling": 0.75
+    }
+  }
+}

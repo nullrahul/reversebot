@@ -1,0 +1,64 @@
+{
+  "captured_at_utc": "2026-06-03T12:03:54Z",
+  "captured_at_ist": "2026-06-03 17:33 IST",
+  "fear_greed": {
+    "score": 11,
+    "classification": "Extreme Fear",
+    "yesterday_score": 23,
+    "yesterday_classification": "Extreme Fear",
+    "source": "alternative.me/fng"
+  },
+  "btc_price": {
+    "price_usd": 66990.66,
+    "close_14d_ago_usd": 77552.23,
+    "change_14d_pct": -13.62,
+    "source": "api.binance.com/klines"
+  },
+  "funding_rate": {
+    "last_funding_rate_raw": 4.005e-05,
+    "annualized_pct": 4.3855,
+    "mark_price": 66965.02,
+    "is_negative": false,
+    "source": "fapi.binance.com/premiumIndex"
+  },
+  "open_interest": {
+    "oi_btc": 107539.08,
+    "oi_usd_approx": 7204113811.0,
+    "source": "fapi.binance.com/openInterest"
+  },
+  "realized_vol": {
+    "realized_vol_7d_annualized_pct": 46.33,
+    "daily_vol_pct": 2.4249,
+    "num_days": 8,
+    "source": "binance_klines_computed"
+  },
+  "liquidations": {
+    "liq_24h_proxy_usd": 0,
+    "liq_count_24h": 0,
+    "error": "400, message='Attempt to decode JSON with unexpected mimetype: ', url='https://fapi.binance.com/fapi/v1/allForceOrders?symbol=BTCUSDT&limit=1000'",
+    "source": "fapi.binance.com/allForceOrders"
+  },
+  "bot_pnl": {
+    "pnl_3d_usdc": 0,
+    "consecutive_losses": 0,
+    "error": "no such table: paper_positions",
+    "source": "sqlite_local"
+  },
+  "danger_zone": {
+    "signals": {
+      "extreme_fear_fg_lt_20": true,
+      "btc_14d_trend_lt_neg10pct": true,
+      "funding_rate_negative": false,
+      "realized_vol_lt_20pct": false,
+      "liquidation_event_large": false,
+      "consecutive_bot_losses_gte_5": false,
+      "session_loss_gt_threshold": false,
+      "fg_sharp_drop_gt_10pts": true,
+      "btc_oversold_cascade_proxy": false
+    },
+    "triggered": 3,
+    "total": 9,
+    "color": "ORANGE",
+    "verdict": "\ud83d\udfe0 CAUTION \u2014 Multiple danger signals active. Reduce sizing or paper-only."
+  }
+}

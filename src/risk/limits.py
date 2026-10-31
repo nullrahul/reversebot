@@ -38,7 +38,6 @@ class RiskLimits:
         """
         checks = [
             await self.check_daily_loss(paper),
-            await self.check_position_count(paper),
             await self.check_exposure(paper),
         ]
 
@@ -49,7 +48,9 @@ class RiskLimits:
         return True, "All risk checks passed"
 
     async def check_daily_loss(self, paper: bool = False) -> Tuple[bool, str]:
-        """Check if daily loss limit has been reached."""
+        """Check if daily loss limit has been reached. Only enforced on live orders."""
+        if paper:
+            return True, "Paper trade mode active — daily loss check bypassed"
         daily_loss = await get_daily_realised_loss(self.db, paper=paper)
         max_loss = self.config.max_daily_loss_usdc
 
@@ -64,21 +65,7 @@ class RiskLimits:
 
         return True, f"Daily loss OK: ${daily_loss:.2f} < ${max_loss:.2f}"
 
-    async def check_position_count(self, paper: bool = False) -> Tuple[bool, str]:
-        """Check if max position count has been reached."""
-        count = await count_open_positions(self.db, paper=paper)
-        max_pos = self.config.max_open_positions
 
-        if count >= max_pos:
-            logger.warning(
-                "max_positions_reached",
-                count=count,
-                max_positions=max_pos,
-                message=f"Max positions reached: {count} >= {max_pos}",
-            )
-            return False, f"Max positions reached: {count} >= {max_pos}"
-
-        return True, f"Position count OK: {count} < {max_pos}"
 
     async def check_exposure(
         self,
@@ -107,7 +94,10 @@ class RiskLimits:
         """
         Check if kill switch should fire based on risk limits.
         This is called from the main monitoring loop.
+        Never triggers kill switch on paper trading runs.
         """
+        if paper:
+            return False, "Paper trade mode active — kill switch bypassed"
         daily_loss = await get_daily_realised_loss(self.db, paper=paper)
         if daily_loss >= self.config.max_daily_loss_usdc:
             return True, f"Daily loss ${daily_loss:.2f} >= limit ${self.config.max_daily_loss_usdc:.2f}"

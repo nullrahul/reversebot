@@ -50,6 +50,19 @@ class L2Auth:
         # Server time offset (local - server) in seconds
         self._time_offset: float = 0.0
 
+        # Pre-decode API secret once at initialization
+        try:
+            padded_secret = self._api_secret
+            missing_padding = len(padded_secret) % 4
+            if missing_padding:
+                padded_secret += '=' * (4 - missing_padding)
+            self._secret_bytes = base64.urlsafe_b64decode(padded_secret)
+        except Exception:
+            try:
+                self._secret_bytes = base64.b64decode(self._api_secret)
+            except Exception:
+                self._secret_bytes = self._api_secret.encode("utf-8")
+
         # Track consecutive 401s for kill switch trigger
         self._consecutive_401s: int = 0
         self._max_401_retries: int = 3
@@ -142,9 +155,18 @@ class L2Auth:
 
         return self._time_offset
 
+    @property
+    def time_offset(self) -> float:
+        """The difference between local clock and server clock (local - server)."""
+        return self._time_offset
+
+    def get_synced_time(self) -> float:
+        """Returns current UTC time in seconds adjusted for server offset."""
+        return time.time() - self._time_offset
+
     def _get_timestamp(self) -> str:
         """Get current timestamp adjusted for server time offset."""
-        adjusted = time.time() - self._time_offset
+        adjusted = self.get_synced_time()
         return str(int(adjusted))
 
     def _create_signature(
@@ -158,31 +180,29 @@ class L2Auth:
         Create HMAC-SHA256 signature for a CLOB API request.
         Matches official Polymarket V2 authentication standard.
         """
-        message = timestamp + method.upper() + path + body
-        
-        # Polymarket V2 requires the secret to be base64 decoded
-        secret_bytes = base64.b64decode(self._api_secret)
-        
+        # Strip query parameters for standard path-only signature matching
+        clean_path = path.split("?")[0]
+        message = timestamp + method.upper() + clean_path + body
+
         signature = hmac.new(
-            secret_bytes,
+            self._secret_bytes,
             message.encode("utf-8"),
             hashlib.sha256,
         ).digest()
         
-        # Result must be base64 encoded
-        return base64.b64encode(signature).decode("utf-8")
+        # Result must be URL-safe base64 encoded
+        return base64.urlsafe_b64encode(signature).decode("utf-8")
 
     def build_headers(self, method: str, path: str, body: str = "") -> Dict[str, str]:
         timestamp = self._get_timestamp()
         signature = self._create_signature(timestamp, method, path, body)
 
         return {
-            "POLY-ADDRESS": self._address,
-            "POLY-SIGNATURE": signature,
-            "POLY-TIMESTAMP": timestamp,
-            "POLY-NONCE": str(uuid.uuid4()),
-            "POLY-API-KEY": self._api_key,
-            "POLY-PASSPHRASE": self._passphrase,
+            "POLY_ADDRESS": self._address,
+            "POLY_SIGNATURE": signature,
+            "POLY_TIMESTAMP": timestamp,
+            "POLY_API_KEY": self._api_key,
+            "POLY_PASSPHRASE": self._passphrase,
         }
 
     def log_auth_failure_details(

@@ -15,6 +15,18 @@ import structlog
 import asyncio
 
 DASHBOARD_CALLBACK = None  # Set by dashboard.py
+_ACTIVE_BOT_VERSION = "v0.0.0"
+
+
+def version_processor(logger, method_name, event_dict):
+    """
+    Ensure loggers created at import time with default 'v0.0.0' automatically
+    report the active bot_version configured in setup_logging().
+    """
+    if _ACTIVE_BOT_VERSION != "v0.0.0" and event_dict.get("version") in (None, "v0.0.0"):
+        event_dict["version"] = _ACTIVE_BOT_VERSION
+    return event_dict
+
 
 def dashboard_processor(logger, method_name, event_dict):
     """
@@ -64,6 +76,10 @@ def setup_logging(
     Configure structlog with JSON rendering, rotating file handler,
     and stdout output.
     """
+    global _ACTIVE_BOT_VERSION
+    if bot_version and bot_version != "v0.0.0":
+        _ACTIVE_BOT_VERSION = bot_version
+
     # Ensure log directory exists
     log_path = Path(log_dir)
     log_path.mkdir(parents=True, exist_ok=True)
@@ -107,7 +123,11 @@ def setup_logging(
     stdout_handler.setFormatter(formatter)
     root_logger.addHandler(stdout_handler)
 
-    # --- Structlog configuration ---
+    _configure_structlog()
+
+
+def _configure_structlog() -> None:
+    """Configure structlog processor pipeline with version_processor and JSON output."""
     structlog.configure(
         processors=[
             # Add log level
@@ -121,6 +141,8 @@ def setup_logging(
             structlog.processors.format_exc_info,
             # Add default fields
             structlog.processors.UnicodeDecoder(),
+            # Inject active bot version for module-level loggers
+            version_processor,
             # Forward to dashboard
             dashboard_processor,
             # Render to JSON
@@ -129,8 +151,13 @@ def setup_logging(
         context_class=dict,
         logger_factory=structlog.stdlib.LoggerFactory(),
         wrapper_class=structlog.stdlib.BoundLogger,
-        cache_logger_on_first_use=True,
+        cache_logger_on_first_use=False,
     )
+
+
+# Configure structlog at import time so module-level get_logger().bind(...) calls
+# before setup_logging() still attach version_processor and JSONRenderer.
+_configure_structlog()
 
 
 def get_logger(module: str, bot_version: str = "v0.0.0") -> structlog.stdlib.BoundLogger:
@@ -138,7 +165,8 @@ def get_logger(module: str, bot_version: str = "v0.0.0") -> structlog.stdlib.Bou
     Get a structured logger bound with module name and bot version.
     Every log line automatically includes these fields.
     """
+    resolved_version = bot_version if bot_version != "v0.0.0" else _ACTIVE_BOT_VERSION
     return structlog.get_logger(module).bind(
-        version=bot_version,
+        version=resolved_version,
         module=module,
     )

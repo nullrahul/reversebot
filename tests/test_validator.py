@@ -51,6 +51,7 @@ def _mock_config(**overrides):
         "target_window_minutes": [5, 15],
         "short_window_discovery_interval_seconds": 30,
         "short_window_min_seconds_to_close": 60,
+        "timeframe_15m_enabled": True,
     }
     defaults.update(overrides)
     config = MagicMock()
@@ -262,35 +263,11 @@ class TestValidatorChecks:
         assert result.checks["4_duplicate"] is False
 
     @pytest.mark.asyncio
-    async def test_check_7_position_count_limit(self, db):
-        """When at max positions, check 7 should fail."""
-        from src.strategy.validator import SignalValidator
-
-        config = _mock_config(max_open_positions=2)
-        clob = AsyncMock()
-        clob.get_orderbook = AsyncMock(return_value=None)
-
-        # Create 2 open positions in different markets
-        for i in range(2):
-            m = _sample_market(market_id=f"0xmarket_{i}")
-            await upsert_market(db, m)
-            pid = await create_position(db, f"0xmarket_{i}", 0.15, 15.0, 100.0, "v0.1.0", paper=True)
-            await update_position_status(db, pid, "OPEN", paper=True)
-
-        # New market signal
-        new_market = _sample_market(market_id="0xnewmarket")
-        await upsert_market(db, new_market)
-
-        validator = SignalValidator(config, clob, db)
-        result = await validator.validate(new_market)
-        assert result.checks["7_position_count"] is False
-
-    @pytest.mark.asyncio
     async def test_resolution_block_monitoring_and_logging(self, db):
-        """Verify that when a signal is blocked due to position count and there are closed-but-unresolved markets, it logs a RESOLUTION_BLOCK event."""
+        """Verify that when a signal is blocked due to exposure limit and there are closed-but-unresolved markets, it logs a RESOLUTION_BLOCK event."""
         from src.strategy.validator import SignalValidator
 
-        config = _mock_config(max_open_positions=1)
+        config = _mock_config(max_total_exposure_usdc=10.0, position_size_usdc=15.0)
         clob = AsyncMock()
         clob.get_orderbook = AsyncMock(return_value=None)
 
@@ -316,8 +293,8 @@ class TestValidatorChecks:
         validator = SignalValidator(config, clob, db)
         result = await validator.validate(new_market)
 
-        # Check 7 (position count limit) should fail because max_open_positions = 1 and we have 1 active open position (and 1 closed excluded one)
-        assert result.checks["7_position_count"] is False
+        # Check 5 (exposure limit) should fail because max_total_exposure_usdc = 10.0 and we have 20.0 open exposure
+        assert result.checks["5_exposure"] is False
 
         # 5. Check if RESOLUTION_BLOCK event was logged in the database
         cursor = await db.execute("SELECT * FROM events_log WHERE event_type = 'RESOLUTION_BLOCK'")
@@ -329,7 +306,7 @@ class TestValidatorChecks:
         # Verify payload contains the blocked_by_positions info
         import json
         payload = json.loads(event["payload"])
-        assert payload["failed_check"] == "position_count_limit"
+        assert payload["failed_check"] == "exposure_limit"
         assert len(payload["blocked_by_positions"]) == 1
         assert payload["blocked_by_positions"][0]["position_id"] == pid
         assert payload["blocked_by_positions"][0]["market_id"] == "0xclosed_market"
@@ -495,10 +472,9 @@ class TestShortWindowScannerFilter:
         validator = SignalValidator(config, clob, db)
         result = await validator.validate(market)
 
-        # Checks 2 and 3 might fail depending on mock setup, but 1,4,5,6,7,8,9 should pass
+        # Checks 2 and 3 might fail depending on mock setup, but 1,4,5,6,8,9 should pass
         assert result.checks["1_liquidity"] is True
         assert result.checks["4_duplicate"] is True
-        assert result.checks["7_position_count"] is True
         assert result.checks["8_price_stability"] is True
         assert result.checks["9_category"] is True
 

@@ -1,6 +1,7 @@
 import aiosqlite
 import json
 import time
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -17,7 +18,10 @@ class RejectionLogger:
     async def init(self):
         """Initialize the rejections database and schema."""
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
-        self._db = await aiosqlite.connect(self.db_path)
+        self._db = await aiosqlite.connect(self.db_path, timeout=60.0)
+        await self._db.execute("PRAGMA journal_mode = WAL")
+        await self._db.execute("PRAGMA busy_timeout = 60000")
+        await self._db.execute("PRAGMA synchronous = NORMAL")
         
         await self._db.execute("""
             CREATE TABLE IF NOT EXISTS rejections (
@@ -44,7 +48,15 @@ class RejectionLogger:
     ):
         """Log a rejected signal with full verbose context, rate-limited to once every 5 minutes."""
         now = time.time()
-        cache_key = (market_id, primary_reason)
+        
+        # Sanitize primary_reason by stripping numbers, percentages, and decimals
+        # to prevent dynamic wiggles (prices, countdown seconds, levels) from bypassing the rate-limiter
+        clean_reason = re.sub(r'-?\d+(?:\.\d+)?%?', '', primary_reason)
+        clean_reason = re.sub(r'_+', '_', clean_reason)
+        clean_reason = re.sub(r'\s+', ' ', clean_reason)
+        clean_reason = clean_reason.strip('_ ').strip()
+        
+        cache_key = (market_id, clean_reason)
         
         # Rate-limiting: only write to DB if 5 minutes (300s) have passed since the last identical rejection
         last_time = self._last_logged.get(cache_key, 0.0)

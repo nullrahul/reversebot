@@ -71,12 +71,16 @@ class WebSocketClient:
         self._subscribed_channels: List[str] = ["price_change", "book", "user"]
         # Track raw token subscriptions
         self._active_tokens: Set[str] = set()
+        # Track currently active subscriptions over the socket
+        self._subscribed_tokens: Set[str] = set()
+        self._push_lock: asyncio.Lock = asyncio.Lock()
 
         # User event queue (MINED, etc.)
         self.user_queue: asyncio.Queue = asyncio.Queue()
 
-        # Background task handle
+        # Background task handles
         self._listen_task: Optional[asyncio.Task] = None
+        self._heartbeat_task: Optional[asyncio.Task] = None
 
         logger.info(
             "ws_client_initialized",
@@ -109,10 +113,10 @@ class WebSocketClient:
             self._reconnect_attempt = 0
             self.last_message_received_at = time.time()
             
-            # Clear caches to ensure no stale data is used
-            self.price_cache.clear()
-            self.bid_cache.clear()
-            self.ask_cache.clear()
+            # Retain last known prices in cache during reconnect window to prevent blind spots
+            # self.price_cache.clear()
+            # self.bid_cache.clear()
+            # self.ask_cache.clear()
 
             logger.info(
                 "ws_connected",
@@ -133,10 +137,10 @@ class WebSocketClient:
                 error=str(e),
                 message=f"WebSocket pipe broken ({type(e).__name__}) — clearing price cache",
             )
-            # Clear all cached prices to prevent stale data
-            self.price_cache.clear()
-            self.bid_cache.clear()
-            self.ask_cache.clear()
+            # Retain all cached prices to prevent blind spots
+            # self.price_cache.clear()
+            # self.bid_cache.clear()
+            # self.ask_cache.clear()
             return False
 
         except (aiohttp.ClientError, asyncio.TimeoutError, OSError) as e:
@@ -172,6 +176,13 @@ class WebSocketClient:
             except asyncio.CancelledError:
                 pass
 
+        if self._heartbeat_task and not self._heartbeat_task.done():
+            self._heartbeat_task.cancel()
+            try:
+                await self._heartbeat_task
+            except asyncio.CancelledError:
+                pass
+
         if self._ws and not self._ws.closed:
             await self._ws.close()
 
@@ -180,41 +191,57 @@ class WebSocketClient:
 
         self._connected = False
 
-    async def _push_subscription_state(self) -> None:
-        """Push the batched array of active tokens to the WS in chunks to avoid INVALID OPERATION errors."""
-        if not self.is_connected or not self._active_tokens:
-            return
+    async def _push_subscription_state(self, force: bool = False) -> None:
+        """Push the subscription state to the WS in chunks, avoiding duplicate subscriptions."""
+        async with self._push_lock:
+            if not self.is_connected or not self._active_tokens:
+                return
 
-        # Filter out invalid tokens
-        token_list = []
-        for t in self._active_tokens:
-            if t:
-                token_list.append(str(t))
-        
-        chunk_size = 50  # Polymarket prefers smaller batches
-        
-        for i in range(0, len(token_list), chunk_size):
-            chunk = token_list[i : i + chunk_size]
-            msg = {
-                "operation": "subscribe",
-                "assets_ids": chunk,
-                "custom_feature_enabled": True
-            }
+            if force:
+                # Reconnection path: clear local subscription state and subscribe to everything
+                self._subscribed_tokens.clear()
+                to_subscribe = set(self._active_tokens)
+            else:
+                # Incremental path: only subscribe to what is not already subscribed
+                to_subscribe = self._active_tokens - self._subscribed_tokens
+
+            if not to_subscribe:
+                return
+
+            token_list = [str(t) for t in to_subscribe if t]
+            if not token_list:
+                return
+
+            chunk_size = 50  # Polymarket prefers smaller batches
             
-            try:
-                await self._ws.send_json(msg)
-                logger.debug("ws_subscription_pushed", chunk_index=i//chunk_size, token_count=len(chunk), channels=self._subscribed_channels)
-                logger.debug(
-                    "ws_batch_subscribed", 
-                    chunk_index=i//chunk_size, 
-                    count=len(chunk),
-                    first_id=chunk[0][-8:],
-                    last_id=chunk[-1][-8:],
-                    message=f"Subscribed to batch {i//chunk_size} ({len(chunk)} tokens)"
-                )
-                await asyncio.sleep(0.1)
-            except Exception as e:
-                logger.warning("ws_state_push_error", error=str(e))
+            for i in range(0, len(token_list), chunk_size):
+                if not self.is_connected:
+                    break
+
+                chunk = token_list[i : i + chunk_size]
+                msg = {
+                    "operation": "subscribe",
+                    "type": "market",
+                    "assets_ids": chunk,
+                    "custom_feature_enabled": True
+                }
+                
+                try:
+                    await self._ws.send_json(msg)
+                    self.last_message_received_at = time.time()
+                    logger.debug(
+                        "ws_batch_subscribed", 
+                        chunk_index=i//chunk_size, 
+                        count=len(chunk),
+                        first_id=chunk[0][-8:] if chunk else "",
+                        last_id=chunk[-1][-8:] if chunk else "",
+                        message=f"Subscribed to batch {i//chunk_size} ({len(chunk)} tokens)"
+                    )
+                    self._subscribed_tokens.update(chunk)
+                    await asyncio.sleep(0.1)
+                except Exception as e:
+                    logger.warning("ws_state_push_error", error=str(e))
+                    break
 
     async def subscribe_market(
         self, market_id: str, yes_token_id: str = None, no_token_id: str = None, condition_id: str = None, push_state: bool = True
@@ -245,30 +272,48 @@ class WebSocketClient:
         self, market_id: str, yes_token_id: str = None, no_token_id: str = None, push_state: bool = True
     ) -> None:
         """Unsubscribe from a market's updates and clear memory."""
-        self._subscribed_markets.pop(market_id, market_id)
-        if market_id in self.price_cache:
-            del self.price_cache[market_id]
-        if market_id in self.bid_cache:
-            del self.bid_cache[market_id]
-        if market_id in self.ask_cache:
-            del self.ask_cache[market_id]
+        self._subscribed_markets.pop(market_id, None)
 
-        if yes_token_id:
-            self.token_to_market.pop(yes_token_id, None)
-            self._active_tokens.discard(yes_token_id)
+        target_tokens = [
+            tid for tid, mid in list(self.token_to_market.items()) if mid == market_id
+        ]
+        if yes_token_id and yes_token_id not in target_tokens:
+            target_tokens.append(yes_token_id)
+        if no_token_id and no_token_id not in target_tokens:
+            target_tokens.append(no_token_id)
 
-        if no_token_id:
-            self.token_to_market.pop(no_token_id, None)
-            self._active_tokens.discard(no_token_id)
+        to_unsubscribe = []
+        for tid in target_tokens:
+            self.price_cache.pop(tid, None)
+            self.bid_cache.pop(tid, None)
+            self.ask_cache.pop(tid, None)
+            self.book_cache.pop(tid, None)
+            self.token_to_market.pop(tid, None)
+            self._active_tokens.discard(tid)
+            if tid in self._subscribed_tokens:
+                to_unsubscribe.append(tid)
+                self._subscribed_tokens.discard(tid)
 
-        logger.debug("ws_unsubscribed", market_id=market_id)
+        logger.debug("ws_unsubscribed", market_id=market_id, tokens=to_unsubscribe)
+
+        if to_unsubscribe and self.is_connected:
+            # Send explicit unsubscribe message to the Polymarket WebSocket server
+            msg = {
+                "operation": "unsubscribe",
+                "assets_ids": to_unsubscribe
+            }
+            try:
+                await self._ws.send_json(msg)
+                logger.info("ws_unsubscribed_sent", market_id=market_id, count=len(to_unsubscribe))
+            except Exception as e:
+                logger.warning("ws_unsubscribe_send_failed", error=str(e))
 
         if push_state:
             await self._push_subscription_state()
 
     async def _resubscribe(self) -> None:
         """Re-subscribe to all channels after reconnection."""
-        await self._push_subscription_state()
+        await self._push_subscription_state(force=True)
         
         # Subscribe to authenticated user channel
         if self.is_connected:
@@ -350,39 +395,52 @@ class WebSocketClient:
                                 if not isinstance(d, dict):
                                     continue
                                     
+                                event_type = d.get("event_type") or d.get("type") or d.get("event")
+                                
+                                if event_type == "price_change":
+                                    # L2 DELTA PATH: Precise orderbook replica updates from nested list
+                                    changes = d.get("price_changes") or []
+                                    for change in changes:
+                                        asset_id = str(change.get("asset_id") or "")
+                                        if not asset_id or len(asset_id) < 50:
+                                            continue
+                                            
+                                        side = change.get("side") # "BUY" (bid) or "SELL" (ask)
+                                        price_val = float(change.get("price") or 0)
+                                        size = float(change.get("size") or 0)
+                                        
+                                        if asset_id not in self.book_cache:
+                                            self.book_cache[asset_id] = {"bids": {}, "asks": {}}
+                                            
+                                        book_side = "bids" if side == "BUY" else "asks"
+                                        
+                                        if size == 0:
+                                            # DELETION RULE: Size 0 means level is depleted
+                                            self.book_cache[asset_id][book_side].pop(price_val, None)
+                                        else:
+                                            self.book_cache[asset_id][book_side][price_val] = size
+                                            
+                                        # Parse best_bid/best_ask from nested delta update to keep caches hot
+                                        best_bid = change.get("best_bid")
+                                        best_ask = change.get("best_ask")
+                                        if best_bid is not None:
+                                            self.bid_cache[asset_id] = float(best_bid)
+                                            self.price_cache[asset_id] = float(best_bid)
+                                        if best_ask is not None:
+                                            self.ask_cache[asset_id] = float(best_ask)
+                                            
+                                        self._update_best_bid_ask(asset_id)
+                                    continue
+                                    
                                 token_id = str(d.get("asset_id") or d.get("token_id") or d.get("market_id") or "")
                                 
                                 # STRICT GUARD: Ignore short market_ids to prevent memory poisoning
                                 if len(token_id) < 50:
                                     continue
                                     
-                                event_type = d.get("event_type") or d.get("type") or d.get("event")
                                 price = d.get("price")
-                                
-                                if token_id and price is not None:
-                                    # Cache by token_id (Trade/Price Change)
-                                    self.price_cache[token_id] = float(price)
-                                
-                                elif token_id and event_type == "price_change":
-                                    # L2 DELTA PATH: Precise orderbook replica update
-                                    side = d.get("side") # "BUY" (bid) or "SELL" (ask)
-                                    price = float(d.get("price") or 0)
-                                    size = float(d.get("size") or 0)
-                                    
-                                    if token_id not in self.book_cache:
-                                        self.book_cache[token_id] = {"bids": {}, "asks": {}}
-                                    
-                                    book_side = "bids" if side == "BUY" else "asks"
-                                    
-                                    if size == 0:
-                                        # DELETION RULE: Size 0 means level is depleted
-                                        self.book_cache[token_id][book_side].pop(price, None)
-                                    else:
-                                        self.book_cache[token_id][book_side][price] = size
-                                    
-                                    self._update_best_bid_ask(token_id)
 
-                                elif token_id and event_type == "book":
+                                if token_id and event_type == "book":
                                     # L2 SNAPSHOT PATH: Reset replica for this token
                                     self.book_cache[token_id] = {"bids": {}, "asks": {}}
                                     
@@ -404,8 +462,12 @@ class WebSocketClient:
                                     
                                     if ask is not None:
                                         self.ask_cache[token_id] = float(ask)
+
+                                elif token_id and price is not None:
+                                    # Fallback/General price caching (e.g. trade events)
+                                    self.price_cache[token_id] = float(price)
                                 
-                                elif event_type == "mined":
+                                elif event_type == "mined" or (event_type == "trade" and str(d.get("status")).upper() == "MINED"):
                                     # AUTHENTICATED USER PATH: Order confirmed on-chain
                                     logger.info("ws_order_mined", order_id=d.get("order_id"), message="Order successfully mined on Polygon")
                                     await self.user_queue.put(d)
@@ -445,10 +507,10 @@ class WebSocketClient:
                     error=str(e),
                     message=f"WebSocket pipe broken ({type(e).__name__}) — clearing cache and reconnecting",
                 )
-                # Clear all cached prices to prevent stale data serving
-                self.price_cache.clear()
-                self.bid_cache.clear()
-                self.ask_cache.clear()
+                # Retain all cached prices to prevent stale data serving during brief reconnect
+                # self.price_cache.clear()
+                # self.bid_cache.clear()
+                # self.ask_cache.clear()
             except Exception as e:
                 logger.error(
                     "ws_listen_error",
@@ -486,6 +548,30 @@ class WebSocketClient:
     def get_live_price(self, token_id: str) -> Optional[float]:
         """Get the latest price from the cache."""
         return self.price_cache.get(token_id)
+
+    def get_best_ask(self, token_id: str) -> Optional[float]:
+        """Query the best ask price from L2 replica first, falling back to ask_cache."""
+        if not token_id:
+            return None
+        book = self.book_cache.get(token_id)
+        if book and book.get("asks"):
+            return min(book["asks"].keys())
+        if self.ask_cache.get(token_id) is not None:
+            return self.ask_cache[token_id]
+        return None
+
+    def get_best_bid(self, token_id: str) -> Optional[float]:
+        """Query the best bid price from L2 replica first, falling back to bid_cache and price_cache."""
+        if not token_id:
+            return None
+        book = self.book_cache.get(token_id)
+        if book and book.get("bids"):
+            return max(book["bids"].keys())
+        if self.bid_cache.get(token_id) is not None:
+            return self.bid_cache[token_id]
+        if self.price_cache.get(token_id) is not None:
+            return self.price_cache[token_id]
+        return None
 
     def get_full_book(self, token_id: str) -> Optional[Dict]:
         """Returns a snapshot-compatible dict of the local L2 replica."""
